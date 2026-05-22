@@ -6,10 +6,7 @@
   <title>Карточки-интервью — Болталка</title>
   <link rel="stylesheet" href="../css/main.css">
   <style>
-    .interview-wrap {
-      max-width: 540px;
-      margin: 0 auto;
-    }
+    .interview-wrap { max-width: 540px; margin: 0 auto; }
 
     /* Mode select */
     .mode-grid {
@@ -18,9 +15,7 @@
       gap: var(--space-4);
       margin-top: var(--space-4);
     }
-    @media (max-width: 520px) {
-      .mode-grid { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 520px) { .mode-grid { grid-template-columns: 1fr; } }
     .mode-card {
       position: relative;
       border: 2px solid var(--c-border);
@@ -33,154 +28,142 @@
       user-select: none;
     }
     .mode-card:hover { border-color: var(--c-primary); background: #f5f8ff; }
-    .mode-card.is-done {
-      border-color: var(--c-success);
-      background: #f0faf2;
-    }
+    .mode-card.is-done { border-color: var(--c-success); background: #f0faf2; }
     .mode-card__icon { font-size: 40px; margin-bottom: var(--space-3); }
     .mode-card__title { font-size: 17px; font-weight: 700; margin-bottom: var(--space-2); }
     .mode-card__desc { font-size: 13px; color: var(--c-text-muted); line-height: 1.45; }
     .mode-card__check {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      width: 24px;
-      height: 24px;
-      background: var(--c-success);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
-      font-size: 13px;
-      font-weight: 700;
+      position: absolute; top: 12px; right: 12px;
+      width: 24px; height: 24px;
+      background: var(--c-success); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 13px; font-weight: 700;
     }
     .mode-card__btn {
       margin-top: var(--space-4);
       display: inline-block;
       padding: 8px 20px;
       border-radius: var(--r-md);
-      font-size: 14px;
-      font-weight: 600;
-      background: var(--c-primary);
-      color: #fff;
+      font-size: 14px; font-weight: 600;
+      background: var(--c-primary); color: #fff;
     }
-    .mode-card.is-done .mode-card__btn {
-      background: var(--c-surface-alt);
-      color: var(--c-text-muted);
-    }
+    .mode-card.is-done .mode-card__btn { background: var(--c-surface-alt); color: var(--c-text-muted); }
 
-    /* Progress */
-    .interview-progress {
-      display: flex;
-      align-items: center;
-      gap: var(--space-3);
-      margin-bottom: var(--space-5);
-    }
-    .interview-progress__bar {
-      flex: 1;
-      height: 6px;
-      background: var(--c-border);
-      border-radius: 999px;
-      overflow: hidden;
-    }
-    .interview-progress__fill {
-      height: 100%;
-      background: var(--c-primary);
-      transition: width .35s ease;
-    }
-    .interview-progress__count {
-      font-size: 13px;
-      color: var(--c-text-muted);
-      white-space: nowrap;
-      font-variant-numeric: tabular-nums;
-    }
-
-    /* Mode label in game */
-    .mode-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 12px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: var(--space-4);
-    }
-    .mode-label--child  { background: #e8f0ff; color: #1e3a6f; }
-    .mode-label--parent { background: #f4e1fc; color: #5a1a6b; }
-
-    /* Card */
-    .interview-card {
+    /* Viewer */
+    .viewer {
       background: var(--c-surface);
-      border: 2px solid var(--c-border-strong);
+      border: 2px solid var(--c-primary);
       border-radius: var(--r-lg);
-      padding: var(--space-6) var(--space-5);
-      min-height: 190px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      padding: var(--space-5);
       margin-bottom: var(--space-5);
-      transition: opacity .18s;
+      transition: border-color .2s;
     }
-    .interview-card.is-flipping { opacity: 0; }
-    .interview-card__question {
-      font-size: 21px;
-      font-weight: 600;
-      line-height: 1.4;
-      margin-bottom: var(--space-3);
+    .viewer--parent { border-color: #7c3aed; }
+    .viewer__meta {
+      display: flex; align-items: center;
+      gap: var(--space-3); margin-bottom: var(--space-4);
     }
-    .interview-card__hint {
-      font-size: 14px;
-      color: var(--c-text-muted);
-      line-height: 1.5;
+    .viewer__num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--c-primary); color: #fff;
+      font-weight: 700; font-size: 15px; flex-shrink: 0;
     }
+    .viewer--parent .viewer__num { background: #7c3aed; }
+    .viewer__mode-label {
+      font-size: 12px; text-transform: uppercase;
+      letter-spacing: .06em; font-weight: 700;
+      color: var(--c-primary);
+    }
+    .viewer--parent .viewer__mode-label { color: #7c3aed; }
+    .viewer__question {
+      font-size: 20px; font-weight: 600;
+      line-height: 1.4; margin-bottom: var(--space-3);
+    }
+    .viewer__hint { font-size: 14px; color: var(--c-text-muted); line-height: 1.5; }
 
-    /* Nav */
-    .interview-nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--space-3);
+    /* Grid */
+    .interview-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
     }
+    @media (max-width: 480px) { .interview-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    /* Flip card */
+    .icard {
+      perspective: 600px; cursor: pointer;
+      user-select: none; min-height: 100px;
+    }
+    .icard__inner {
+      width: 100%; height: 100%; min-height: 100px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform .5s cubic-bezier(.4,0,.2,1);
+      border-radius: 10px;
+    }
+    .icard.is-flipped .icard__inner { transform: rotateY(180deg); }
+    .icard__front, .icard__back {
+      position: absolute; inset: 0;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      border-radius: 10px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 10px 8px; text-align: center;
+      border: 2px solid var(--c-border);
+      background: var(--c-surface);
+    }
+    .icard.is-active .icard__front { border-color: var(--c-primary); background: #e8f0ff; }
+    .icard--parent.is-active .icard__front { border-color: #7c3aed; background: #f3eeff; }
+
+    .icard__back {
+      transform: rotateY(180deg);
+      background: var(--c-primary); border-color: var(--c-primary); color: #fff;
+    }
+    .icard--parent .icard__back { background: #7c3aed; border-color: #7c3aed; }
+
+    .icard__num { font-weight: 700; font-size: 22px; line-height: 1; color: var(--c-text); }
+    .icard.is-active .icard__num { color: var(--c-primary); }
+    .icard--parent.is-active .icard__num { color: #7c3aed; }
+    .icard__sub { font-size: 10px; color: var(--c-text-muted); text-transform: uppercase; letter-spacing: .04em; margin-top: 3px; }
+    .icard__back-icon { font-size: 24px; line-height: 1; margin-bottom: 4px; }
+    .icard__back-title { font-size: 11px; font-weight: 600; line-height: 1.3; opacity: .95; }
+
+    /* Finish button area */
+    .finish-bar {
+      margin: var(--space-4) 0 var(--space-5);
+      display: flex; align-items: center;
+      justify-content: space-between; gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+    .seen-counter { font-size: 13px; color: var(--c-text-muted); }
 
     /* Done screen */
-    .done-screen {
-      text-align: center;
-      padding: var(--space-5) 0 var(--space-4);
-    }
+    .done-screen { text-align: center; padding: var(--space-5) 0 var(--space-4); }
     .done-screen__icon { font-size: 52px; margin-bottom: var(--space-3); }
     .done-screen__pts {
       display: inline-block;
-      background: rgba(45,122,62,.10);
-      color: var(--c-success);
-      border-radius: 4px;
-      padding: 4px 14px;
-      font-size: 15px;
-      font-weight: 700;
+      background: rgba(45,122,62,.10); color: var(--c-success);
+      border-radius: 4px; padding: 4px 14px;
+      font-size: 15px; font-weight: 700;
       margin: var(--space-3) 0 var(--space-4);
     }
     .done-screen__both {
-      background: #fff7d6;
-      border: 1px solid #e6d28b;
-      border-radius: var(--r-md);
-      padding: var(--space-4);
-      margin-bottom: var(--space-4);
-      font-size: 15px;
-      color: #6b4a18;
+      background: #fff7d6; border: 1px solid #e6d28b;
+      border-radius: var(--r-md); padding: var(--space-4);
+      margin-bottom: var(--space-4); font-size: 15px; color: #6b4a18;
     }
   </style>
 </head>
 <body data-mode="user">
   <main class="app-main">
     <div class="breadcrumb"><a href="district-boltalka.html">← В Болталку</a></div>
-
     <h1>Карточки-интервью</h1>
     <p class="muted">Два набора вопросов — один за ребёнка, один за родителя. Пройдите оба по очереди.</p>
 
     <div class="interview-wrap">
 
-      <!-- Экран выбора режима -->
+      <!-- Выбор режима -->
       <div id="screen-select">
         <div class="mode-grid">
           <div class="mode-card" id="card-child" onclick="startMode('child')">
@@ -200,27 +183,29 @@
 
       <!-- Игровой экран -->
       <div id="screen-game" style="display:none;">
-        <div class="interview-progress">
-          <div class="interview-progress__bar">
-            <div class="interview-progress__fill" id="prog-fill" style="width:0%"></div>
+
+        <div class="viewer" id="viewer">
+          <div class="viewer__meta">
+            <div class="viewer__num" id="viewer-num">1</div>
+            <div class="viewer__mode-label" id="viewer-mode-label"></div>
           </div>
-          <div class="interview-progress__count" id="prog-count"></div>
+          <div class="viewer__question" id="viewer-question"></div>
+          <div class="viewer__hint" id="viewer-hint"></div>
         </div>
 
-        <div id="mode-label-wrap"></div>
-
-        <div class="interview-card" id="interview-card">
-          <div class="interview-card__question" id="card-question"></div>
-          <div class="interview-card__hint" id="card-hint"></div>
+        <div class="finish-bar">
+          <div class="seen-counter" id="seen-counter"></div>
+          <button class="btn btn--primary" id="btn-finish" style="display:none;" onclick="finishMode()">Завершить набор ✓</button>
         </div>
 
-        <div class="interview-nav">
-          <button class="btn" id="btn-prev" disabled>← Назад</button>
-          <button class="btn btn--primary" id="btn-next">Следующий →</button>
-        </div>
+        <h2 class="section-title" style="margin-top:0;">Все вопросы</h2>
+        <div class="interview-grid" id="interview-grid"></div>
+        <p class="muted center" style="margin-top:var(--space-3); font-size:13px;">
+          Нажмите на карточку, чтобы прочитать вопрос выше
+        </p>
       </div>
 
-      <!-- Экран завершения режима -->
+      <!-- Экран завершения -->
       <div id="screen-done" style="display:none;">
         <div class="done-screen">
           <div class="done-screen__icon" id="done-icon"></div>
@@ -239,78 +224,103 @@
   <script>
     var CARDS = {
       child: [
-        { q: 'Что тебе больше всего нравилось делать летом, когда ты был маленьким?', hint: 'Расскажи конкретный момент, который запомнился' },
-        { q: 'Чего ты немного боялся в детстве?', hint: 'Можно смешного или необычного' },
-        { q: 'Какую ошибку ты совершил в жизни и что из неё понял?', hint: '' },
-        { q: 'Что ты делаешь, когда тебе грустно или трудно?', hint: '' },
-        { q: 'Что было самым трудным в твоём детстве?', hint: 'Не обязательно серьёзное' },
-        { q: 'Был ли у тебя любимый предмет в школе — и почему?', hint: '' },
-        { q: 'Кем ты хотел стать, когда вырастешь?', hint: 'Тогда, в детстве' },
-        { q: 'Какой момент из своего детства ты бы хотел прожить ещё раз?', hint: '' },
+        { icon:'☀️', title:'Летние дни',        q:'Что тебе больше всего нравилось делать летом, когда ты был маленьким?', hint:'Расскажи конкретный момент, который запомнился' },
+        { icon:'😨', title:'Детские страхи',    q:'Чего ты немного боялся в детстве?',                                     hint:'Можно смешного или необычного' },
+        { icon:'🤦', title:'Ошибка и урок',     q:'Какую ошибку ты совершил в жизни и что из неё понял?',                  hint:'' },
+        { icon:'💙', title:'Когда грустно',     q:'Что ты делаешь, когда тебе грустно или трудно?',                        hint:'' },
+        { icon:'⚡', title:'Трудности детства', q:'Что было самым трудным в твоём детстве?',                               hint:'Не обязательно серьёзное' },
+        { icon:'📚', title:'Любимый предмет',   q:'Был ли у тебя любимый предмет в школе — и почему?',                    hint:'' },
+        { icon:'🚀', title:'Мечта о профессии', q:'Кем ты хотел стать, когда вырастешь?',                                  hint:'Тогда, в детстве' },
+        { icon:'⏪', title:'Момент детства',    q:'Какой момент из своего детства ты бы хотел прожить ещё раз?',           hint:'' },
       ],
       parent: [
-        { q: 'Если бы ты мог провести целый день как угодно — без правил и расписания — что бы ты делал?', hint: 'Нет неправильных ответов' },
-        { q: 'Что тебя сейчас больше всего радует — прямо в эти дни?', hint: 'Может быть что угодно — большое или маленькое' },
-        { q: 'Есть ли что-то, о чём ты хотел бы поговорить, но не знаешь как начать?', hint: 'Можно ответить «нет» — это тоже ответ' },
-        { q: 'Что, по-твоему, у тебя получается лучше всего?', hint: 'Не обязательно что-то школьное' },
-        { q: 'Если бы ты мог изменить одно правило дома — какое?', hint: 'Отвечай честно, это не ловушка' },
-        { q: 'Что тебя больше всего удивило в этом году?', hint: '' },
-        { q: 'Чему ты хотел бы научиться?', hint: 'Что угодно — кататься на скейте, готовить, программировать' },
-        { q: 'Какой момент из последнего месяца ты бы хотел запомнить?', hint: 'Может быть очень маленьким — это нормально' },
+        { icon:'🌈', title:'Идеальный день',    q:'Если бы ты мог провести целый день как угодно — без правил и расписания — что бы ты делал?', hint:'Нет неправильных ответов' },
+        { icon:'✨', title:'Что радует',         q:'Что тебя сейчас больше всего радует — прямо в эти дни?',                hint:'Может быть что угодно — большое или маленькое' },
+        { icon:'💬', title:'Трудный разговор',  q:'Есть ли что-то, о чём ты хотел бы поговорить, но не знаешь как начать?', hint:'Можно ответить «нет» — это тоже ответ' },
+        { icon:'🏆', title:'Твой талант',       q:'Что, по-твоему, у тебя получается лучше всего?',                        hint:'Не обязательно что-то школьное' },
+        { icon:'🔧', title:'Правило дома',      q:'Если бы ты мог изменить одно правило дома — какое?',                   hint:'Отвечай честно, это не ловушка' },
+        { icon:'🤩', title:'Удивление года',    q:'Что тебя больше всего удивило в этом году?',                            hint:'' },
+        { icon:'🎯', title:'Хочу научиться',    q:'Чему ты хотел бы научиться?',                                           hint:'Что угодно — кататься на скейте, готовить, программировать' },
+        { icon:'📸', title:'Момент месяца',     q:'Какой момент из последнего месяца ты бы хотел запомнить?',              hint:'Может быть очень маленьким — это нормально' },
       ],
     };
 
     var MODE_META = {
-      child:  { label: '🧒 Ребёнок спрашивает родителя', cls: 'mode-label--child' },
-      parent: { label: '👨‍👩 Родитель спрашивает ребёнка', cls: 'mode-label--parent' },
+      child:  { label: '🧒 Ребёнок спрашивает родителя', cls: 'child' },
+      parent: { label: '👨‍👩 Родитель спрашивает ребёнка', cls: 'parent' },
     };
 
     var done = { child: false, parent: false };
     var activeMode = null;
-    var current = 0;
+    var activeIndex = 0;
+    var seen = {};
 
     function startMode(mode) {
       activeMode = mode;
-      current = 0;
+      activeIndex = 0;
+      seen = {};
+
       document.getElementById('screen-select').style.display = 'none';
       document.getElementById('screen-done').style.display = 'none';
       document.getElementById('screen-game').style.display = '';
-      renderCard();
+
+      var viewer = document.getElementById('viewer');
+      viewer.className = 'viewer' + (mode === 'parent' ? ' viewer--parent' : '');
+      document.getElementById('viewer-mode-label').textContent = MODE_META[mode].label;
+
+      buildGrid(mode);
+      showCard(0);
     }
 
-    function renderCard() {
+    function buildGrid(mode) {
+      var grid = document.getElementById('interview-grid');
+      grid.innerHTML = '';
+      CARDS[mode].forEach(function(card, i) {
+        var cell = document.createElement('div');
+        cell.className = 'icard icard--' + mode + (i === 0 ? ' is-active is-flipped' : '');
+        cell.innerHTML =
+          '<div class="icard__inner">' +
+            '<div class="icard__front">' +
+              '<div class="icard__num">' + (i + 1) + '</div>' +
+              '<div class="icard__sub">Вопрос</div>' +
+            '</div>' +
+            '<div class="icard__back">' +
+              '<div class="icard__back-icon">' + card.icon + '</div>' +
+              '<div class="icard__back-title">' + card.title + '</div>' +
+            '</div>' +
+          '</div>';
+        cell.addEventListener('click', function() { showCard(i); });
+        grid.appendChild(cell);
+      });
+    }
+
+    function showCard(i) {
+      activeIndex = i;
+      seen[i] = true;
+
       var cards = CARDS[activeMode];
-      var total = cards.length;
-      var c = cards[current];
-      var meta = MODE_META[activeMode];
+      var c = cards[i];
 
-      document.getElementById('prog-fill').style.width = ((current / total) * 100) + '%';
-      document.getElementById('prog-count').textContent = (current + 1) + ' / ' + total;
+      document.getElementById('viewer-num').textContent = i + 1;
+      document.getElementById('viewer-question').textContent = c.q;
+      document.getElementById('viewer-hint').textContent = c.hint;
 
-      document.getElementById('mode-label-wrap').innerHTML =
-        '<span class="mode-label ' + meta.cls + '">' + meta.label + '</span>';
+      // Flip selected, unflip all others
+      document.querySelectorAll('.icard').forEach(function(el, idx) {
+        el.classList.toggle('is-active', idx === i);
+        if (idx !== i) el.classList.remove('is-flipped');
+      });
+      document.querySelectorAll('.icard')[i].classList.add('is-flipped');
 
-      document.getElementById('card-question').textContent = c.q;
-      document.getElementById('card-hint').textContent = c.hint;
-
-      document.getElementById('btn-prev').disabled = current === 0;
-      document.getElementById('btn-next').textContent =
-        current === total - 1 ? 'Завершить ✓' : 'Следующий →';
+      updateSeenCounter();
+      document.getElementById('viewer').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    function flip(dir) {
-      var card = document.getElementById('interview-card');
-      card.classList.add('is-flipping');
-      setTimeout(function () {
-        current += dir;
-        if (current >= CARDS[activeMode].length) {
-          finishMode();
-          card.classList.remove('is-flipping');
-          return;
-        }
-        renderCard();
-        card.classList.remove('is-flipping');
-      }, 180);
+    function updateSeenCounter() {
+      var total = CARDS[activeMode].length;
+      var seenCount = Object.keys(seen).length;
+      document.getElementById('seen-counter').textContent = seenCount + ' / ' + total + ' вопросов просмотрено';
+      document.getElementById('btn-finish').style.display = seenCount >= total ? '' : 'none';
     }
 
     function finishMode() {
@@ -325,7 +335,8 @@
 
       document.getElementById('done-icon').textContent = bothDone ? '🎉' : '✅';
       document.getElementById('done-title').textContent =
-        bothDone ? 'Оба набора пройдены!' : (activeMode === 'child' ? 'Набор ребёнка пройден' : 'Набор родителя пройден');
+        bothDone ? 'Оба набора пройдены!' :
+        (activeMode === 'child' ? 'Набор ребёнка пройден' : 'Набор родителя пройден');
       document.getElementById('done-desc').textContent =
         bothDone
           ? 'Поговорите об ответах — что удивило, что совпало, что оказалось неожиданным.'
@@ -340,8 +351,7 @@
           'Пройти ' + otherLabel + ' →</button><br>';
       }
 
-      var btns = document.getElementById('done-btns');
-      btns.innerHTML =
+      document.getElementById('done-btns').innerHTML =
         '<button class="btn btn--ghost" onclick="goSelect()">← К выбору режима</button>' +
         (bothDone ? '<a class="btn btn--primary" href="district-boltalka.html">В Болталку</a>' : '');
     }
@@ -353,20 +363,19 @@
 
     function updateModeCards() {
       ['child', 'parent'].forEach(function(mode) {
+        if (!done[mode]) return;
         var card = document.getElementById('card-' + mode);
         var btn  = document.getElementById('btn-' + mode);
-        if (done[mode]) {
-          card.classList.add('is-done');
-          card.innerHTML =
-            '<div class="mode-card__check">✓</div>' +
-            card.innerHTML.replace(/<div class="mode-card__check">.*?<\/div>/, '');
-          btn.textContent = 'Пройти снова';
+        if (!card.querySelector('.mode-card__check')) {
+          var check = document.createElement('div');
+          check.className = 'mode-card__check';
+          check.textContent = '✓';
+          card.insertBefore(check, card.firstChild);
         }
+        card.classList.add('is-done');
+        btn.textContent = 'Пройти снова';
       });
     }
-
-    document.getElementById('btn-next').addEventListener('click', function () { flip(1); });
-    document.getElementById('btn-prev').addEventListener('click', function () { flip(-1); });
   </script>
 </body>
 </html>
