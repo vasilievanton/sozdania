@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Волк ловит яйца</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <style>
+    .game-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    #game-canvas {
+      border: 2px solid var(--c-border-strong);
+      border-radius: 8px;
+      background: #1a2540;
+      display: block;
+      max-width: 100%;
+      cursor: none;
+    }
+    .game-controls {
+      display: flex;
+      gap: 8px;
+    }
+    .game-touch {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .btn-touch {
+      width: 72px;
+      height: 56px;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--c-border-strong);
+      border-radius: 8px;
+      background: var(--c-surface);
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .btn-touch:active { background: var(--c-surface-alt); }
+    .game-hint {
+      font-size: 13px;
+      color: var(--c-text-muted);
+      text-align: center;
+    }
+  </style>
+</head>
+<body data-mode="user">
+  <main class="app-main app-main--narrow">
+    <div class="breadcrumb"><a href="map.html">← На карту</a></div>
+    <h1>Волк ловит яйца</h1>
+    <p class="muted">Классическая советская LCD-игра. Управление — стрелки или кнопки ниже.</p>
+
+    <div class="game-wrap">
+      <canvas id="game-canvas" width="400" height="360"></canvas>
+
+      <div class="game-controls">
+        <button class="btn btn--primary" id="btn-start">Начать игру</button>
+        <button class="btn" id="btn-restart" style="display:none">Заново</button>
+      </div>
+
+      <div class="game-touch">
+        <button class="btn-touch" id="btn-left">←</button>
+        <button class="btn-touch" id="btn-right">→</button>
+      </div>
+
+      <p class="game-hint">← → на клавиатуре · или кнопки выше · пробел — пауза</p>
+    </div>
+  </main>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    var canvas = document.getElementById('game-canvas');
+    var ctx = canvas.getContext('2d');
+    var W = canvas.width, H = canvas.height;
+
+    var COLS = 5;
+    var COL_W = W / COLS;
+    var WOLF_W = 64, WOLF_H = 36;
+    var WOLF_Y = H - WOLF_H - 14;
+    var EGG_W = 18, EGG_H = 22;
+    var WOLF_SPEED = 6;
+    var BASE_EGG_SPEED = 2.2;
+    var SPAWN_CHANCE = 0.022;
+
+    var state = { running: false, paused: false, over: false };
+    var wolfX, score, lives, eggs, animId, frame;
+    var keys = {};
+    var touchLeft = false, touchRight = false;
+
+    function resetGame() {
+      wolfX = W / 2 - WOLF_W / 2;
+      score = 0;
+      lives = 3;
+      eggs = [];
+      frame = 0;
+      state.running = false;
+      state.paused = false;
+      state.over = false;
+    }
+
+    function startGame() {
+      resetGame();
+      state.running = true;
+      document.getElementById('btn-start').style.display = 'none';
+      document.getElementById('btn-restart').style.display = '';
+      if (animId) cancelAnimationFrame(animId);
+      loop();
+    }
+
+    function eggSpeed() {
+      return BASE_EGG_SPEED + score * 0.06;
+    }
+
+    function spawnEgg() {
+      var col = Math.floor(Math.random() * COLS);
+      eggs.push({
+        x: col * COL_W + COL_W / 2 - EGG_W / 2,
+        y: -EGG_H,
+        speed: eggSpeed()
+      });
+    }
+
+    function update() {
+      if (!state.running || state.paused || state.over) return;
+      frame++;
+
+      if (keys['ArrowLeft'] || keys['a'] || touchLeft)  wolfX = Math.max(0, wolfX - WOLF_SPEED);
+      if (keys['ArrowRight'] || keys['d'] || touchRight) wolfX = Math.min(W - WOLF_W, wolfX + WOLF_SPEED);
+
+      var chance = SPAWN_CHANCE + score * 0.0004;
+      if (Math.random() < chance) spawnEgg();
+
+      var survived = [];
+      for (var i = 0; i < eggs.length; i++) {
+        var e = eggs[i];
+        e.y += e.speed;
+        var caught = e.y + EGG_H >= WOLF_Y &&
+                     e.x + EGG_W >= wolfX &&
+                     e.x <= wolfX + WOLF_W;
+        if (caught) {
+          score++;
+          continue;
+        }
+        if (e.y > H) {
+          lives--;
+          if (lives <= 0) { state.over = true; }
+          continue;
+        }
+        survived.push(e);
+      }
+      eggs = survived;
+    }
+
+    function drawRoundRect(x, y, w, h, r, fill) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+      ctx.fillStyle = fill;
+      ctx.fill();
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      // Background
+      ctx.fillStyle = '#1a2540';
+      ctx.fillRect(0, 0, W, H);
+
+      // Column separators
+      ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+      ctx.lineWidth = 1;
+      for (var c = 1; c < COLS; c++) {
+        ctx.beginPath();
+        ctx.moveTo(c * COL_W, 0);
+        ctx.lineTo(c * COL_W, H - 50);
+        ctx.stroke();
+      }
+
+      // Ground line
+      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, H - 14);
+      ctx.lineTo(W, H - 14);
+      ctx.stroke();
+
+      // Wolf basket
+      drawRoundRect(wolfX, WOLF_Y, WOLF_W, WOLF_H, 6, '#3a6fd8');
+      ctx.font = '26px serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('🐺', wolfX + WOLF_W / 2, WOLF_Y + 28);
+
+      // Eggs
+      for (var i = 0; i < eggs.length; i++) {
+        var e = eggs[i];
+        ctx.save();
+        ctx.fillStyle = '#f5e6a8';
+        ctx.strokeStyle = '#c8a830';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.ellipse(
+          e.x + EGG_W / 2, e.y + EGG_H / 2,
+          EGG_W / 2, EGG_H / 2,
+          0, 0, Math.PI * 2
+        );
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // HUD
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.font = 'bold 15px system-ui, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('Счёт: ' + score, 12, 26);
+
+      // Lives
+      ctx.textAlign = 'right';
+      ctx.font = '16px serif';
+      var heartsStr = '';
+      for (var h = 0; h < 3; h++) heartsStr += h < lives ? '❤️' : '🖤';
+      ctx.fillText(heartsStr, W - 8, 26);
+
+      // Pause overlay
+      if (state.paused && !state.over) {
+        ctx.fillStyle = 'rgba(0,0,0,0.55)';
+        ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 24px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('Пауза', W / 2, H / 2 - 10);
+        ctx.font = '15px system-ui';
+        ctx.fillText('Пробел — продолжить', W / 2, H / 2 + 20);
+      }
+
+      // Start screen
+      if (!state.running && !state.over) {
+        ctx.fillStyle = 'rgba(0,0,0,0.6)';
+        ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 22px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('🐺  Волк ловит яйца', W / 2, H / 2 - 30);
+        ctx.font = '15px system-ui';
+        ctx.fillStyle = 'rgba(255,255,255,0.75)';
+        ctx.fillText('Нажмите «Начать игру»', W / 2, H / 2 + 10);
+      }
+
+      // Game over
+      if (state.over) {
+        ctx.fillStyle = 'rgba(0,0,0,0.65)';
+        ctx.fillRect(0, 0, W, H);
+        ctx.fillStyle = 'white';
+        ctx.font = 'bold 26px system-ui';
+        ctx.textAlign = 'center';
+        ctx.fillText('Игра окончена', W / 2, H / 2 - 36);
+        ctx.font = '22px system-ui';
+        ctx.fillText('Счёт: ' + score, W / 2, H / 2 + 4);
+        ctx.font = '15px system-ui';
+        ctx.fillStyle = 'rgba(255,255,255,0.7)';
+        ctx.fillText(score < 10 ? 'Попробуй ещё раз!' :
+                     score < 30 ? 'Неплохо! Попробуй ещё.' :
+                                  'Отлично! Ты настоящий волк 🐺', W / 2, H / 2 + 38);
+        ctx.fillText('Нажмите «Заново»', W / 2, H / 2 + 64);
+      }
+
+      ctx.textAlign = 'left';
+    }
+
+    function loop() {
+      update();
+      draw();
+      animId = requestAnimationFrame(loop);
+    }
+
+    // Keyboard
+    document.addEventListener('keydown', function(e) {
+      keys[e.key] = true;
+      if (e.key === ' ') {
+        e.preventDefault();
+        if (state.running && !state.over) state.paused = !state.paused;
+      }
+    });
+    document.addEventListener('keyup', function(e) { keys[e.key] = false; });
+
+    // Touch controls
+    var btnLeft  = document.getElementById('btn-left');
+    var btnRight = document.getElementById('btn-right');
+    function bindTouch(btn, setter) {
+      btn.addEventListener('mousedown',  function() { setter(true); });
+      btn.addEventListener('mouseup',    function() { setter(false); });
+      btn.addEventListener('mouseleave', function() { setter(false); });
+      btn.addEventListener('touchstart', function(e) { e.preventDefault(); setter(true); });
+      btn.addEventListener('touchend',   function(e) { e.preventDefault(); setter(false); });
+    }
+    bindTouch(btnLeft,  function(v) { touchLeft = v; });
+    bindTouch(btnRight, function(v) { touchRight = v; });
+
+    document.getElementById('btn-start').addEventListener('click', startGame);
+    document.getElementById('btn-restart').addEventListener('click', startGame);
+
+    resetGame();
+    draw();
+  </script>
+</body>
+</html>

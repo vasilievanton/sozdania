@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Структура контента — СоздАния</title>
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    .content-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--c-surface);
+      font-size: 14px;
+    }
+    .content-table th, .content-table td {
+      padding: 11px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--c-border);
+      vertical-align: top;
+    }
+    .content-table th {
+      background: var(--c-surface-alt);
+      font-weight: 600;
+      font-size: 13px;
+      position: sticky;
+      top: 0;
+    }
+    .content-table tr:hover td { background: #fafaf8; }
+
+    .date-cell {
+      white-space: nowrap;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--c-text);
+      width: 100px;
+    }
+    .date-cell small {
+      display: block;
+      font-weight: 400;
+      color: var(--c-text-muted);
+      font-size: 11px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: var(--r-sm);
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+      margin-right: 4px;
+    }
+    .tag--tehnodrom  { background: #deeef8; color: #1a5070; border: 1px solid #b8d8ec; }
+    .tag--umnoteka   { background: #f8f4de; color: #6b5010; border: 1px solid #e8d88c; }
+    .tag--boltalka   { background: #def8f0; color: #1a5040; border: 1px solid #b8e8d8; }
+    .tag--pridumkino { background: #f8deee; color: #6b1840; border: 1px solid #e8b8d0; }
+    .tag--parent     { background: #eedeff; color: #40186b; border: 1px solid #d0b8e8; }
+    .tag--both       { background: #e8f0ff; color: #1e3a6f; border: 1px solid #b9ccf0; }
+    .tag--system     { background: var(--c-surface-alt); color: var(--c-text-muted); border: 1px solid var(--c-border); }
+    .tag--limited    { background: #fff4e0; color: #6b4a18; border: 1px solid #e6c98b; }
+
+    .week-header td {
+      background: #f0f0ec;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--c-text);
+      padding: 12px 14px;
+      border-top: 2px solid var(--c-border-strong);
+    }
+    .week-header td:first-child {
+      color: var(--c-primary);
+    }
+
+    .pts {
+      white-space: nowrap;
+      font-weight: 600;
+      color: var(--c-success);
+      font-size: 13px;
+    }
+    .pts-neutral { color: var(--c-text-muted); }
+
+    .legend {
+      display: flex;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+      padding: var(--space-3) var(--space-4);
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-md);
+      margin-bottom: var(--space-5);
+      font-size: 13px;
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+    }
+    .summary-card {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-md);
+      padding: var(--space-4);
+    }
+    .summary-card__num { font-size: 24px; font-weight: 700; line-height: 1; }
+    .summary-card__label { font-size: 12px; color: var(--c-text-muted); margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <main class="app-main">
+    <div class="breadcrumb"><a href="index.html">← К выбору режима</a></div>
+    <h1>Структура контента</h1>
+    <p class="muted">Расписание выхода всего контента за 5 недель проекта (1 июня — 5 июля). Что открывается, для кого, сколько баллов.</p>
+
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="summary-card__num" style="color:var(--c-primary);">35</div>
+        <div class="summary-card__label">дней проекта (1 июня – 5 июля)</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card__num" style="color:#1a5070;">4</div>
+        <div class="summary-card__label">игровых района для детей</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card__num" style="color:#40186b;">9</div>
+        <div class="summary-card__label">материалов и тестов для родителей</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card__num" style="color:#1e3a6f;">35</div>
+        <div class="summary-card__label">адвент-карточек (одна в день)</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card__num" style="color:var(--c-success);">530–730</div>
+        <div class="summary-card__label">максимум баллов за задания детей</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-card__num" style="color:#6b4a18;">4</div>
+        <div class="summary-card__label">возрастные группы (3–5, 6–9, 10–12, 13–17)</div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span class="legend-item"><span class="tag tag--tehnodrom">Технодром</span> игры «Помоги роботу»</span>
+      <span class="legend-item"><span class="tag tag--umnoteka">Умнотека</span> квизы</span>
+      <span class="legend-item"><span class="tag tag--boltalka">Болталка</span> «Сопоставь» и карточки</span>
+      <span class="legend-item"><span class="tag tag--pridumkino">Придумкино</span> раскраски, галерея</span>
+      <span class="legend-item"><span class="tag tag--parent">Родителям</span> только для родителей</span>
+      <span class="legend-item"><span class="tag tag--both">Совместное</span> ребёнок + родитель</span>
+      <span class="legend-item"><span class="tag tag--limited">Ограничено</span> временное задание</span>
+    </div>
+
+    <div style="border: 1px solid var(--c-border); border-radius: var(--r-md); overflow: hidden; overflow-x: auto;">
+    <table class="content-table">
+      <thead>
+        <tr>
+          <th style="width:110px;">Дата</th>
+          <th>Контент / Событие</th>
+          <th style="width:160px;">Тип</th>
+          <th style="width:120px;">Для кого</th>
+          <th style="width:110px;">Баллы</th>
+          <th>Примечания</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- Регистрация -->
+        <tr class="week-header">
+          <td>До старта</td>
+          <td colspan="5">Регистрация и онбординг</td>
+        </tr>
+        <tr>
+          <td class="date-cell">До 1 июня</td>
+          <td>Регистрация по корпоративной почте</td>
+          <td><span class="tag tag--system">Система</span></td>
+          <td>Родитель</td>
+          <td class="pts-neutral">—</td>
+          <td>Только @mts.ru домен. Один родитель — один аккаунт.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">До 1 июня</td>
+          <td>Добавление ребёнка: никнейм, имя, возраст</td>
+          <td><span class="tag tag--system">Система</span></td>
+          <td>Родитель</td>
+          <td class="pts-neutral">—</td>
+          <td>Определяется группа: 3–5 / 6–9 / 10–12 / 13–17. Можно несколько детей.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">1 июня<small>Старт</small></td>
+          <td>Приветственные баллы за регистрацию</td>
+          <td><span class="tag tag--system">Система</span></td>
+          <td>Ребёнок</td>
+          <td class="pts">+10</td>
+          <td>Начисляются автоматически в первый день проекта.</td>
+        </tr>
+
+        <!-- Неделя 1 -->
+        <tr class="week-header">
+          <td>Неделя 1</td>
+          <td colspan="5">1–5 июня · Старт: два района, материалы для родителей</td>
+        </tr>
+        <tr>
+          <td class="date-cell">1 июня</td>
+          <td>🤖 Технодром: Доставщик (базовый уровень)</td>
+          <td><span class="tag tag--tehnodrom">Технодром</span></td>
+          <td>Ребёнок</td>
+          <td class="pts">+40–90</td>
+          <td>Базовый: 3–4 блока для 6–9 лет; циклы и условия для 10–17. Доступен до конца проекта.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">1 июня</td>
+          <td>Умнотека: Квиз «Технологии и будущее» (пачка 1)</td>
+          <td><span class="tag tag--umnoteka">Умнотека</span></td>
+          <td>Ребёнок</td>
+          <td class="pts">+40–70</td>
+          <td>10 закрытых вопросов с 4 вариантами. Бонус за первую попытку без ошибок.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">1 июня</td>
+          <td>Статья для родителей № 1</td>
+          <td><span class="tag tag--parent">Родителям</span></td>
+          <td>Родитель</td>
+          <td class="pts-neutral">—</td>
+          <td>Тема: детско-родительская совместность в цифровой среде.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">1 июня</td>
+          <td>Адвент-карточки стартуют (ежедневно)</td>
+          <td><span class="tag tag--parent">Родителям</span></td>
+          <td>Родитель</td>
+          <td class="pts-neutral">—</td>
+          <td>35 карточек, по одной в день. Совет или мини-действие вместе с ребёнком.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">1 июня</td>
+          <td>Тест «Какой ты родитель?» (6 вопросов)</td>
+          <td><span class="tag tag--parent">Родителям</span></td>
+          <td>Родитель</td>
+          <td class="pts-neutral">—</td>
+          <td>4 стиля воспитания: поддерживающий, структурирующий, защищающий, исследующий.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">1 июня</td>
+          <td>Тест «Тревожный ли ты родитель?» (6 вопросов)</td>
+          <td><span class="tag tag--parent">Родителям</span></td>
+          <td>Родитель</td>
+          <td class="pts-neutral">—</td>
+          <td>Шкала родительской тревожности. Результат с пояснением.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">5 июня</td>
+          <td>Умнотека: Квиз «Мир вокруг» (пачка 2)</td>
+          <td><span class="tag tag--umnoteka">Умнотека</span></td>
+          <td>Ребёнок</td>
+          <td class="pts">+40–70</td>
+          <td>10 вопросов. Пачка 2 из 3 в Умнотеке.</td>
+        </tr>
+
+        <!-- Неделя 2 -->
+        <tr class="week-header">
+          <td>Неделя 2</td>
+          <td colspan="5">6–13 июня · Болталка открывается, новые роботы, совместное задание</td>
+        </tr>
+        <tr>
+          <td class="date-cell">6 июня</td>
+          <td>🧹 Технодром: Уборщик</td>
+          <td><span class="tag tag--tehnodrom">Технодром</span></td>
+          <td>Ребёнок</td>
+          <td class="pts">+40–90</td>
+          <td>Сложнее Доставщика. Обойти все клетки с мусором, не пропустив ни одной.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">8 июня</td>
+          <td>Болталка: «Сопоставь» контент 1</td>
+          <td><span class="tag tag--boltalka">Болталка</span></td>
+          <td>Ребёнок</td>
+          <td class="pts">+40–70</td>
+          <td>6 ситуаций общения. Для младших — картинки, для старших — аудиофайл.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">8 июня</td>
+          <td>Умнотека: Квиз «История и культура» (пачка 3)</td>
+          <td><span class="tag tag--umnoteka">Умнотека</span></td>
+          <td>Ребёнок</td>
+          <td class="pts">+40–70</td>
+          <td>Последняя пачка квизов. Умнотека полностью открыта с 8 июня.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">9 июня</td>
+          <td>Совместное задание «Какие мы напарники?»</td>
+          <td><span class="tag tag--both">Совместное</span></td>
+          <td>Оба</td>
+          <td class="pts">+20–30 <span style="font-size:11px;color:var(--c-text-muted);">в профиль ребёнка</span></td>
+          <td>Ребёнок и родитель проходят независимо. Сравнение ответов → результат-дуэт (Тимон и Пумба и т. д.).</td>
+        </tr>
+        <tr>
+          <td class="date-cell">9 июня</td>
+          <td>Подкаст для родителей</td>
+          <td><span class="tag tag--parent">Родителям</span></td>
+          <td>Родитель</td>
+          <td class="pts-neutral">—</td>
+          <td>Тема: мотивация через игру, разговор с педагогом.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">10 июня</td>
+          <td>Открывается запись на индивидуальные сессии с психологом</td>
+          <td><span class="tag tag--parent">Родителям</span></td>
+          <td>Родитель</td>
+          <td class="pts-neutral">—</td>
+          <td>4 групповых эфира по расписанию + индивидуальные. Платформа: МТС Линк.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">12 июня</td>
+          <td>🛴 Технодром: Самокатер</td>
+          <td><span class="tag tag--tehnodrom">Технодром</span></td>
+          <td>Ребёнок</td>
+          <td class="pts">+40–90</td>
+          <td>Гонка через чек-поинты. Меньше шагов — больше баллов.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">13 июня</td>
+          <td>Болталка: «Сопоставь» контент 2</td>
+          <td><span class="tag tag--boltalka">Болталка</span></td>
+          <td>Ребёнок</td>
+          <td class="pts">+40–70</td>
+          <td>Новые ситуации. Для старших (10+) — аудиофайл вместо текста.</td>
+        </tr>
+
+        <!-- Неделя 3 -->
+        <tr class="week-header">
+          <td>Неделя 3</td>
+          <td colspan="5">14–21 июня · Садовник (ограниченно!), карточки интервью</td>
+        </tr>
+        <tr>
+          <td class="date-cell">14 июня</td>
+          <td>Статья для родителей № 2</td>
+          <td><span class="tag tag--parent">Родителям</span></td>
+          <td>Родитель</td>
+          <td class="pts-neutral">—</td>
+          <td>Тема уточняется. Вторая из трёх статей в разделе.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">15 июня</td>
+          <td>Болталка: Карточки интервью 1</td>
+          <td><span class="tag tag--boltalka">Болталка</span></td>
+          <td>Ребёнок</td>
+          <td class="pts">+20–30</td>
+          <td>Вопросы для интервью «ребёнок ↔ родитель». Результат — общая запись.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">15–21 июня</td>
+          <td>🌱 Технодром: Садовник (временное задание)</td>
+          <td><span class="tag tag--tehnodrom">Технодром</span> <span class="tag tag--limited">Ограничено</span></td>
+          <td>Ребёнок</td>
+          <td class="pts">+50–100</td>
+          <td><strong>Доступен только 7 дней!</strong> Тематика «выходные на даче». Повышенные баллы. После 21 июня исчезает.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">21 июня</td>
+          <td>Видео «Разминки вместе» для родителей</td>
+          <td><span class="tag tag--parent">Родителям</span></td>
+          <td>Родитель</td>
+          <td class="pts-neutral">—</td>
+          <td>Короткие физические активности для родителя + ребёнка. Без спортивной подготовки.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">21 июня</td>
+          <td>Садовник — последний день, уходит с платформы</td>
+          <td><span class="tag tag--system">Система</span></td>
+          <td>—</td>
+          <td class="pts-neutral">—</td>
+          <td>Задание закрывается в конце дня 21 июня. Баллы, набранные до этого, сохраняются.</td>
+        </tr>
+
+        <!-- Неделя 4–5 -->
+        <tr class="week-header">
+          <td>Недели 4–5</td>
+          <td colspan="5">22 июня – 5 июля · Придумкино открывается, финал</td>
+        </tr>
+        <tr>
+          <td class="date-cell">22 июня</td>
+          <td><span class="district-dot district-dot--pridumkino"></span> Придумкино: Раскраски (3 шаблона)</td>
+          <td><span class="tag tag--pridumkino">Придумкино</span></td>
+          <td>Ребёнок</td>
+          <td class="pts">+30–60</td>
+          <td>Готовые контуры (Город, Космос, Лето). Раскрашивается прямо на платформе, без внешних редакторов.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">22 июня</td>
+          <td><span class="district-dot district-dot--pridumkino"></span> Придумкино: Галерея граффити</td>
+          <td><span class="tag tag--pridumkino">Придумкино</span></td>
+          <td>Ребёнок</td>
+          <td class="pts">+20</td>
+          <td>Рисунок создаётся вне платформы (бумага, Procreate и т. д.) и загружается фото. Виден всем участникам.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">22 июня</td>
+          <td>Придумкино: Совместное задание «Имя рисунку»</td>
+          <td><span class="tag tag--both">Совместное</span></td>
+          <td>Оба</td>
+          <td class="pts">+20 <span style="font-size:11px;color:var(--c-text-muted);">в профиль ребёнка</span></td>
+          <td>Ребёнок загружает граффити, родитель придумывает название. Баллы начисляются ребёнку.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">22 июня</td>
+          <td>Болталка: Карточки интервью 2</td>
+          <td><span class="tag tag--boltalka">Болталка</span></td>
+          <td>Ребёнок</td>
+          <td class="pts">+20–30</td>
+          <td>Второй набор карточек для диалога ребёнка и родителя.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">5 июля</td>
+          <td>Конец проекта. Платформа закрывается для новых начислений.</td>
+          <td><span class="tag tag--system">Система</span></td>
+          <td>Все</td>
+          <td class="pts-neutral">—</td>
+          <td>Финальные баллы фиксируются. Начинается подготовка к розыгрышу.</td>
+        </tr>
+        <tr>
+          <td class="date-cell">После 5 июля</td>
+          <td>Финальный розыгрыш призов</td>
+          <td><span class="tag tag--system">Система</span></td>
+          <td>Победители</td>
+          <td class="pts-neutral">—</td>
+          <td>По одному победителю в каждой из 4 возрастных групп. Призы объявят отдельно. Связь через корпоративную почту.</td>
+        </tr>
+
+      </tbody>
+    </table>
+    </div>
+
+    <div class="card" style="margin-top: var(--space-6);">
+      <h3>Совместные задания — сводка</h3>
+      <p class="muted" style="font-size:14px;">Баллы от совместных заданий начисляются в профиль ребёнка, не родителя.</p>
+      <table class="tbl tbl--compact" style="margin-top: var(--space-3);">
+        <thead>
+          <tr><th>Задание</th><th>Дата</th><th>Баллы ребёнку</th><th>Описание</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Квиз в районах (все)</td>
+            <td>Весь проект</td>
+            <td class="pts">+20–30</td>
+            <td>Каждый квиз в любом районе можно пройти вместе с ребёнком.</td>
+          </tr>
+          <tr>
+            <td>«Какая ты технология» (Технодром)</td>
+            <td>С 1 июня</td>
+            <td class="pts">+20</td>
+            <td>Узнайте, на какую технологию похожи вы и ваш ребёнок.</td>
+          </tr>
+          <tr>
+            <td>«Поп-культура разных эпох» (Умнотека)</td>
+            <td>С 1 июня</td>
+            <td class="pts">+20</td>
+            <td>Ребёнок — за свою эпоху, родитель — за свою.</td>
+          </tr>
+          <tr>
+            <td>«Какие мы напарники?»</td>
+            <td>С 9 июня</td>
+            <td class="pts">+20–30</td>
+            <td>Оба проходят независимо. Результат: известный дуэт.</td>
+          </tr>
+          <tr>
+            <td>Карточки интервью 1 (Болталка)</td>
+            <td>С 15 июня</td>
+            <td class="pts">+20</td>
+            <td>Вопросы для диалога ребёнка и родителя.</td>
+          </tr>
+          <tr>
+            <td>Карточки интервью 2 (Болталка)</td>
+            <td>С 22 июня</td>
+            <td class="pts">+20</td>
+            <td>Второй набор карточек.</td>
+          </tr>
+          <tr>
+            <td>«Имя рисунку» (Придумкино)</td>
+            <td>С 22 июня</td>
+            <td class="pts">+20</td>
+            <td>Ребёнок загружает граффити, родитель придумывает название.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="btn-row" style="margin-top: var(--space-5);">
+      <a class="btn" href="index.html">← К выбору режима</a>
+      <a class="btn" href="user-flow.html">Блок-схема пути →</a>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Сессии с психологом</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <style>
+    /* ── Tabs ── */
+    .session-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--c-border);
+      margin-bottom: 28px;
+    }
+    .session-tab {
+      padding: 10px 20px;
+      border: 1px solid transparent;
+      border-bottom: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 14px;
+      cursor: pointer;
+      color: var(--c-text-muted);
+      border-radius: var(--r-sm) var(--r-sm) 0 0;
+      margin-bottom: -1px;
+      font-weight: 500;
+    }
+    .session-tab:hover { color: var(--c-text); }
+    .session-tab.active {
+      background: var(--c-surface);
+      border-color: var(--c-border);
+      border-bottom-color: var(--c-surface);
+      color: var(--c-text);
+      font-weight: 600;
+    }
+    .session-pane { display: none; }
+    .session-pane.active { display: block; }
+
+    /* ── Booking ── */
+    .booking-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-5);
+      align-items: start;
+    }
+    @media (max-width: 680px) {
+      .booking-layout { grid-template-columns: 1fr; }
+    }
+
+    .booking-section-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--c-text-muted);
+      margin-bottom: var(--space-3);
+    }
+
+    /* Date strip */
+    .date-strip {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+    .date-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 6px;
+      border: 2px solid var(--c-border);
+      border-radius: var(--r-md);
+      background: var(--c-surface);
+      cursor: pointer;
+      font-family: inherit;
+      line-height: 1.2;
+      transition: border-color .15s, background .15s;
+      gap: 2px;
+    }
+    .date-btn:hover:not(:disabled) { border-color: var(--c-primary); }
+    .date-btn.active {
+      border-color: var(--c-primary);
+      background: #e8f0ff;
+    }
+    .date-btn:disabled {
+      opacity: 0.38;
+      cursor: not-allowed;
+    }
+    .date-btn__weekday {
+      font-size: 11px;
+      color: var(--c-text-muted);
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .date-btn__day {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--c-text);
+    }
+    .date-btn.active .date-btn__day { color: var(--c-primary); }
+    .date-btn__month {
+      font-size: 11px;
+      color: var(--c-text-muted);
+    }
+
+    /* Time slots */
+    .slots-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .slot-btn {
+      padding: 10px 8px;
+      border: 2px solid var(--c-border);
+      border-radius: var(--r-md);
+      background: var(--c-surface);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--c-text);
+      text-align: center;
+      transition: border-color .15s, background .15s;
+    }
+    .slot-btn:hover:not(:disabled) { border-color: var(--c-primary); }
+    .slot-btn.active {
+      border-color: var(--c-primary);
+      background: #e8f0ff;
+      color: var(--c-primary);
+    }
+    .slot-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      text-decoration: line-through;
+    }
+    .slots-empty {
+      color: var(--c-text-muted);
+      font-size: 14px;
+      padding: var(--space-3) 0;
+    }
+
+    /* Confirm panel */
+    .confirm-panel {
+      margin-top: var(--space-5);
+      padding: var(--space-4) var(--space-5);
+      background: #e8f0ff;
+      border: 2px solid var(--c-primary);
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+    }
+    .confirm-panel__text { font-weight: 600; font-size: 16px; }
+    .confirm-panel__sub { font-size: 13px; color: var(--c-text-muted); margin-top: 2px; }
+
+    /* Broadcast cards */
+    .broadcast-card {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-md);
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .broadcast-card--past { opacity: 0.6; }
+    .broadcast-info { flex: 1; min-width: 200px; }
+    .broadcast-title { font-weight: 600; margin-bottom: 4px; }
+    .broadcast-meta { font-size: 13px; color: var(--c-text-muted); }
+  </style>
+</head>
+<body data-mode="user">
+  <main class="app-main">
+    <div class="breadcrumb"><a href="parent-hub.html">← Для родителей</a></div>
+    <h1>Сессии с психологом</h1>
+    <p class="muted">
+      Онлайн-встречи по темам детско-родительских отношений, эмоций и мотивации.
+      Встречи проходят через МТС Линк, записи не хранятся.
+    </p>
+
+    <div class="session-tabs">
+      <button class="session-tab active" data-tab="individual">Индивидуальные</button>
+      <button class="session-tab" data-tab="group">Групповые эфиры</button>
+      <button class="session-tab" data-tab="my">Мои записи</button>
+    </div>
+
+    <!-- Индивидуальные -->
+    <div class="session-pane active" id="tab-individual">
+      <p class="muted" style="margin-bottom: var(--space-5);">
+        Сессия — 50 минут, встреча один на один в МТС Линк. Выберите удобный день и время.
+      </p>
+
+      <div class="booking-layout">
+        <div>
+          <div class="booking-section-label">Выберите день</div>
+          <div class="date-strip" id="date-strip"></div>
+        </div>
+        <div>
+          <div class="booking-section-label" id="slots-label">Выберите время</div>
+          <div id="slots-container"><p class="slots-empty">← Сначала выберите день</p></div>
+        </div>
+      </div>
+
+      <div class="confirm-panel" id="confirm-panel" style="display:none;">
+        <div>
+          <div class="confirm-panel__text" id="confirm-text">Запись подтверждена</div>
+          <div class="confirm-panel__sub">Напоминание придёт на корпоративную почту за день и за час</div>
+        </div>
+        <button class="btn btn--primary" id="confirm-btn">Записаться</button>
+      </div>
+    </div>
+
+    <!-- Групповые эфиры -->
+    <div class="session-pane" id="tab-group">
+      <div class="notice notice--info" style="margin-bottom:20px;">
+        4 онлайн-эфира за всё лето. Запишитесь — придёт напоминание на почту.
+        Ссылка на МТС Линк появится за 15 минут до начала.
+      </div>
+
+      <div class="broadcast-card broadcast-card--past">
+        <div class="broadcast-info">
+          <div class="broadcast-title">Старт лета: как говорить с ребёнком о новом опыте</div>
+          <div class="broadcast-meta">Пт, 7 июня · 19:00 · 90 мин · Елена Карпова, психолог</div>
+        </div>
+        <span class="badge badge--done">Прошёл</span>
+      </div>
+      <div class="broadcast-card">
+        <div class="broadcast-info">
+          <div class="broadcast-title">Тревога и дети: что делать родителю</div>
+          <div class="broadcast-meta">Пт, 21 июня · 19:00 · 90 мин</div>
+        </div>
+        <button class="btn btn--primary" onclick="registerGroup(this, 'Пт, 21 июня · 19:00', 'Тревога и дети: что делать родителю')">Записаться</button>
+      </div>
+      <div class="broadcast-card">
+        <div class="broadcast-info">
+          <div class="broadcast-title">Совместные занятия: инструкция по применению</div>
+          <div class="broadcast-meta">Пт, 28 июня · 19:00 · 90 мин</div>
+        </div>
+        <button class="btn" onclick="registerGroup(this, 'Пт, 28 июня · 19:00', 'Совместные занятия: инструкция по применению')">Записаться</button>
+      </div>
+      <div class="broadcast-card">
+        <div class="broadcast-info">
+          <div class="broadcast-title">Итоги лета: что взять с собой в сентябрь</div>
+          <div class="broadcast-meta">Пт, 4 июля · 19:00 · 90 мин</div>
+        </div>
+        <button class="btn" onclick="registerGroup(this, 'Пт, 4 июля · 19:00', 'Итоги лета: что взять с собой в сентябрь')">Записаться</button>
+      </div>
+    </div>
+
+    <!-- Мои записи -->
+    <div class="session-pane" id="tab-my">
+      <div class="card">
+        <table class="tbl tbl--compact">
+          <thead>
+            <tr><th>Дата и время</th><th>Ссылка</th><th></th></tr>
+          </thead>
+          <tbody id="my-bookings">
+            <tr id="empty-bookings-row">
+              <td colspan="3" style="color:var(--c-text-muted); text-align:center; padding: 20px 0;">
+                Записей пока нет
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted" style="font-size:13px;">Напоминание придёт на корпоративную почту за день и за час.</p>
+    </div>
+  </main>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    // Tabs
+    document.querySelectorAll('.session-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.session-tab').forEach(function(t) { t.classList.remove('active'); });
+        document.querySelectorAll('.session-pane').forEach(function(p) { p.classList.remove('active'); });
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Booking data
+    var DAYS = [
+      { weekday: 'Пн', day: 16, month: 'июня', slots: ['10:00', '11:00', '14:00', '19:00', '20:00'], taken: ['11:00'] },
+      { weekday: 'Вт', day: 17, month: 'июня', slots: ['10:00', '12:00', '15:00', '19:00'], taken: ['10:00', '15:00'] },
+      { weekday: 'Ср', day: 18, month: 'июня', slots: ['11:00', '14:00', '16:00', '20:00'], taken: [] },
+      { weekday: 'Чт', day: 19, month: 'июня', slots: ['10:00', '13:00', '19:00'], taken: ['13:00'] },
+      { weekday: 'Пт', day: 20, month: 'июня', slots: ['11:00', '14:00', '15:00', '18:00'], taken: ['11:00', '14:00', '15:00', '18:00'] },
+      { weekday: 'Пн', day: 23, month: 'июня', slots: ['10:00', '11:00', '16:00', '19:00', '20:00'], taken: ['10:00'] },
+      { weekday: 'Вт', day: 24, month: 'июня', slots: ['12:00', '14:00', '19:00', '20:00'], taken: [] },
+      { weekday: 'Ср', day: 25, month: 'июня', slots: ['10:00', '15:00', '16:00', '19:00'], taken: ['16:00'] },
+      { weekday: 'Чт', day: 26, month: 'июня', slots: ['11:00', '14:00', '20:00'], taken: [] },
+      { weekday: 'Пт', day: 27, month: 'июня', slots: ['10:00', '12:00', '14:00', '19:00'], taken: ['12:00'] },
+    ];
+
+    var selectedDay = null;
+    var selectedSlot = null;
+    var booked = {};
+
+    // Build date strip
+    var strip = document.getElementById('date-strip');
+    DAYS.forEach(function(d, i) {
+      var allTaken = d.slots.every(function(s) { return d.taken.indexOf(s) !== -1; });
+      var btn = document.createElement('button');
+      btn.className = 'date-btn';
+      btn.disabled = allTaken;
+      btn.innerHTML =
+        '<span class="date-btn__weekday">' + d.weekday + '</span>' +
+        '<span class="date-btn__day">' + d.day + '</span>' +
+        '<span class="date-btn__month">' + d.month + '</span>';
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.date-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        selectedDay = i;
+        selectedSlot = null;
+        renderSlots(i);
+        document.getElementById('confirm-panel').style.display = 'none';
+      });
+      strip.appendChild(btn);
+    });
+
+    function renderSlots(dayIdx) {
+      var d = DAYS[dayIdx];
+      var container = document.getElementById('slots-container');
+      document.getElementById('slots-label').textContent = d.weekday + ', ' + d.day + ' ' + d.month;
+      container.innerHTML = '';
+      var grid = document.createElement('div');
+      grid.className = 'slots-grid';
+      d.slots.forEach(function(slot) {
+        var taken = d.taken.indexOf(slot) !== -1 || booked[dayIdx + '_' + slot];
+        var btn = document.createElement('button');
+        btn.className = 'slot-btn';
+        btn.textContent = slot;
+        btn.disabled = taken;
+        if (!taken) {
+          btn.addEventListener('click', function() {
+            document.querySelectorAll('.slot-btn').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            selectedSlot = slot;
+            showConfirm(dayIdx, slot);
+          });
+        }
+        grid.appendChild(btn);
+      });
+      container.appendChild(grid);
+    }
+
+    function showConfirm(dayIdx, slot) {
+      var d = DAYS[dayIdx];
+      var panel = document.getElementById('confirm-panel');
+      document.getElementById('confirm-text').textContent =
+        d.weekday + ', ' + d.day + ' ' + d.month + ' · ' + slot + ' · 50 минут';
+      panel.style.display = 'flex';
+    }
+
+    document.getElementById('confirm-btn').addEventListener('click', function() {
+      if (selectedDay === null || !selectedSlot) return;
+      var d = DAYS[selectedDay];
+      booked[selectedDay + '_' + selectedSlot] = true;
+
+      // Add to "Мои записи"
+      var tbody = document.getElementById('my-bookings');
+      var emptyRow = document.getElementById('empty-bookings-row');
+      if (emptyRow) emptyRow.remove();
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + d.weekday + ', ' + d.day + ' ' + d.month + ' · ' + selectedSlot + '</td>' +
+        '<td><a href="#" data-stub="МТС Линк">МТС Линк</a> (откроется за 15 мин)</td>' +
+        '<td><button class="btn btn--sm btn--ghost" onclick="this.closest(\'tr\').remove()">Отменить</button></td>';
+      tbody.appendChild(tr);
+
+      // Update UI
+      document.getElementById('confirm-panel').style.display = 'none';
+      document.getElementById('confirm-text').textContent = '';
+      renderSlots(selectedDay);
+      selectedSlot = null;
+
+      alert('Готово! Запись подтверждена.\nНапоминание придёт на корпоративную почту.');
+    });
+
+    function registerGroup(btn, datetime, title) {
+      btn.textContent = 'Записан ✓';
+      btn.disabled = true;
+      btn.classList.remove('btn--primary');
+      btn.classList.add('btn--ghost');
+
+      var tbody = document.getElementById('my-bookings');
+      var emptyRow = document.getElementById('empty-bookings-row');
+      if (emptyRow) emptyRow.remove();
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + datetime + ' · групповой эфир</td>' +
+        '<td><a href="#" data-stub="МТС Линк">МТС Линк</a> (откроется за 15 мин)</td>' +
+        '<td><button class="btn btn--sm btn--ghost" onclick="this.closest(\'tr\').remove()">Отменить</button></td>';
+      tbody.appendChild(tr);
+    }
+  </script>
+</body>
+</html>

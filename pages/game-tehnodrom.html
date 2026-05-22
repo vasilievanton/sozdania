@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Игра — Технодром</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body data-mode="user">
+  <main class="app-main">
+    <div class="breadcrumb"><a href="district-tehnodrom.html">← В Технодром</a></div>
+    <h1>🧹 Робот «Уборщик»</h1>
+    <p class="muted">Группа 6–9 · Расстановка 2 из 4 на этой неделе · +50 баллов</p>
+
+    <div class="notice notice--warn">
+      <strong>Прототип игры.</strong>
+      В реальной версии — сетка комнат, мусор в клетках, кнопки направлений,
+      кнопка «Запустить», анимация уборки.
+      <br>Это версия для группы <strong>6–9 лет</strong> — цепочка из 3–4 блоков.
+      Для 10–12 и 13–17 будут циклы и условия.
+    </div>
+
+    <div class="grid grid--2">
+      <div class="card">
+        <h3>Поле</h3>
+        <div class="mock-canvas">
+          Сетка комнат, мусор в клетках, робот-уборщик у входа
+        </div>
+      </div>
+      <div class="card">
+        <h3>Программа</h3>
+        <p class="muted">Перетащи блоки в нужном порядке</p>
+        <ul>
+          <li>Вперёд</li>
+          <li>Вперёд</li>
+          <li>Поворот направо</li>
+          <li>Вперёд</li>
+        </ul>
+        <div class="btn-row">
+          <a class="btn" href="#" data-stub="Добавить блок">+ Блок</a>
+          <a class="btn btn--primary" href="game-result.html">Запустить →</a>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

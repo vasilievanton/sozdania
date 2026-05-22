@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Запись на сессию</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body data-mode="user">
+  <main class="app-main app-main--narrow">
+    <div class="breadcrumb"><a href="parent-sessions.html">← Все сессии</a></div>
+
+    <!-- Форма записи -->
+    <div id="book-form">
+      <h1>Запись на сессию</h1>
+
+      <div class="card" style="margin-bottom:16px;">
+        <h3 class="mb-0">Как говорить с подростком о будущем</h3>
+        <p class="muted mb-0" style="font-size:14px; margin-top:6px;">
+          Елена Карпова, психолог · Чт, 22 мая, 19:00 · 60 мин · Осталось 3 места
+        </p>
+      </div>
+
+      <div class="notice notice--info" style="margin-bottom:20px;">
+        Ссылка на МТС Линк придёт на корпоративную почту за день и за час до встречи. Отменить запись можно в разделе «Мои записи».
+      </div>
+
+      <div class="card">
+        <h3>Подтверждение записи</h3>
+
+        <label class="form-field">
+          <span class="form-field__label">Имя</span>
+          <input class="form-field__input" type="text" value="Иван Иванов" readonly>
+        </label>
+
+        <label class="form-field">
+          <span class="form-field__label">Корпоративная почта</span>
+          <input class="form-field__input" type="email" value="ivanov@mts.ru" readonly>
+          <span class="form-field__hint">На этот адрес придёт ссылка на встречу.</span>
+        </label>
+
+        <label class="form-field">
+          <span class="form-field__label">Тема для специалиста <span class="muted">(необязательно)</span></span>
+          <textarea class="form-field__textarea" placeholder="Опишите коротко, что вас беспокоит или что хотите обсудить. Специалист увидит это заранее."></textarea>
+        </label>
+
+        <label class="form-field__checkbox" style="margin-bottom:16px;">
+          <input type="checkbox" id="consent-check">
+          <span>Я соглашаюсь на обработку данных в целях проведения онлайн-консультации</span>
+        </label>
+
+        <div class="btn-row">
+          <button class="btn btn--primary" id="btn-confirm">Записаться</button>
+          <a class="btn btn--ghost" href="parent-sessions.html">Отмена</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Успешная запись -->
+    <div id="book-success" style="display:none; text-align:center; padding:40px 0;">
+      <div style="font-size:56px; margin-bottom:16px;">✅</div>
+      <h2>Вы записаны!</h2>
+      <p class="muted">
+        Тема: <strong>Как говорить с подростком о будущем</strong><br>
+        Когда: <strong>Чт, 22 мая, 19:00</strong>
+      </p>
+      <div class="notice notice--success" style="text-align:left; margin: 20px 0;">
+        Ссылка на МТС Линк отправлена на <strong>ivanov@mts.ru</strong>.<br>
+        Напоминание придёт за день и за час до встречи.
+      </div>
+      <div class="btn-row" style="justify-content:center;">
+        <a class="btn btn--primary" href="parent-sessions.html">Мои записи</a>
+        <a class="btn" href="map.html">На карту</a>
+      </div>
+    </div>
+  </main>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    document.getElementById('btn-confirm').addEventListener('click', function() {
+      var consent = document.getElementById('consent-check').checked;
+      if (!consent) {
+        alert('Пожалуйста, дайте согласие на обработку данных.');
+        return;
+      }
+      document.getElementById('book-form').style.display = 'none';
+      document.getElementById('book-success').style.display = '';
+      window.scrollTo(0, 0);
+    });
+  </script>
+</body>
+</html>

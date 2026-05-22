@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Вход</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body data-mode="guest">
+  <main class="app-main app-main--narrow">
+    <div class="breadcrumb"><a href="index.html">← На главную</a></div>
+    <h1>Вход</h1>
+
+    <div class="card">
+      <label class="form-field">
+        <span class="form-field__label">Корпоративная почта</span>
+        <input class="form-field__input" type="email" placeholder="ivanov@mts.ru">
+      </label>
+      <label class="form-field">
+        <span class="form-field__label">Пароль</span>
+        <input class="form-field__input" type="password">
+      </label>
+      <div class="btn-row">
+        <a class="btn btn--primary" href="profile-switch.html">Войти</a>
+        <a class="btn btn--ghost" href="#" data-stub="Восстановление пароля">Забыли пароль?</a>
+      </div>
+    </div>
+
+    <p class="muted center">
+      Нет аккаунта? <a href="register.html">Зарегистрироваться</a>
+    </p>
+  </main>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

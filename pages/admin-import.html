@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Админка — JSON-импорт</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body data-mode="admin">
+  <main class="app-main">
+    <h1>Импорт контента через JSON</h1>
+    <p class="muted">
+      Все игровые материалы — квизы, рисовалки, задания роботам, ситуации Болталки,
+      родительские карточки, материалы и слоты сессий — загружаются JSON-шаблонами.
+      Никаких форм «вопрос за вопросом» в админке нет.
+    </p>
+
+    <div class="card">
+      <h3>1. Выберите тип контента</h3>
+      <label class="form-field">
+        <select class="form-field__select">
+          <option>Квиз (Умнотека)</option>
+          <option>Задание — рисунок (Придумкино)</option>
+          <option>Задание — робот (Технодром)</option>
+          <option>Ситуация — общение (Болталка)</option>
+          <option>Спецзадание недели</option>
+          <option>Карточка дня (родитель)</option>
+          <option>Материал (статья / видео / аудио / чек-лист)</option>
+          <option>Слоты онлайн-сессий</option>
+        </select>
+      </label>
+      <div class="btn-row">
+        <a class="btn" href="#" data-stub="Скачать шаблон JSON">Скачать шаблон JSON</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>2. Загрузите файл</h3>
+      <input class="form-field__input" type="file" accept="application/json">
+      <p class="form-field__hint mt-4">Можно загрузить несколько файлов сразу.</p>
+    </div>
+
+    <div class="card">
+      <h3>3. Проверка</h3>
+
+      <div class="notice notice--warn">
+        <strong>В шаблоне найдены ошибки:</strong>
+        <ul class="mb-0">
+          <li>Вопрос #4 — указано 5 вариантов ответа, допустимо до 4</li>
+          <li>Вопрос #7 — отсутствует поле <code>correct_index</code></li>
+        </ul>
+      </div>
+
+      <h4 class="mt-4">Превью первого вопроса</h4>
+      <div class="card" style="background:var(--c-surface-alt);">
+        <p><strong>Вопрос 1.</strong> Какое из этих животных умеет летать?</p>
+        <ul>
+          <li>Пингвин</li>
+          <li>Летучая мышь <span class="badge badge--done">правильный</span></li>
+          <li>Ёж</li>
+          <li>Лиса</li>
+        </ul>
+        <p class="muted">Группа: 6–9 • Баллы: +40 • Подсказка разрешена</p>
+      </div>
+
+      <div class="btn-row">
+        <a class="btn btn--primary" href="#" data-stub="Опубликовать">Опубликовать</a>
+        <a class="btn" href="#" data-stub="Поставить дату публикации">Запланировать публикацию</a>
+        <a class="btn btn--ghost" href="#" data-stub="Отменить">Отменить</a>
+      </div>
+    </div>
+  </main>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

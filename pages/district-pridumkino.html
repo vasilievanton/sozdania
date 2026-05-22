@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Придумкино</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <style>
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-3);
+    }
+    @media (max-width: 760px) {
+      .gallery { grid-template-columns: repeat(2, 1fr); }
+    }
+    .gallery__item {
+      background: var(--c-surface-alt);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-md);
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: var(--c-text-muted);
+      font-size: 12px;
+      text-align: center;
+      padding: var(--space-2);
+    }
+    .gallery__item--locked { opacity: 0.45; }
+  </style>
+</head>
+<body data-mode="user">
+  <main class="app-main">
+    <div class="breadcrumb"><a href="map.html">← На карту</a></div>
+    <div class="flex flex--between flex--wrap mb-4">
+      <div>
+        <h1 class="mb-0"><span class="district-dot district-dot--pridumkino"></span>Придумкино</h1>
+        <p class="muted mb-0">Творчество · Маскот: Креативик</p>
+      </div>
+    </div>
+
+    <h2 class="section-title">Раскраски</h2>
+    <div class="card">
+      <p class="muted">
+        Готовые шаблоны для раскрашивания. Графического редактора нет — ребёнок
+        раскрашивает прямо на платформе по уже нарисованным контурам.
+      </p>
+      <div class="grid grid--3">
+        <a class="tile" href="game-pridumkino.html">
+          <div class="tile__head"><span class="tile__name">Раскраска: Город</span></div>
+          <div class="tile__desc">Дом, дерево, машина</div>
+        </a>
+        <a class="tile" href="game-pridumkino.html">
+          <div class="tile__head"><span class="tile__name">Раскраска: Космос</span></div>
+          <div class="tile__desc">Планеты, ракета, астронавт</div>
+        </a>
+        <a class="tile" href="game-pridumkino.html">
+          <div class="tile__head"><span class="tile__name">Раскраска: Лето</span></div>
+          <div class="tile__desc">Пляж, мороженое, солнце</div>
+        </a>
+      </div>
+    </div>
+
+    <h2 class="section-title">Общая галерея граффити</h2>
+    <div class="card">
+      <p class="muted">
+        Участники рисуют граффити где-то вне платформы (на бумаге, в Procreate, фото настоящего рисунка)
+        и загружают сюда. Все работы видны всем — скроллится бесконечная стена.
+      </p>
+      <div class="gallery">
+        <div class="gallery__item">Граффити<br>КосмоВаня</div>
+        <div class="gallery__item">Граффити<br>МираКрафт</div>
+        <div class="gallery__item">Граффити<br>ТехноРома</div>
+        <div class="gallery__item">Граффити<br>ВикаКодит</div>
+        <div class="gallery__item">Граффити<br>ЛесникАртём</div>
+        <div class="gallery__item">Граффити<br>ДашаЛео</div>
+        <div class="gallery__item">Граффити<br>СаняВольт</div>
+        <div class="gallery__item">…ещё 42</div>
+      </div>
+      <div class="btn-row">
+        <a class="btn btn--primary" href="#" data-stub="Загрузить свой граффити">Загрузить свой граффити</a>
+        <a class="btn btn--ghost" href="#" data-stub="Показать ещё">Показать ещё</a>
+      </div>
+    </div>
+
+    <h2 class="section-title">Совместное задание</h2>
+    <div class="card">
+      <h3>«Имя рисунку»</h3>
+      <p class="muted">
+        Ребёнок загружает свой граффити в галерею, родитель открывает работу и придумывает название.
+      </p>
+      <div class="btn-row">
+        <a class="btn" href="game-pridumkino.html">Открыть задание</a>
+      </div>
+    </div>
+  </main>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

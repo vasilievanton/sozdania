@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Какой ты родитель?</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <style>
+    .quiz-progress {
+      height: 6px;
+      background: var(--c-border);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .quiz-progress__fill {
+      height: 100%;
+      background: var(--c-primary);
+      transition: width .3s ease;
+    }
+    .quiz-option {
+      display: block;
+      padding: 14px 16px;
+      border: 1px solid var(--c-border);
+      border-radius: 8px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      background: var(--c-surface);
+      transition: border-color .15s, background .15s;
+    }
+    .quiz-option:hover { border-color: var(--c-primary); background: #f0f4ff; }
+    .quiz-option.selected { border-color: var(--c-primary); background: #e8f0ff; font-weight: 600; }
+
+    .result-card {
+      text-align: center;
+      padding: 32px 24px;
+    }
+    .result-card__icon { font-size: 56px; margin-bottom: 12px; }
+    .result-card__type { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .result-card__desc { font-size: 15px; color: var(--c-text-muted); line-height: 1.6; margin-bottom: 20px; }
+    .result-card__tip {
+      background: #e8f0ff;
+      border: 1px solid #b9ccf0;
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 13px;
+      color: #1e3a6f;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body data-mode="user">
+  <main class="app-main app-main--narrow">
+    <div class="breadcrumb"><a href="map.html">← На карту</a></div>
+    <h1>Какой ты родитель?</h1>
+    <p class="muted">6 вопросов · ~3 минуты · Результат — один из четырёх стилей воспитания</p>
+
+    <div id="quiz-section">
+      <div class="quiz-progress">
+        <div class="quiz-progress__fill" id="progress-fill" style="width:0%"></div>
+      </div>
+
+      <div class="card" id="question-card">
+        <p id="q-num" class="muted" style="font-size:13px; margin-bottom:8px;"></p>
+        <h3 id="q-text"></h3>
+        <div id="q-options"></div>
+        <div class="btn-row">
+          <button class="btn btn--primary" id="btn-next" disabled>Далее →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card result-card" id="result-section" style="display:none">
+      <div class="result-card__icon" id="r-icon"></div>
+      <div class="result-card__type" id="r-type"></div>
+      <div class="result-card__desc" id="r-desc"></div>
+      <div class="result-card__tip" id="r-tip"></div>
+      <div class="btn-row" style="justify-content:center">
+        <a class="btn btn--primary" href="map.html">На карту</a>
+        <button class="btn btn--ghost" id="btn-retake">Пройти ещё раз</button>
+      </div>
+    </div>
+  </main>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    var questions = [
+      {
+        text: 'Когда у ребёнка что-то не получается, вы…',
+        options: [
+          { text: 'Сидите рядом, поддерживаете и хвалите за попытку', type: 'A' },
+          { text: 'Объясняете правила и составляете план действий', type: 'B' },
+          { text: 'Сразу помогаете, чтобы не расстраивался', type: 'C' },
+          { text: 'Говорите: «Попробуй ещё раз — интересно, что получится»', type: 'D' }
+        ]
+      },
+      {
+        text: 'Как вы относитесь к домашним заданиям?',
+        options: [
+          { text: 'Делаем вместе, хвалю за старание', type: 'A' },
+          { text: 'Есть чёткий режим: сначала ДЗ, потом остальное', type: 'B' },
+          { text: 'Проверяю всё, чтобы не было ошибок', type: 'C' },
+          { text: 'Пусть сам решит, когда делать — это его ответственность', type: 'D' }
+        ]
+      },
+      {
+        text: 'На площадке ребёнок поспорил с другим ребёнком. Вы:',
+        options: [
+          { text: 'Остаюсь рядом, даю разобраться самим, но готов вмешаться', type: 'A' },
+          { text: 'Объясняю правила общения и как надо себя вести', type: 'B' },
+          { text: 'Сразу вступаюсь — ребёнок должен чувствовать защиту', type: 'C' },
+          { text: 'Наблюдаю со стороны — это полезный опыт', type: 'D' }
+        ]
+      },
+      {
+        text: 'Ребёнок хочет попробовать что-то рискованное (залезть на дерево, кататься на скейте):',
+        options: [
+          { text: 'Поддерживаю и страхую рядом', type: 'A' },
+          { text: 'Объясняю технику безопасности и потом разрешаю', type: 'B' },
+          { text: 'Запрещаю или сильно ограничиваю — опасно', type: 'C' },
+          { text: 'Говорю «давай!» и смотрю — пусть пробует', type: 'D' }
+        ]
+      },
+      {
+        text: 'Вечером ребёнок говорит, что ему скучно:',
+        options: [
+          { text: 'Слушаю, предлагаю побыть рядом или поиграть вместе', type: 'A' },
+          { text: 'Предлагаю список занятий на выбор', type: 'B' },
+          { text: 'Тут же придумываю, чем его занять', type: 'C' },
+          { text: 'Говорю: «Скука — нормально, найди сам», и не вмешиваюсь', type: 'D' }
+        ]
+      },
+      {
+        text: 'Как вы реагируете на плохие оценки?',
+        options: [
+          { text: 'Сначала узнаю, как ребёнок себя чувствует', type: 'A' },
+          { text: 'Разбираюсь в причинах и составляем план, как исправить', type: 'B' },
+          { text: 'Расстраиваюсь и начинаю контролировать учёбу сильнее', type: 'C' },
+          { text: 'Спрашиваю: «Что ты сам думаешь об этом?»', type: 'D' }
+        ]
+      }
+    ];
+
+    var results = {
+      A: {
+        icon: '🤝',
+        type: 'Поддерживающий родитель',
+        desc: 'Вы — эмоциональная опора ребёнка. Чувствуете настроение, создаёте безопасность и принимаете без условий. Ребёнок рядом с вами открывается и доверяет.',
+        tip: '💡 Иногда полезно немного подтолкнуть к самостоятельности — дайте ребёнку возможность справиться самому, даже если первая попытка окажется неудачной.'
+      },
+      B: {
+        icon: '📐',
+        type: 'Структурирующий родитель',
+        desc: 'Вы создаёте предсказуемость и порядок. Ребёнку с вами надёжно: есть правила, есть план. Это воспитывает ответственность и самодисциплину.',
+        tip: '💡 Иногда стоит оставлять место для спонтанности — неплановые вечера и «просто потому что» тоже важны для отношений.'
+      },
+      C: {
+        icon: '🛡️',
+        type: 'Защищающий родитель',
+        desc: 'Вы глубоко вовлечены и всегда рядом. Ребёнок знает, что у него есть надёжный тыл. Ваша забота — это сила.',
+        tip: '💡 Небольшой контролируемый риск — это опыт роста. Попробуйте иногда отступить на шаг и наблюдать, как ребёнок справляется сам.'
+      },
+      D: {
+        icon: '🔭',
+        type: 'Исследующий родитель',
+        desc: 'Вы верите в самостоятельность ребёнка и даёте много свободы. Он учится принимать решения и нести ответственность.',
+        tip: '💡 Иногда ребёнку нужна не свобода, а ваше эмоциональное присутствие. Обнимите просто так — это тоже важный сигнал.'
+      }
+    };
+
+    var current = 0;
+    var scores = { A: 0, B: 0, C: 0, D: 0 };
+    var selected = null;
+
+    function renderQuestion() {
+      var q = questions[current];
+      document.getElementById('q-num').textContent = 'Вопрос ' + (current + 1) + ' из ' + questions.length;
+      document.getElementById('q-text').textContent = q.text;
+      document.getElementById('progress-fill').style.width = (current / questions.length * 100) + '%';
+
+      var optDiv = document.getElementById('q-options');
+      optDiv.innerHTML = '';
+      selected = null;
+      document.getElementById('btn-next').disabled = true;
+
+      q.options.forEach(function(opt) {
+        var el = document.createElement('div');
+        el.className = 'quiz-option';
+        el.textContent = opt.text;
+        el.addEventListener('click', function() {
+          document.querySelectorAll('.quiz-option').forEach(function(o) { o.classList.remove('selected'); });
+          el.classList.add('selected');
+          selected = opt.type;
+          document.getElementById('btn-next').disabled = false;
+        });
+        optDiv.appendChild(el);
+      });
+    }
+
+    document.getElementById('btn-next').addEventListener('click', function() {
+      if (!selected) return;
+      scores[selected]++;
+      current++;
+      if (current < questions.length) {
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    });
+
+    function showResult() {
+      var best = 'A';
+      ['A','B','C','D'].forEach(function(k) {
+        if (scores[k] > scores[best]) best = k;
+      });
+      var r = results[best];
+      document.getElementById('r-icon').textContent = r.icon;
+      document.getElementById('r-type').textContent = r.type;
+      document.getElementById('r-desc').textContent = r.desc;
+      document.getElementById('r-tip').textContent = r.tip;
+      document.getElementById('quiz-section').style.display = 'none';
+      document.getElementById('result-section').style.display = '';
+    }
+
+    document.getElementById('btn-retake').addEventListener('click', function() {
+      current = 0;
+      scores = { A: 0, B: 0, C: 0, D: 0 };
+      selected = null;
+      document.getElementById('result-section').style.display = 'none';
+      document.getElementById('quiz-section').style.display = '';
+      renderQuestion();
+    });
+
+    renderQuestion();
+  </script>
+</body>
+</html>

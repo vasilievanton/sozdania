@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Регистрация</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body data-mode="guest">
+  <main class="app-main app-main--narrow">
+    <div class="breadcrumb"><a href="index.html">← На главную</a></div>
+    <h1>Регистрация</h1>
+    <p class="muted">Доступно только сотрудникам МТС с корпоративной почтой.</p>
+
+    <div class="card">
+      <label class="form-field">
+        <span class="form-field__label">Корпоративная почта</span>
+        <input class="form-field__input" type="email" placeholder="ivanov@mts.ru">
+        <span class="form-field__hint">Проверим, что домен в списке разрешённых.</span>
+      </label>
+
+      <label class="form-field">
+        <span class="form-field__label">Имя и фамилия родителя</span>
+        <input class="form-field__input" type="text" placeholder="Иван Иванов">
+      </label>
+
+      <label class="form-field">
+        <span class="form-field__label">Регион</span>
+        <select class="form-field__select">
+          <option value="">Выберите регион…</option>
+          <option>Москва</option>
+          <option>Санкт-Петербург</option>
+          <option>Нижегородская область</option>
+          <option>Свердловская область</option>
+          <option>Новосибирская область</option>
+          <option>Краснодарский край</option>
+          <option>Республика Татарстан</option>
+          <option>Самарская область</option>
+          <option>Другой</option>
+        </select>
+      </label>
+
+      <label class="form-field">
+        <span class="form-field__label">Пароль</span>
+        <input class="form-field__input" type="password" placeholder="не короче 8 символов">
+      </label>
+
+      <label class="form-field">
+        <span class="form-field__label">Повторите пароль</span>
+        <input class="form-field__input" type="password">
+      </label>
+
+      <hr>
+
+      <label class="form-field__checkbox">
+        <input type="checkbox">
+        <span>Я согласен с <a href="#" data-stub="Правила платформы">правилами акции</a></span>
+      </label>
+      <label class="form-field__checkbox">
+        <input type="checkbox">
+        <span>Я даю согласие на обработку персональных данных (своих и моего ребёнка)</span>
+      </label>
+
+      <div class="btn-row">
+        <a class="btn btn--primary" href="add-child.html">Создать аккаунт</a>
+      </div>
+    </div>
+
+    <p class="muted center">
+      Уже есть аккаунт? <a href="login.html">Войти</a>
+    </p>
+  </main>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

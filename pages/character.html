@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Персонаж</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body data-mode="user">
+  <main class="app-main">
+    <div class="breadcrumb"><a href="map.html">← На карту</a></div>
+    <h1>Твой персонаж</h1>
+    <p class="muted">Собери из готовых деталей. Можно поменять в любой момент.</p>
+
+    <div class="grid grid--2">
+      <div class="card">
+        <div class="mock-canvas" style="min-height: 360px;">
+          Предпросмотр персонажа<br>
+          (в реальной версии — слои PNG/SVG, которые меняются под выбранные опции)
+        </div>
+      </div>
+      <div class="card">
+        <h3>Детали</h3>
+
+        <label class="form-field">
+          <span class="form-field__label">Форма / лицо</span>
+          <select class="form-field__select">
+            <option>Круглое</option>
+            <option>Вытянутое</option>
+            <option>Квадратное</option>
+          </select>
+        </label>
+
+        <label class="form-field">
+          <span class="form-field__label">Цвет</span>
+          <select class="form-field__select">
+            <option>Жёлтый</option>
+            <option>Синий</option>
+            <option>Розовый</option>
+            <option>Зелёный</option>
+          </select>
+        </label>
+
+        <label class="form-field">
+          <span class="form-field__label">Настроение</span>
+          <select class="form-field__select">
+            <option>Весёлый</option>
+            <option>Спокойный</option>
+            <option>Удивлённый</option>
+          </select>
+        </label>
+
+        <label class="form-field">
+          <span class="form-field__label">Головной убор</span>
+          <select class="form-field__select">
+            <option>Нет</option>
+            <option>Шапка</option>
+            <option>Кепка</option>
+            <option>Корона</option>
+          </select>
+        </label>
+
+        <label class="form-field">
+          <span class="form-field__label">Костюм</span>
+          <select class="form-field__select">
+            <option>Базовый</option>
+            <option>Спортивный</option>
+            <option>Художник</option>
+            <option>Инженер</option>
+          </select>
+        </label>
+
+        <label class="form-field">
+          <span class="form-field__label">Аксессуар</span>
+          <select class="form-field__select">
+            <option>Нет</option>
+            <option>Очки</option>
+            <option>Рюкзак</option>
+          </select>
+        </label>
+
+        <p class="form-field__hint">
+          Новые шапки, костюмы и эмоции открываются за прогресс в районах.
+        </p>
+
+        <div class="btn-row">
+          <a class="btn btn--primary" href="map.html">Готово, на карту →</a>
+          <button class="btn btn--ghost" id="btn-random">🎲 Случайный персонаж</button>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    document.getElementById('btn-random').addEventListener('click', function () {
+      document.querySelectorAll('.form-field__select').forEach(function (sel) {
+        var opts = sel.options;
+        sel.selectedIndex = Math.floor(Math.random() * opts.length);
+      });
+    });
+  </script>
+</body>
+</html>

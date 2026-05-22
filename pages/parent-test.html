@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Какой ты мем?</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <style>
+    .quiz-progress {
+      height: 6px;
+      background: var(--c-border);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .quiz-progress__fill {
+      height: 100%;
+      background: var(--c-primary);
+      transition: width .3s ease;
+    }
+    .quiz-option {
+      display: block;
+      padding: 14px 16px;
+      border: 1px solid var(--c-border);
+      border-radius: 8px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      background: var(--c-surface);
+      transition: border-color .15s, background .15s;
+    }
+    .quiz-option:hover { border-color: var(--c-primary); background: #f0f4ff; }
+    .quiz-option.selected { border-color: var(--c-primary); background: #e8f0ff; font-weight: 600; }
+
+    .duo-result {
+      text-align: center;
+      padding: 8px 0 24px;
+    }
+    .duo-result__emoji { font-size: 64px; margin-bottom: 12px; }
+    .duo-result__label {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--c-text-muted);
+      margin-bottom: 6px;
+    }
+    .duo-result__name {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .duo-result__desc {
+      font-size: 15px;
+      color: var(--c-text-muted);
+      line-height: 1.6;
+      max-width: 480px;
+      margin: 0 auto 20px;
+    }
+    .duo-result__note {
+      font-size: 12px;
+      color: var(--c-text-muted);
+      font-style: italic;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body data-mode="user">
+  <main class="app-main app-main--narrow">
+    <div class="breadcrumb"><a href="parent-hub.html">← Для родителей</a></div>
+
+    <!-- Квиз -->
+    <div id="quiz-section">
+      <h1 style="margin-bottom:4px;">Какой ты мем?</h1>
+      <p class="muted">Пройдите квиз вместе с ребёнком — каждый отвечает на одни и те же вопросы по очереди. В конце система сравнит ответы и покажет, какой вы мем-дуэт.</p>
+
+      <div class="quiz-progress">
+        <div class="quiz-progress__fill" id="progress-fill" style="width:0%"></div>
+      </div>
+
+      <div class="card" id="question-card">
+        <p id="q-num" class="muted" style="font-size:13px; margin-bottom:8px;"></p>
+        <h3 id="q-text"></h3>
+        <div id="q-options"></div>
+        <div class="btn-row">
+          <button class="btn btn--primary" id="btn-next" disabled>Далее →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Результат -->
+    <div id="result-section" style="display:none;">
+      <div class="card">
+        <div class="duo-result">
+          <div class="duo-result__emoji" id="r-emoji"></div>
+          <div class="duo-result__label">Ваш дуэт</div>
+          <div class="duo-result__name" id="r-name"></div>
+          <div class="duo-result__desc" id="r-desc"></div>
+          <div class="duo-result__note">
+            Результат основан на ответах родителя. В финальной версии система сравнит ваши ответы и ответы ребёнка.
+          </div>
+        </div>
+        <div class="btn-row" style="justify-content:center;">
+          <a class="btn btn--primary" href="map.html">На карту</a>
+          <button class="btn btn--ghost" id="btn-retake">Пройти ещё раз</button>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    var questions = [
+      {
+        text: 'Когда мы вместе беремся за новое дело, я чаще…',
+        options: [
+          { text: 'Предлагаю план и распределяю кто что делает', type: 'A' },
+          { text: 'Поддерживаю того, кто хочет взяться, и помогаю', type: 'B' },
+          { text: 'Генерирую идеи — выбираем лучшую по ходу', type: 'C' },
+          { text: 'Наблюдаю и включаюсь, когда всё становится понятнее', type: 'D' }
+        ]
+      },
+      {
+        text: 'Если что-то идёт не так, я…',
+        options: [
+          { text: 'Анализирую причину и сразу предлагаю решение', type: 'A' },
+          { text: 'Сначала успокаиваю, потом решаем вместе', type: 'B' },
+          { text: 'Придумываю нестандартный выход', type: 'C' },
+          { text: 'Продолжаю по плану — временные сбои в порядке вещей', type: 'D' }
+        ]
+      },
+      {
+        text: 'В нашей паре меня больше всего ценят за…',
+        options: [
+          { text: 'Организацию — я знаю кто за что отвечает', type: 'A' },
+          { text: 'Тепло — со мной чувствуют себя в безопасности', type: 'B' },
+          { text: 'Азарт — каждый раз что-то новое', type: 'C' },
+          { text: 'Надёжность — я всегда доделываю начатое', type: 'D' }
+        ]
+      },
+      {
+        text: 'Когда у нас разные мнения, я…',
+        options: [
+          { text: 'Ищу логический компромисс', type: 'A' },
+          { text: 'Скорее уступлю, чтобы было мирно', type: 'B' },
+          { text: 'Отстаиваю своё, но с юмором', type: 'C' },
+          { text: 'Настаиваю, если уверен что прав', type: 'D' }
+        ]
+      },
+      {
+        text: 'Отдыхать вместе мне нравится…',
+        options: [
+          { text: 'По намеченному плану — так спокойнее', type: 'A' },
+          { text: 'Просто рядом, каждый занят своим', type: 'B' },
+          { text: 'Спонтанно — куда выведет', type: 'C' },
+          { text: 'Проверенными способами, которые точно нравятся', type: 'D' }
+        ]
+      },
+      {
+        text: 'Когда ребёнок учится чему-то новому, я…',
+        options: [
+          { text: 'Объясняю шаг за шагом, слежу за прогрессом', type: 'A' },
+          { text: 'Хвалю и поддерживаю, даже если не получается', type: 'B' },
+          { text: 'Придумываю игровой способ научить', type: 'C' },
+          { text: 'Даю делать самому и вмешиваюсь только если нужно', type: 'D' }
+        ]
+      },
+      {
+        text: 'На новом мероприятии вместе с ребёнком я…',
+        options: [
+          { text: 'Заранее знаю программу и держусь её', type: 'A' },
+          { text: 'Слежу за настроением ребёнка и подстраиваюсь', type: 'B' },
+          { text: 'Первый иду исследовать и знакомиться', type: 'C' },
+          { text: 'Наблюдаю, пока не пойму обстановку', type: 'D' }
+        ]
+      },
+      {
+        text: 'Лучшее в нашей команде — это…',
+        options: [
+          { text: 'Мы умеем планировать и не теряем цель', type: 'A' },
+          { text: 'Нам хорошо просто быть вместе', type: 'B' },
+          { text: 'С нами никогда не скучно', type: 'C' },
+          { text: 'Мы надёжны — друг на друга всегда можно рассчитывать', type: 'D' }
+        ]
+      }
+    ];
+
+    var duos = {
+      A: {
+        emoji: '🕵️🩺',
+        name: 'Шерлок и Ватсон',
+        desc: 'Один думает, другой действует. Вы решаете задачи логично и методично, не теряете цель. Вместе — надёжная система, которая умеет находить выход даже в сложных ситуациях.'
+      },
+      B: {
+        emoji: '🐊🐿️',
+        name: 'Чебурашка и Гена',
+        desc: 'Тепло, забота и настоящая дружба — вот что вас объединяет. Вы умеете слышать и поддерживать. Рядом с вами ребёнок чувствует себя в безопасности и готов к новому.'
+      },
+      C: {
+        emoji: '🦁🐗',
+        name: 'Тимон и Пумба',
+        desc: 'Акуна матата! Вы лёгкие, спонтанные и умеете превращать любую ситуацию в приключение. С вами не соскучишься — и именно это делает вашу пару особенной.'
+      },
+      D: {
+        emoji: '🐱📬',
+        name: 'Матроскин и Шарик',
+        desc: 'Каждый со своим характером, но вместе — неразлучные. Вы надёжны, практичны и умеете дополнять друг друга. Ваш союз держится на уважении и настоящем доверии.'
+      }
+    };
+
+    var current = 0;
+    var scores = { A: 0, B: 0, C: 0, D: 0 };
+    var selected = null;
+
+    function renderQuestion() {
+      var q = questions[current];
+      document.getElementById('q-num').textContent = 'Вопрос ' + (current + 1) + ' из ' + questions.length;
+      document.getElementById('q-text').textContent = q.text;
+      document.getElementById('progress-fill').style.width = ((current / questions.length) * 100) + '%';
+
+      var optDiv = document.getElementById('q-options');
+      optDiv.innerHTML = '';
+      selected = null;
+      document.getElementById('btn-next').disabled = true;
+
+      q.options.forEach(function(opt) {
+        var el = document.createElement('div');
+        el.className = 'quiz-option';
+        el.textContent = opt.text;
+        el.addEventListener('click', function() {
+          optDiv.querySelectorAll('.quiz-option').forEach(function(o) { o.classList.remove('selected'); });
+          el.classList.add('selected');
+          selected = opt.type;
+          document.getElementById('btn-next').disabled = false;
+        });
+        optDiv.appendChild(el);
+      });
+    }
+
+    document.getElementById('btn-next').addEventListener('click', function() {
+      if (!selected) return;
+      scores[selected]++;
+      current++;
+      if (current < questions.length) {
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    });
+
+    function showResult() {
+      var best = 'A';
+      ['A','B','C','D'].forEach(function(k) {
+        if (scores[k] > scores[best]) best = k;
+      });
+      var duo = duos[best];
+
+      document.getElementById('r-emoji').textContent = duo.emoji;
+      document.getElementById('r-name').textContent = duo.name;
+      document.getElementById('r-desc').textContent = duo.desc;
+
+      document.getElementById('progress-fill').style.width = '100%';
+      document.getElementById('quiz-section').style.display = 'none';
+      document.getElementById('result-section').style.display = '';
+      window.scrollTo(0, 0);
+    }
+
+    document.getElementById('btn-retake').addEventListener('click', function() {
+      current = 0;
+      scores = { A: 0, B: 0, C: 0, D: 0 };
+      selected = null;
+      document.getElementById('result-section').style.display = 'none';
+      document.getElementById('quiz-section').style.display = '';
+      renderQuestion();
+    });
+
+    renderQuestion();
+  </script>
+</body>
+</html>

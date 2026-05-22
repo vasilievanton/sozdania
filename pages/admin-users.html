@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Админка — пользователи</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body data-mode="admin">
+  <main class="app-main">
+    <h1>Пользователи</h1>
+    <p class="muted">Родители и привязанные к ним детские профили.</p>
+
+    <div class="card">
+      <div class="flex flex--wrap">
+        <label class="form-field" style="flex:1; min-width:260px;">
+          <span class="form-field__label">Поиск</span>
+          <input class="form-field__input" type="text" placeholder="почта, имя, никнейм">
+        </label>
+        <label class="form-field" style="min-width:160px;">
+          <span class="form-field__label">Возрастная группа</span>
+          <select class="form-field__select">
+            <option>Все</option><option>3–5</option><option>6–9</option><option>10–12</option><option>13–17</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Родитель</th>
+          <th>Корпоративная почта</th>
+          <th>Детей</th>
+          <th>Активность</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Иван Иванов</td>
+          <td>ivanov@mts.ru</td>
+          <td>2 (Маша, 9 • Иван, 11)</td>
+          <td>Сегодня</td>
+          <td><a class="btn btn--sm" href="#" data-stub="Открыть карточку родителя">Открыть</a></td>
+        </tr>
+        <tr>
+          <td>Елена Петрова</td>
+          <td>petrova@mts.ru</td>
+          <td>1 (Артём, 7)</td>
+          <td>Вчера</td>
+          <td><a class="btn btn--sm" href="#" data-stub="Открыть карточку родителя">Открыть</a></td>
+        </tr>
+        <tr>
+          <td>Артём Сидоров</td>
+          <td>sidorov@mts.ru</td>
+          <td>3 (Мира, 5 • Лёва, 8 • Катя, 13)</td>
+          <td>3 дня назад</td>
+          <td><a class="btn btn--sm" href="#" data-stub="Открыть карточку родителя">Открыть</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

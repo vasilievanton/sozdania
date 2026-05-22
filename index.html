@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>СоздАния — прототип</title>
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-5);
+      margin-top: var(--space-6);
+    }
+    @media (max-width: 900px) {
+      .mode-grid { grid-template-columns: 1fr; }
+    }
+    .mode-card {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-md);
+      padding: var(--space-5);
+      display: flex;
+      flex-direction: column;
+    }
+    .mode-card__num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--c-surface-alt);
+      border: 1px solid var(--c-border);
+      font-weight: 600;
+      margin-bottom: var(--space-3);
+    }
+    .mode-card h3 { margin-bottom: var(--space-2); }
+    .mode-card__body { flex: 1; }
+    .mode-card__cta { margin-top: var(--space-4); }
+    .mode-card ul { padding-left: var(--space-4); margin: var(--space-3) 0; }
+    .mode-card ul li { margin-bottom: var(--space-1); font-size: 14px; }
+  </style>
+</head>
+<body data-mode="guest">
+  <main class="app-main">
+    <h1>СоздАния — прототип</h1>
+    <p class="muted">
+      Кликабельный каркас платформы по ТЗ v2.0. Выберите, как смотреть.
+    </p>
+
+    <div class="mode-grid">
+      <div class="mode-card">
+        <div class="mode-card__num">1</div>
+        <h3>Все экраны (sitemap)</h3>
+        <div class="mode-card__body">
+          <p class="muted">
+            Карта всех страниц прототипа. Можно перейти в любой экран напрямую,
+            не проходя сценарий.
+          </p>
+          <ul>
+            <li>Все экраны в одном списке</li>
+            <li>Удобно проверять полноту</li>
+            <li>Удобно искать конкретный экран</li>
+          </ul>
+          <p class="muted"><strong>Для кого:</strong> для заказчика и команды разработки.</p>
+        </div>
+        <div class="mode-card__cta">
+          <a class="btn btn--block" href="sitemap.html">Открыть карту экранов →</a>
+        </div>
+      </div>
+
+      <div class="mode-card">
+        <div class="mode-card__num">2</div>
+        <h3>Полный UX-тур</h3>
+        <div class="mode-card__body">
+          <p class="muted">
+            Пройти сайт как реальный пользователь. Регистрация, возможные ошибки,
+            добавление ребёнка, доступ к контенту для родителя в общем меню, игры, прогресс.
+          </p>
+          <ul>
+            <li>Линейный сценарий с подсказками</li>
+            <li>Шаги от регистрации до результата</li>
+            <li>За родителя <strong>Иван Иванов</strong> и его ребёнка <strong>Машу 9 лет</strong></li>
+          </ul>
+          <p class="muted"><strong>Для кого:</strong> оценить удобство UX и поймать нелогичные места.</p>
+        </div>
+        <div class="mode-card__cta">
+          <a class="btn btn--primary btn--block" href="pages/index.html?mode=tour&amp;step=1">Начать тур →</a>
+        </div>
+      </div>
+
+      <div class="mode-card">
+        <div class="mode-card__num">3</div>
+        <h3>Структура контента</h3>
+        <div class="mode-card__body">
+          <p class="muted">
+            Расписание релизов: что когда открывается за 5 недель проекта
+            (1 июня – 5 июля), какие есть игры, тесты и материалы.
+          </p>
+          <ul>
+            <li>Все релизы по районам и для родителей</li>
+            <li>Баллы за каждый контент</li>
+            <li>Совместные задания отдельной таблицей</li>
+          </ul>
+          <p class="muted"><strong>Для кого:</strong> согласовать контентную часть до разработки.</p>
+        </div>
+        <div class="mode-card__cta">
+          <a class="btn btn--block" href="games.html">Открыть расписание →</a>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <p class="muted">
+      Дополнительно: <a href="user-flow.html"><strong>блок-схема пользовательского пути</strong></a> — детальная схема с датами по двум трекам.
+    </p>
+  </main>
+</body>
+</html>

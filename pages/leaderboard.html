@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Турнирная таблица</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body data-mode="user">
+  <main class="app-main">
+    <div class="breadcrumb"><a href="map.html">← На карту</a></div>
+    <h1>Турнирная таблица</h1>
+    <p class="muted">Никнеймы вместо имён · Все недели суммарно</p>
+
+    <div class="card">
+      <label class="form-field" style="max-width:200px;">
+        <span class="form-field__label">Возрастная группа</span>
+        <select class="form-field__select">
+          <option>3–5</option>
+          <option selected>6–9</option>
+          <option>10–12</option>
+          <option>13–17</option>
+        </select>
+      </label>
+
+      <table class="tbl">
+        <thead>
+          <tr><th>Место</th><th>Никнейм</th><th>Персонаж</th><th class="right">Баллы</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>СупергерВалера</td><td>Кругленький жёлтый</td><td class="right">540</td></tr>
+          <tr><td>2</td><td>МираКрафт</td><td>Спокойный синий</td><td class="right">505</td></tr>
+          <tr><td>3</td><td>ТехноРома</td><td>Удивлённый зелёный</td><td class="right">480</td></tr>
+          <tr style="background:#e8f0ff;"><td>4</td><td><strong>КосмоМаша (это ты!)</strong></td><td>Весёлый розовый</td><td class="right"><strong>290</strong></td></tr>
+          <tr><td>5</td><td>ВикаКодит</td><td>Спокойный жёлтый</td><td class="right">260</td></tr>
+          <tr><td>6</td><td>ЛесникАртём</td><td>Весёлый зелёный</td><td class="right">240</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>Как попасть выше</h3>
+      <ul>
+        <li>Пройди оставшиеся задания в каждом районе</li>
+        <li>Сделай совместное задание с родителем</li>
+      </ul>
+      <p><a href="prize-rules.html">Подробнее о правилах акции и финальном розыгрыше →</a></p>
+    </div>
+  </main>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

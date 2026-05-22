@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Админка — онлайн-сессии</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body data-mode="admin">
+  <main class="app-main">
+    <h1>Онлайн-сессии</h1>
+    <p class="muted">Слоты со специалистами. Создаются через JSON-импорт или вручную.</p>
+
+    <div class="btn-row mb-4">
+      <a class="btn btn--primary" href="admin-import.html">Загрузить расписание из JSON</a>
+      <a class="btn" href="#" data-stub="Добавить слот вручную">+ Добавить слот вручную</a>
+    </div>
+
+    <table class="tbl">
+      <thead>
+        <tr><th>Дата</th><th>Тема</th><th>Специалист</th><th>Записано</th><th>Ссылка</th><th></th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>22 мая, 19:00</td>
+          <td>Как говорить с подростком о будущем</td>
+          <td>Елена Карпова</td>
+          <td>7 / 10</td>
+          <td><a href="#" data-stub="Ссылка на МТС Линк">МТС Линк</a></td>
+          <td>
+            <a class="btn btn--sm btn--ghost" href="#" data-stub="Редактировать">Редактировать</a>
+            <a class="btn btn--sm btn--ghost" href="#" data-stub="Отменить слот">Отменить</a>
+          </td>
+        </tr>
+        <tr>
+          <td>26 мая, 20:00</td>
+          <td>Мотивация без давления</td>
+          <td>Артём Лебедев</td>
+          <td>4 / 10</td>
+          <td><a href="#" data-stub="Ссылка на МТС Линк">МТС Линк</a></td>
+          <td>
+            <a class="btn btn--sm btn--ghost" href="#" data-stub="Редактировать">Редактировать</a>
+            <a class="btn btn--sm btn--ghost" href="#" data-stub="Отменить слот">Отменить</a>
+          </td>
+        </tr>
+        <tr>
+          <td>28 мая, 19:30</td>
+          <td>Цифровая безопасность детей</td>
+          <td>Ольга Носова</td>
+          <td>10 / 10</td>
+          <td>—</td>
+          <td>
+            <a class="btn btn--sm btn--ghost" href="#" data-stub="Редактировать">Редактировать</a>
+            <a class="btn btn--sm btn--ghost" href="#" data-stub="Отменить слот">Отменить</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

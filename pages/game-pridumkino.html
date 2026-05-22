@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Игра — Придумкино</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body data-mode="user">
+  <main class="app-main">
+    <div class="breadcrumb"><a href="district-pridumkino.html">← В Придумкино</a></div>
+    <h1>Раскраска: Космос</h1>
+    <p class="muted">Группа 6–9 · +40 баллов</p>
+
+    <div class="notice notice--warn">
+      <strong>Прототип игры.</strong>
+      В реальной версии — готовый шаблон с контурами, палитра цветов,
+      возможность залить или закрасить кистью внутри уже нарисованных зон.
+      Свободного рисования нет.
+    </div>
+
+    <div class="grid grid--2">
+      <div class="card">
+        <div class="mock-canvas" style="min-height:360px;">
+          Готовый шаблон с контурами<br>
+          (зоны для заливки цветом)
+        </div>
+      </div>
+      <div class="card">
+        <h3>Палитра</h3>
+        <p class="muted">Выбери цвет и нажми на зону</p>
+        <div class="grid grid--4">
+          <a class="tile" href="#" data-stub="Цвет: красный">Красный</a>
+          <a class="tile" href="#" data-stub="Цвет: жёлтый">Жёлтый</a>
+          <a class="tile" href="#" data-stub="Цвет: синий">Синий</a>
+          <a class="tile" href="#" data-stub="Цвет: зелёный">Зелёный</a>
+          <a class="tile" href="#" data-stub="Цвет: фиолетовый">Фиолетовый</a>
+          <a class="tile" href="#" data-stub="Цвет: оранжевый">Оранжевый</a>
+          <a class="tile" href="#" data-stub="Цвет: розовый">Розовый</a>
+          <a class="tile" href="#" data-stub="Цвет: чёрный">Чёрный</a>
+        </div>
+        <div class="btn-row">
+          <a class="btn" href="#" data-stub="Очистить">Очистить</a>
+          <a class="btn btn--primary" href="game-result.html">Готово →</a>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

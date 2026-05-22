@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Добавить ребёнка</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body data-mode="user">
+  <main class="app-main app-main--narrow">
+    <h1>Добавим ребёнка</h1>
+    <p class="muted">
+      Можно добавить несколько детей. Прогресс и баллы у каждого свои.
+    </p>
+
+    <div class="card">
+      <label class="form-field">
+        <span class="form-field__label">Никнейм (как ребёнка увидят в турнирной таблице)</span>
+        <input class="form-field__input" type="text" placeholder="например, КосмоМаша">
+        <span class="form-field__hint">Реальное имя в публичной части не показываем.</span>
+      </label>
+
+      <label class="form-field">
+        <span class="form-field__label">Реальное имя</span>
+        <input class="form-field__input" type="text" placeholder="Мария">
+        <span class="form-field__hint">Нужно для оформления призов. Видно только в админке.</span>
+      </label>
+
+      <label class="form-field">
+        <span class="form-field__label">Возраст</span>
+        <input class="form-field__input" type="number" min="3" max="17" placeholder="например, 9">
+        <span class="form-field__hint">Определяет возрастную группу: 3–5, 6–9, 10–12 или 13–17.</span>
+      </label>
+
+      <div class="btn-row">
+        <a class="btn btn--primary" href="profile-switch.html">Сохранить и продолжить</a>
+        <a class="btn btn--ghost" href="profile-switch.html">Пропустить — добавлю позже</a>
+      </div>
+    </div>
+
+    <p class="muted center">
+      <a href="#" data-stub="Добавить ещё одного ребёнка">+ Добавить ещё одного ребёнка</a>
+    </p>
+  </main>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

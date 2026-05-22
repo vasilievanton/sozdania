@@ -1,0 +1,745 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Блок-схема пути — СоздАния</title>
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    /* ── Layout ──────────────────────────────── */
+    .flow-wrap {
+      max-width: 1200px;
+    }
+
+    .swimlane-header {
+      display: grid;
+      grid-template-columns: 110px 1fr 1fr;
+      gap: 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: var(--c-bg);
+      border-bottom: 2px solid var(--c-border-strong);
+      margin-bottom: var(--space-2);
+    }
+    .swimlane-header__cell {
+      padding: var(--space-3) var(--space-4);
+      font-weight: 700;
+      font-size: 13px;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .swimlane-header__cell:first-child { text-align: left; color: var(--c-text-muted); }
+    .swimlane-header__cell--child  { background: #e8f0ff; color: #1e3a6f; border-radius: var(--r-sm) var(--r-sm) 0 0; }
+    .swimlane-header__cell--parent { background: #f0e4f0; color: #5a1a6b; border-radius: var(--r-sm) var(--r-sm) 0 0; }
+
+    /* ── Phase separator ─────────────────────── */
+    .phase {
+      margin: var(--space-6) 0 var(--space-3);
+    }
+    .phase__label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-4);
+      background: #f0f0ec;
+      border: 1px solid var(--c-border-strong);
+      border-radius: var(--r-md);
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .phase__label .phase-date {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--c-text-muted);
+    }
+    .phase__label .phase-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--c-primary);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    /* ── Flow row (swimlane) ─────────────────── */
+    .flow-row {
+      display: grid;
+      grid-template-columns: 110px 1fr 1fr;
+      gap: var(--space-3);
+      margin-bottom: var(--space-3);
+      align-items: start;
+    }
+
+    .flow-date {
+      padding-top: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--c-text-muted);
+      text-align: right;
+      padding-right: var(--space-3);
+      line-height: 1.3;
+    }
+    .flow-date .day {
+      display: block;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--c-primary);
+      line-height: 1;
+    }
+    .flow-date .month { display: block; }
+    .flow-date .weekday { display: block; font-weight: 400; font-size: 11px; }
+
+    .flow-child { /* left column */ }
+    .flow-parent { /* right column */ }
+
+    /* ── Node types ──────────────────────────── */
+    .node {
+      border-radius: var(--r-md);
+      padding: var(--space-3) var(--space-4);
+      font-size: 13px;
+      line-height: 1.45;
+      border: 1px solid transparent;
+      margin-bottom: var(--space-2);
+      position: relative;
+    }
+    .node:last-child { margin-bottom: 0; }
+
+    .node__title {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+    .node__pts {
+      display: inline-block;
+      background: rgba(45, 122, 62, .12);
+      color: var(--c-success);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+    .node__sub {
+      color: var(--c-text-muted);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+    .node__link {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--c-primary);
+    }
+
+    /* District colours */
+    .node--system    { background: var(--c-surface); border-color: var(--c-border); }
+    .node--auth      { background: #eef3ff; border-color: #b9ccf0; }
+    .node--tehnodrom { background: #e6f3fb; border-color: #9ecde8; }
+    .node--umnoteka  { background: #fdf8e1; border-color: #e8d88c; }
+    .node--boltalka  { background: #e1faf3; border-color: #8cd8be; }
+    .node--pridumkino{ background: #fce1f0; border-color: #e88cc0; }
+    .node--parent    { background: #f4e1fc; border-color: #c88ce8; }
+    .node--joint     { background: #fff0e1; border-color: #e8b88c; }
+    .node--result    { background: #e6f2e9; border-color: #b8d6bf; }
+    .node--warning   { background: #fff4e0; border-color: #e6c98b; }
+    .node--finish    { background: #1e3a6f; color: #fff; border-color: #1e3a6f; }
+    .node--finish .node__sub { color: rgba(255,255,255,.7); }
+    .node--finish .node__pts { background: rgba(255,255,255,.2); color: #fff; }
+
+    /* Decision diamond */
+    .decision {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-3);
+      grid-column: 1 / -1;
+    }
+    .decision__diamond {
+      width: 48px;
+      height: 48px;
+      background: #fff7d6;
+      border: 2px solid #e6d28b;
+      transform: rotate(45deg);
+      flex-shrink: 0;
+      margin-left: 110px;
+    }
+    .decision__text {
+      font-weight: 600;
+      font-size: 14px;
+      color: #6b4a18;
+      background: #fff7d6;
+      border: 1px solid #e6d28b;
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--r-sm);
+    }
+    .decision__branches {
+      display: flex;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+    .decision__branch {
+      background: var(--c-surface-alt);
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-sm);
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+
+    /* Connector arrow (vertical) */
+    .flow-connector {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      padding: 0 0 0 110px;
+      margin: 0 0 var(--space-2);
+      color: var(--c-text-muted);
+      font-size: 12px;
+      gap: var(--space-2);
+    }
+    .flow-connector::before {
+      content: '';
+      display: block;
+      width: 2px;
+      height: 20px;
+      background: var(--c-border-strong);
+      margin-right: var(--space-2);
+    }
+
+    /* Both-columns span */
+    .node--span {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+    }
+    .span-row {
+      grid-column: 2 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-3);
+    }
+
+    /* ── Legend ──────────────────────────────── */
+    .legend {
+      display: flex;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+      margin-bottom: var(--space-5);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+    }
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      border: 1px solid;
+      flex-shrink: 0;
+    }
+
+    /* ── Responsive ──────────────────────────── */
+    @media (max-width: 760px) {
+      .flow-row { grid-template-columns: 70px 1fr; }
+      .flow-parent { grid-column: 2; margin-top: var(--space-2); }
+      .swimlane-header { grid-template-columns: 70px 1fr 1fr; }
+      .flow-date .day { font-size: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-main flow-wrap">
+    <div class="breadcrumb"><a href="index.html">← К выбору режима</a></div>
+    <h1>Пользовательский путь</h1>
+    <p class="muted">Детальная схема: все события, даты, точки входа и контент по обоим трекам — ребёнка и родителя.</p>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#e6f3fb;border-color:#9ecde8;"></div>Технодром</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fdf8e1;border-color:#e8d88c;"></div>Умнотека</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e1faf3;border-color:#8cd8be;"></div>Болталка</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fce1f0;border-color:#e88cc0;"></div>Придумкино</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f4e1fc;border-color:#c88ce8;"></div>Только родителям</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#fff0e1;border-color:#e8b88c;"></div>Совместное задание</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e6f2e9;border-color:#b8d6bf;"></div>Результат / Награда</div>
+    </div>
+
+    <div class="swimlane-header">
+      <div class="swimlane-header__cell">Дата</div>
+      <div class="swimlane-header__cell swimlane-header__cell--child">Трек ребёнка</div>
+      <div class="swimlane-header__cell swimlane-header__cell--parent">Трек родителя</div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         ФАЗА 0: ДО СТАРТА
+    ══════════════════════════════════════ -->
+    <div class="phase">
+      <div class="phase__label">
+        <span class="phase-num">0</span>
+        Регистрация
+        <span class="phase-date">до 1 июня</span>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-date"><span class="day">↓</span><span class="month">до 1 июня</span></div>
+      <div class="flow-child">
+        <div class="node node--auth">
+          <div class="node__title">Стартовый экран</div>
+          <div class="node__sub">Кнопки «Создать аккаунт» и «Войти»</div>
+          <a class="node__link" href="pages/index.html">→ pages/index.html</a>
+        </div>
+      </div>
+      <div class="flow-parent">
+        <div class="node node--auth">
+          <div class="node__title">Стартовый экран</div>
+          <div class="node__sub">Тот же экран — роль определяется после входа</div>
+          <a class="node__link" href="pages/index.html">→ pages/index.html</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-date"></div>
+      <div class="flow-child" style="grid-column:2/-1; display:grid; grid-template-columns:1fr 1fr; gap:var(--space-3);">
+        <div class="node node--auth">
+          <div class="node__title">Регистрация</div>
+          <div class="node__sub">Корпоративная почта @mts.ru · имя · пароль · согласия</div>
+          <a class="node__link" href="pages/register.html">→ register.html</a>
+        </div>
+        <div class="node node--auth">
+          <div class="node__title">Или: Вход</div>
+          <div class="node__sub">Для тех, кто уже регистрировался</div>
+          <a class="node__link" href="pages/login.html">→ login.html</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-date"></div>
+      <div class="flow-child">
+        <div class="node node--auth">
+          <div class="node__title">Добавление ребёнка</div>
+          <div class="node__sub">Никнейм (публичный) · Реальное имя (для призов, скрыто) · Возраст → группа 3–5 / 6–9 / 10–12 / 13–17. Можно добавить несколько детей.</div>
+          <a class="node__link" href="pages/add-child.html">→ add-child.html</a>
+        </div>
+      </div>
+      <div class="flow-parent">
+        <div class="node node--auth">
+          <div class="node__title">Если несколько детей</div>
+          <div class="node__sub">Экран «За кого играем?» — у каждого ребёнка свой прогресс и баллы</div>
+          <a class="node__link" href="pages/profile-switch.html">→ profile-switch.html</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-date"></div>
+      <div class="flow-child" style="grid-column:2/-1;">
+        <div class="node node--auth">
+          <div class="node__title">Онбординг → Карта</div>
+          <div class="node__sub">Короткое введение, затем переход на главный экран — Карту СоздАнии</div>
+          <a class="node__link" href="pages/onboarding.html">→ onboarding.html</a>
+          <a class="node__link" style="margin-left:var(--space-3);" href="pages/map.html">→ map.html</a>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════
+         ФАЗА 1: НЕДЕЛЯ 1 (1–5 июня)
+    ══════════════════════════════════════ -->
+    <div class="phase">
+      <div class="phase__label">
+        <span class="phase-num">1</span>
+        Неделя 1 — Старт
+        <span class="phase-date">1–5 июня</span>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-date"><span class="day">1</span><span class="month">июня</span><span class="weekday">вск</span></div>
+      <div class="flow-child">
+        <div class="node node--tehnodrom">
+          <div class="node__title">🤖 Технодром: Доставщик открывается</div>
+          <div class="node__sub">Базовый уровень. 6–9 лет: 3–4 блока; 10–12: циклы; 13–17: условия. До конца проекта.</div>
+          <span class="node__pts">+40–90 баллов</span>
+          <a class="node__link" href="pages/game-tehnodrom.html">→ game-tehnodrom.html</a>
+        </div>
+        <div class="node node--umnoteka" style="margin-top:var(--space-2);">
+          <div class="node__title">Умнотека: Квиз «Технологии и будущее» открывается</div>
+          <div class="node__sub">Пачка 1 из 3. 10 закрытых вопросов, 4 варианта. Бонус за первую попытку без ошибок.</div>
+          <span class="node__pts">+40–70 баллов</span>
+          <a class="node__link" href="pages/game-umnoteka.html">→ game-umnoteka.html</a>
+        </div>
+        <div class="node node--result" style="margin-top:var(--space-2);">
+          <div class="node__title">Приветственные баллы за регистрацию</div>
+          <span class="node__pts">+10 баллов</span>
+        </div>
+      </div>
+      <div class="flow-parent">
+        <div class="node node--parent">
+          <div class="node__title">Статья № 1 открывается</div>
+          <div class="node__sub">«Детско-родительская совместность в цифровой среде»</div>
+          <a class="node__link" href="pages/parent-content.html">→ parent-content.html</a>
+        </div>
+        <div class="node node--parent" style="margin-top:var(--space-2);">
+          <div class="node__title">Адвент-карточки стартуют</div>
+          <div class="node__sub">35 дней → 35 карточек. По одной каждый день. Совет или мини-действие вместе с ребёнком.</div>
+          <a class="node__link" href="pages/parent-advent.html">→ parent-advent.html</a>
+        </div>
+        <div class="node node--parent" style="margin-top:var(--space-2);">
+          <div class="node__title">Тест «Какой ты родитель?»</div>
+          <div class="node__sub">6 вопросов → один из 4 стилей воспитания. Только для родителя.</div>
+          <a class="node__link" href="pages/parent-test-type.html">→ parent-test-type.html</a>
+        </div>
+        <div class="node node--parent" style="margin-top:var(--space-2);">
+          <div class="node__title">Тест «Тревожный ли ты родитель?»</div>
+          <div class="node__sub">6 вопросов. Шкала тревожности с пояснением.</div>
+          <a class="node__link" href="pages/parent-test-anxiety.html">→ parent-test-anxiety.html</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-date"><span class="day">5</span><span class="month">июня</span><span class="weekday">чт</span></div>
+      <div class="flow-child">
+        <div class="node node--umnoteka">
+          <div class="node__title">Умнотека: Квиз «Мир вокруг» открывается</div>
+          <div class="node__sub">Пачка 2 из 3. Умнотека теперь на 2/3 открыта.</div>
+          <span class="node__pts">+40–70 баллов</span>
+          <a class="node__link" href="pages/game-umnoteka.html">→ game-umnoteka.html</a>
+        </div>
+      </div>
+      <div class="flow-parent">
+        <div class="node node--system">
+          <div class="node__sub">Новых событий для родителя нет. Карточка дня продолжается.</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════
+         ФАЗА 2: НЕДЕЛЯ 2 (6–13 июня)
+    ══════════════════════════════════════ -->
+    <div class="phase">
+      <div class="phase__label">
+        <span class="phase-num">2</span>
+        Неделя 2 — Болталка открывается
+        <span class="phase-date">6–13 июня</span>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-date"><span class="day">6</span><span class="month">июня</span><span class="weekday">пт</span></div>
+      <div class="flow-child">
+        <div class="node node--tehnodrom">
+          <div class="node__title">🧹 Технодром: Уборщик открывается</div>
+          <div class="node__sub">Сложнее Доставщика. Нужно обойти все клетки с мусором без пропусков.</div>
+          <span class="node__pts">+40–90 баллов</span>
+          <a class="node__link" href="pages/game-tehnodrom.html">→ game-tehnodrom.html</a>
+        </div>
+      </div>
+      <div class="flow-parent">
+        <div class="node node--system">
+          <div class="node__sub">Новых материалов нет. Карточка дня.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-date"><span class="day">8</span><span class="month">июня</span><span class="weekday">вск</span></div>
+      <div class="flow-child">
+        <div class="node node--boltalka">
+          <div class="node__title">Болталка: «Сопоставь» контент 1 открывается</div>
+          <div class="node__sub">6 ситуаций общения. Один правильный ответ. Младшие — картинки, старшие — аудио.</div>
+          <span class="node__pts">+40–70 баллов</span>
+          <a class="node__link" href="pages/game-boltalka.html">→ game-boltalka.html</a>
+        </div>
+        <div class="node node--umnoteka" style="margin-top:var(--space-2);">
+          <div class="node__title">Умнотека: Квиз «История и культура» открывается</div>
+          <div class="node__sub">Пачка 3 из 3. Умнотека полностью открыта.</div>
+          <span class="node__pts">+40–70 баллов</span>
+          <a class="node__link" href="pages/game-umnoteka.html">→ game-umnoteka.html</a>
+        </div>
+      </div>
+      <div class="flow-parent">
+        <div class="node node--system">
+          <div class="node__sub">Новых материалов нет. Карточка дня.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-date"><span class="day">9</span><span class="month">июня</span><span class="weekday">пн</span></div>
+      <div class="flow-child">
+        <div class="node node--joint">
+          <div class="node__title">Квиз «Какой ты мем?» открывается</div>
+          <div class="node__sub">Ребёнок проходит со своей стороны. Родитель — отдельно. Система сравнивает ответы → мем-дуэт.</div>
+          <span class="node__pts">+20–30 баллов в профиль ребёнка</span>
+          <a class="node__link" href="pages/parent-test.html">→ parent-test.html</a>
+        </div>
+      </div>
+      <div class="flow-parent">
+        <div class="node node--joint">
+          <div class="node__title">Квиз «Какой ты мем?» — часть родителя</div>
+          <div class="node__sub">Независимо от ребёнка. Результат виден после того, как оба прошли.</div>
+          <a class="node__link" href="pages/parent-test.html">→ parent-test.html</a>
+        </div>
+        <div class="node node--parent" style="margin-top:var(--space-2);">
+          <div class="node__title">Подкаст открывается</div>
+          <div class="node__sub">«Мотивация через игру» — разговор с педагогом. ~30 минут.</div>
+          <a class="node__link" href="pages/parent-content.html">→ parent-content.html</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-date"><span class="day">10</span><span class="month">июня</span><span class="weekday">вт</span></div>
+      <div class="flow-child">
+        <div class="node node--system">
+          <div class="node__sub">Новых заданий нет. Продолжаем проходить открытое.</div>
+        </div>
+      </div>
+      <div class="flow-parent">
+        <div class="node node--parent">
+          <div class="node__title">Открывается запись на индивидуальные сессии с психологом</div>
+          <div class="node__sub">4 групповых эфира по расписанию + индивидуальные встречи. Платформа: МТС Линк. Темы: отношения, эмоции, тревожность.</div>
+          <a class="node__link" href="pages/parent-sessions.html">→ parent-sessions.html</a>
+          <a class="node__link" href="pages/parent-session-book.html">→ parent-session-book.html</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-date"><span class="day">12</span><span class="month">июня</span><span class="weekday">чт</span></div>
+      <div class="flow-child">
+        <div class="node node--tehnodrom">
+          <div class="node__title">🛴 Технодром: Самокатер открывается</div>
+          <div class="node__sub">Гонка через чек-поинты. Меньше шагов — больше баллов. Алгоритмическое мышление.</div>
+          <span class="node__pts">+40–90 баллов</span>
+          <a class="node__link" href="pages/game-tehnodrom.html">→ game-tehnodrom.html</a>
+        </div>
+      </div>
+      <div class="flow-parent">
+        <div class="node node--system">
+          <div class="node__sub">Карточка дня, доступна запись на сессии.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-date"><span class="day">13</span><span class="month">июня</span><span class="weekday">пт</span></div>
+      <div class="flow-child">
+        <div class="node node--boltalka">
+          <div class="node__title">Болталка: «Сопоставь» контент 2 открывается</div>
+          <div class="node__sub">Новые ситуации. Для 10+ — аудиофайл вместо текста.</div>
+          <span class="node__pts">+40–70 баллов</span>
+          <a class="node__link" href="pages/game-boltalka.html">→ game-boltalka.html</a>
+        </div>
+      </div>
+      <div class="flow-parent">
+        <div class="node node--system">
+          <div class="node__sub">Новых событий нет.</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════
+         ФАЗА 3: НЕДЕЛЯ 3 (14–21 июня)
+    ══════════════════════════════════════ -->
+    <div class="phase">
+      <div class="phase__label">
+        <span class="phase-num">3</span>
+        Неделя 3 — Садовник (ограниченно!)
+        <span class="phase-date">14–21 июня</span>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-date"><span class="day">14</span><span class="month">июня</span><span class="weekday">сб</span></div>
+      <div class="flow-child">
+        <div class="node node--system">
+          <div class="node__sub">Новых заданий для детей нет. Проходим накопленное.</div>
+        </div>
+      </div>
+      <div class="flow-parent">
+        <div class="node node--parent">
+          <div class="node__title">Статья № 2 открывается</div>
+          <div class="node__sub">Тема: уточняется. Вторая из трёх родительских статей.</div>
+          <a class="node__link" href="pages/parent-content.html">→ parent-content.html</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-date"><span class="day">15</span><span class="month">июня</span><span class="weekday">вск</span></div>
+      <div class="flow-child">
+        <div class="node node--boltalka">
+          <div class="node__title">Болталка: Карточки интервью 1</div>
+          <div class="node__sub">Вопросы для диалога «ребёнок ↔ родитель». Результат — общая запись.</div>
+          <span class="node__pts">+20–30 баллов</span>
+          <a class="node__link" href="pages/game-boltalka.html">→ game-boltalka.html</a>
+        </div>
+        <div class="node node--warning" style="margin-top:var(--space-2); border-width:2px;">
+          <div class="node__title">⚠️ Технодром: Садовник открывается — ТОЛЬКО 7 ДНЕЙ!</div>
+          <div class="node__sub">Тематика «выходные на даче». Повышенные баллы. 15–21 июня — после этого задание исчезает навсегда!</div>
+          <span class="node__pts">+50–100 баллов (повышенные)</span>
+          <a class="node__link" href="pages/game-tehnodrom.html">→ game-tehnodrom.html</a>
+        </div>
+      </div>
+      <div class="flow-parent">
+        <div class="node node--joint">
+          <div class="node__title">Карточки интервью — часть родителя</div>
+          <div class="node__sub">Отвечает на вопросы ребёнка из своей колоды.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-date"><span class="day">21</span><span class="month">июня</span><span class="weekday">сб</span></div>
+      <div class="flow-child">
+        <div class="node node--system">
+          <div class="node__title">Садовник — последний день!</div>
+          <div class="node__sub">После 21 июня задание закрывается. Успей пройти, баллы не сгорают.</div>
+        </div>
+      </div>
+      <div class="flow-parent">
+        <div class="node node--parent">
+          <div class="node__title">Видео «Разминки вместе» открывается</div>
+          <div class="node__sub">Короткие физические активности для родителя + ребёнка. Без спортивной подготовки.</div>
+          <a class="node__link" href="pages/parent-content.html">→ parent-content.html</a>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════
+         ФАЗА 4: НЕДЕЛИ 4–5 (22 июня – 5 июля)
+    ══════════════════════════════════════ -->
+    <div class="phase">
+      <div class="phase__label">
+        <span class="phase-num">4</span>
+        Недели 4–5 — Придумкино и финал
+        <span class="phase-date">22 июня – 5 июля</span>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-date"><span class="day">22</span><span class="month">июня</span><span class="weekday">вск</span></div>
+      <div class="flow-child">
+        <div class="node node--pridumkino">
+          <div class="node__title">Придумкино полностью открывается</div>
+          <div class="node__sub">Раскраски: 3 шаблона (Город, Космос, Лето) — прямо на платформе, без внешних редакторов.</div>
+          <span class="node__pts">+30–60 баллов</span>
+          <a class="node__link" href="pages/district-pridumkino.html">→ district-pridumkino.html</a>
+          <a class="node__link" href="pages/game-pridumkino.html">→ game-pridumkino.html</a>
+        </div>
+        <div class="node node--pridumkino" style="margin-top:var(--space-2);">
+          <div class="node__title">Придумкино: Галерея граффити</div>
+          <div class="node__sub">Рисунок вне платформы → загрузка фото → виден всем участникам.</div>
+          <span class="node__pts">+20 баллов</span>
+        </div>
+        <div class="node node--boltalka" style="margin-top:var(--space-2);">
+          <div class="node__title">Болталка: Карточки интервью 2</div>
+          <div class="node__sub">Второй набор вопросов для диалога.</div>
+          <span class="node__pts">+20–30 баллов</span>
+          <a class="node__link" href="pages/game-boltalka.html">→ game-boltalka.html</a>
+        </div>
+      </div>
+      <div class="flow-parent">
+        <div class="node node--joint">
+          <div class="node__title">Придумкино: «Имя рисунку» — совместное задание</div>
+          <div class="node__sub">Ребёнок загружает граффити. Родитель придумывает название. Баллы идут ребёнку.</div>
+          <span class="node__pts">+20 баллов ребёнку</span>
+        </div>
+        <div class="node node--boltalka" style="margin-top:var(--space-2);">
+          <div class="node__title">Карточки интервью 2 — часть родителя</div>
+          <div class="node__sub">Второй набор вопросов.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-date"><span class="day">5</span><span class="month">июля</span><span class="weekday">сб</span></div>
+      <div class="flow-child" style="grid-column:2/-1;">
+        <div class="node node--finish">
+          <div class="node__title">Конец проекта — платформа закрыта для новых начислений</div>
+          <div class="node__sub">Финальные баллы зафиксированы. Турнирная таблица заморожена. Данные уходят на розыгрыш.</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════
+         ФАЗА 5: РОЗЫГРЫШ
+    ══════════════════════════════════════ -->
+    <div class="phase">
+      <div class="phase__label">
+        <span class="phase-num">5</span>
+        После 5 июля — розыгрыш
+        <span class="phase-date">после закрытия</span>
+      </div>
+    </div>
+
+    <div class="flow-row">
+      <div class="flow-date"><span class="day">↓</span><span class="month">после 5 июля</span></div>
+      <div class="flow-child" style="grid-column:2/-1; display:grid; grid-template-columns:1fr 1fr; gap:var(--space-3);">
+        <div class="node node--result">
+          <div class="node__title">Финальный розыгрыш</div>
+          <div class="node__sub">По одному победителю в каждой из 4 возрастных групп (3–5, 6–9, 10–12, 13–17). Равные шансы среди тех, кто набрал баллы.</div>
+          <a class="node__link" href="pages/prize-rules.html">→ Правила акции</a>
+        </div>
+        <div class="node node--result">
+          <div class="node__title">Объявление победителей</div>
+          <div class="node__sub">Связь через корпоративную почту родителя. Конкретные призы будут объявлены ближе к финалу.</div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ══════════════════════════════════
+         СВОДКА
+    ══════════════════════════════════════ -->
+    <div style="margin-top: var(--space-7);">
+      <h2>Сводка всех ключевых дат</h2>
+      <table class="tbl tbl--compact" style="margin-top:var(--space-3);">
+        <thead>
+          <tr><th>Дата</th><th>Событие</th><th>Трек</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>до 1 июня</td><td>Регистрация, добавление детей, онбординг</td><td>Оба</td></tr>
+          <tr><td><strong>1 июня</strong></td><td>Старт! Технодром (Доставщик) + Умнотека (Пачка 1) + Статья 1 + Адвент + Тесты для родителей</td><td>Оба</td></tr>
+          <tr><td>5 июня</td><td>Умнотека: Пачка 2 «Мир вокруг»</td><td>Ребёнок</td></tr>
+          <tr><td>6 июня</td><td>Технодром: Уборщик</td><td>Ребёнок</td></tr>
+          <tr><td>8 июня</td><td>Болталка: Контент 1 + Умнотека: Пачка 3</td><td>Ребёнок</td></tr>
+          <tr><td>9 июня</td><td>Квиз «Какой ты мем?» + Подкаст</td><td>Оба</td></tr>
+          <tr><td>10 июня</td><td>Открывается запись на сессии с психологом</td><td>Родитель</td></tr>
+          <tr><td>12 июня</td><td>Технодром: Самокатер</td><td>Ребёнок</td></tr>
+          <tr><td>13 июня</td><td>Болталка: Контент 2</td><td>Ребёнок</td></tr>
+          <tr><td>14 июня</td><td>Статья № 2</td><td>Родитель</td></tr>
+          <tr><td>15 июня</td><td>Болталка: Карточки 1 + ⚠️ Технодром: Садовник (7 дней!)</td><td>Ребёнок</td></tr>
+          <tr><td><strong>21 июня</strong></td><td>⚠️ Садовник закрывается навсегда + Видео «Разминки»</td><td>Оба</td></tr>
+          <tr><td>22 июня</td><td>Придумкино открывается (раскраски + галерея) + Болталка: Карточки 2</td><td>Ребёнок</td></tr>
+          <tr><td><strong>5 июля</strong></td><td>Конец проекта. Баллы заморожены.</td><td>Все</td></tr>
+          <tr><td>после 5 июля</td><td>Финальный розыгрыш, объявление победителей</td><td>Победители</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="btn-row" style="margin-top: var(--space-5);">
+      <a class="btn" href="index.html">← К выбору режима</a>
+      <a class="btn" href="games.html">Структура контента →</a>
+      <a class="btn" href="sitemap.html">Все экраны →</a>
+    </div>
+  </main>
+</body>
+</html>

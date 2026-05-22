@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Карта СоздАнии</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <style>
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+      align-items: center;
+      margin-bottom: var(--space-6);
+    }
+    @media (max-width: 700px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero__img { order: -1; }
+    }
+    .hero__img-placeholder {
+      background: var(--c-surface-alt);
+      border: 1px dashed var(--c-border-strong);
+      border-radius: var(--r-lg);
+      min-height: 240px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--c-text-muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body data-mode="user">
+  <main class="app-main">
+
+    <div class="hero">
+      <div class="hero__text">
+        <h1>СоздАния</h1>
+        <p>
+          Игровая онлайн-страна для детей сотрудников МТС. Четыре района с заданиями,
+          конкурс и розыгрыш призов в конце.
+        </p>
+        <p class="muted">5 июня · 1-я неделя из 5 · Твои баллы: 40</p>
+      </div>
+      <div class="hero__img">
+        <div class="hero__img-placeholder">Иллюстрация платформы</div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Доступно сейчас</h2>
+    <div class="grid grid--3">
+      <a class="tile" href="game-tehnodrom.html">
+        <div class="tile__head"><span class="tile__name">Робот «Доставщик»</span><span class="badge badge--done">Технодром</span></div>
+        <div class="tile__desc">Базовый уровень — развези посылки по адресам</div>
+      </a>
+      <a class="tile" href="game-umnoteka.html">
+        <div class="tile__head"><span class="tile__name">Квиз «Технологии и будущее»</span><span class="badge badge--done">Умнотека</span></div>
+        <div class="tile__desc">Пачка 1</div>
+      </a>
+      <a class="tile" href="game-umnoteka.html">
+        <div class="tile__head"><span class="tile__name">Квиз «Мир вокруг»</span><span class="badge">Умнотека</span></div>
+        <div class="tile__desc">Пачка 2</div>
+      </a>
+    </div>
+
+    <h2 class="section-title">Районы</h2>
+    <div class="mock-map">
+      <a class="mock-map__district" href="district-pridumkino.html">
+        <h4><span class="district-dot district-dot--pridumkino"></span>Придумкино</h4>
+        <div class="progress-line">0 / 3 раскраски</div>
+        <div class="progress-bar"><div class="progress-bar__fill" style="width:0%"></div></div>
+        <p class="muted mt-4">Творчество и граффити.</p>
+      </a>
+      <a class="mock-map__district" href="district-tehnodrom.html">
+        <h4><span class="district-dot district-dot--tehnodrom"></span>Технодром</h4>
+        <div class="progress-line">0 / 1 робота</div>
+        <div class="progress-bar"><div class="progress-bar__fill" style="width:0%"></div></div>
+        <p class="muted mt-4">Открыт: Доставщик.</p>
+      </a>
+      <a class="mock-map__district" href="district-umnoteka.html">
+        <h4><span class="district-dot district-dot--umnoteka"></span>Умнотека</h4>
+        <div class="progress-line">0 / 2 пачек квизов</div>
+        <div class="progress-bar"><div class="progress-bar__fill" style="width:0%"></div></div>
+        <p class="muted mt-4">Открыты: «Технологии и будущее», «Мир вокруг».</p>
+      </a>
+      <a class="mock-map__district" href="district-boltalka.html">
+        <h4><span class="district-dot district-dot--boltalka"></span>Болталка</h4>
+        <div class="progress-line">0 / 2 заданий</div>
+        <div class="progress-bar"><div class="progress-bar__fill" style="width:0%"></div></div>
+        <p class="muted mt-4">Общение и ситуации.</p>
+      </a>
+    </div>
+
+    <h2 class="section-title">Совместные задания</h2>
+    <div class="grid grid--2">
+      <div class="card">
+        <h3>Квиз «Какой ты мем?»</h3>
+        <p class="muted">
+          Ребёнок и родитель проходят независимо — система сравнивает ответы и выдаёт мем-дуэт.
+        </p>
+        <div class="btn-row">
+          <a class="btn" href="parent-test.html">Пройти квиз</a>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Карточки вместе</h3>
+        <p class="muted">
+          35 карточек на 35 дней: берёте одну в день и обсуждаете вживую. Открыто с 1 июня.
+        </p>
+        <div class="btn-row">
+          <a class="btn" href="parent-advent.html">Открыть карточки</a>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="section-title">Для родителей</h2>
+    <div class="card" style="margin-bottom:0">
+      <div class="flex flex--between flex--wrap" style="gap:16px; align-items:center;">
+        <div>
+          <h3 class="mb-0">Ваш уголок в СоздАнии</h3>
+          <p class="muted mb-0" style="margin-top:6px; font-size:14px;">
+            Адвент-карточки · Статьи · Сессии с психологом
+          </p>
+        </div>
+        <a class="btn btn--primary" href="parent-hub.html">Открыть →</a>
+      </div>
+    </div>
+
+  </main>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>
