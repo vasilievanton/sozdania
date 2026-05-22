@@ -3,40 +3,264 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Игра — Болталка</title>
+  <title>Сопоставь — Болталка</title>
   <link rel="stylesheet" href="../css/main.css">
+  <style>
+    .match-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+      margin-bottom: var(--space-5);
+    }
+    @media (max-width: 560px) {
+      .match-grid { grid-template-columns: 1fr; }
+    }
+
+    .match-col__label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--c-text-muted);
+      margin-bottom: var(--space-3);
+    }
+
+    .match-item {
+      padding: 14px 16px;
+      border: 2px solid var(--c-border);
+      border-radius: var(--r-md);
+      background: var(--c-surface);
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1.45;
+      margin-bottom: 10px;
+      transition: border-color .15s, background .15s, opacity .15s;
+      user-select: none;
+    }
+    .match-item:hover:not(.is-matched):not(.is-wrong) {
+      border-color: var(--c-primary);
+      background: #f5f8ff;
+    }
+    .match-item.is-selected {
+      border-color: var(--c-primary);
+      background: #e8f0ff;
+      font-weight: 600;
+    }
+    .match-item.is-matched {
+      border-color: var(--c-success);
+      background: #f0faf2;
+      cursor: default;
+      opacity: .8;
+    }
+    .match-item.is-wrong {
+      border-color: #e53e3e;
+      background: #fff5f5;
+      animation: shake .3s ease;
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-6px); }
+      75%      { transform: translateX(6px); }
+    }
+
+    .match-score {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+      font-size: 14px;
+      color: var(--c-text-muted);
+    }
+    .match-score__pts {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--c-primary);
+    }
+
+    .result-screen {
+      text-align: center;
+      padding: var(--space-5) 0;
+    }
+    .result-screen__icon { font-size: 52px; margin-bottom: var(--space-3); }
+    .result-screen__pts {
+      display: inline-block;
+      background: rgba(45,122,62,.10);
+      color: var(--c-success);
+      border-radius: 4px;
+      padding: 4px 16px;
+      font-size: 16px;
+      font-weight: 700;
+      margin: var(--space-3) 0 var(--space-4);
+    }
+  </style>
 </head>
 <body data-mode="user">
   <main class="app-main">
     <div class="breadcrumb"><a href="district-boltalka.html">← В Болталку</a></div>
-    <h1>Сопоставь — контент 2</h1>
-    <p class="muted">Группа 6–9 · Ситуация 2 из 6 · +40 баллов</p>
+    <h1>Сопоставь</h1>
+    <p class="muted">Соедини ситуацию слева с подходящей реакцией справа. Нажми на одну, потом на другую.</p>
 
-    <div class="notice notice--warn">
-      Один правильный ответ. Для старших возрастов вместо картинки — аудиофайл.
-    </div>
+    <div id="game-screen">
+      <div class="match-score">
+        <span>Пар найдено:</span>
+        <span class="match-score__pts"><span id="score">0</span> / <span id="total"></span></span>
+      </div>
 
-    <div class="card">
-      <h3>Ситуация</h3>
-      <p>Твой друг расстроился, у него не получилось задание. Что подходит к этой ситуации?</p>
-
-      <div class="grid grid--2">
-        <a class="tile" href="game-result.html">
-          <div class="tile__name">Сказать: «Бывает, давай вместе подумаем»</div>
-        </a>
-        <a class="tile" href="#" data-stub="Вариант 2">
-          <div class="tile__name">Сказать: «Это ерунда, не расстраивайся»</div>
-        </a>
-        <a class="tile" href="#" data-stub="Вариант 3">
-          <div class="tile__name">Сказать: «Сам виноват»</div>
-        </a>
-        <a class="tile" href="#" data-stub="Вариант 4">
-          <div class="tile__name">Промолчать и уйти</div>
-        </a>
+      <div class="match-grid">
+        <div>
+          <div class="match-col__label">Ситуация</div>
+          <div id="col-left"></div>
+        </div>
+        <div>
+          <div class="match-col__label">Реакция</div>
+          <div id="col-right"></div>
+        </div>
       </div>
     </div>
+
+    <div id="result-screen" style="display:none;">
+      <div class="card result-screen">
+        <div class="result-screen__icon">🎉</div>
+        <h2>Все пары найдены!</h2>
+        <div class="result-screen__pts" id="result-pts"></div>
+        <div class="btn-row" style="justify-content:center;">
+          <a class="btn btn--primary" href="district-boltalka.html">В Болталку</a>
+          <button class="btn btn--ghost" id="btn-retry">Ещё раз</button>
+        </div>
+      </div>
+    </div>
+
   </main>
   <script src="../js/tour.js"></script>
   <script src="../js/app.js"></script>
+  <script>
+    var PAIRS = [
+      {
+        left:  'Друг расстроен и молчит',
+        right: 'Подойди и спроси: «Хочешь поговорить?»'
+      },
+      {
+        left:  'Кто-то злится и кричит',
+        right: 'Не отвечай на крик — дай время успокоиться'
+      },
+      {
+        left:  'Тебя похвалили за работу',
+        right: 'Скажи спасибо и поделись, что помогло'
+      },
+      {
+        left:  'Друг говорит, а ты не согласен',
+        right: 'Выслушай до конца, потом объясни своё мнение'
+      },
+      {
+        left:  'Кто-то плачет рядом',
+        right: 'Просто будь рядом, не торопи с объяснениями'
+      },
+    ];
+
+    var selectedLeft  = null;
+    var selectedRight = null;
+    var matched = 0;
+    var attempts = 0;
+
+    function shuffle(arr) {
+      var a = arr.slice();
+      for (var i = a.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = a[i]; a[i] = a[j]; a[j] = t;
+      }
+      return a;
+    }
+
+    function init() {
+      matched = 0; attempts = 0; selectedLeft = null; selectedRight = null;
+      document.getElementById('score').textContent = 0;
+      document.getElementById('total').textContent = PAIRS.length;
+      document.getElementById('game-screen').style.display = '';
+      document.getElementById('result-screen').style.display = 'none';
+
+      var leftCol  = document.getElementById('col-left');
+      var rightCol = document.getElementById('col-right');
+      leftCol.innerHTML = ''; rightCol.innerHTML = '';
+
+      var rightShuffled = shuffle(PAIRS.map(function(p) { return p.right; }));
+
+      PAIRS.forEach(function(pair, i) {
+        var lEl = document.createElement('div');
+        lEl.className = 'match-item';
+        lEl.textContent = pair.left;
+        lEl.dataset.idx = i;
+        lEl.addEventListener('click', function() { clickLeft(lEl, i); });
+        leftCol.appendChild(lEl);
+      });
+
+      rightShuffled.forEach(function(text) {
+        var pairIdx = PAIRS.findIndex(function(p) { return p.right === text; });
+        var rEl = document.createElement('div');
+        rEl.className = 'match-item';
+        rEl.textContent = text;
+        rEl.dataset.idx = pairIdx;
+        rEl.addEventListener('click', function() { clickRight(rEl, pairIdx); });
+        rightCol.appendChild(rEl);
+      });
+    }
+
+    function clickLeft(el, idx) {
+      if (el.classList.contains('is-matched')) return;
+      document.querySelectorAll('#col-left .match-item').forEach(function(e) {
+        if (!e.classList.contains('is-matched')) e.classList.remove('is-selected');
+      });
+      el.classList.add('is-selected');
+      selectedLeft = { el: el, idx: idx };
+      if (selectedRight) tryMatch();
+    }
+
+    function clickRight(el, idx) {
+      if (el.classList.contains('is-matched')) return;
+      document.querySelectorAll('#col-right .match-item').forEach(function(e) {
+        if (!e.classList.contains('is-matched')) e.classList.remove('is-selected');
+      });
+      el.classList.add('is-selected');
+      selectedRight = { el: el, idx: idx };
+      if (selectedLeft) tryMatch();
+    }
+
+    function tryMatch() {
+      attempts++;
+      var l = selectedLeft, r = selectedRight;
+      selectedLeft = null; selectedRight = null;
+
+      if (l.idx === r.idx) {
+        l.el.classList.remove('is-selected');
+        r.el.classList.remove('is-selected');
+        l.el.classList.add('is-matched');
+        r.el.classList.add('is-matched');
+        matched++;
+        document.getElementById('score').textContent = matched;
+        if (matched === PAIRS.length) {
+          setTimeout(showResult, 400);
+        }
+      } else {
+        l.el.classList.remove('is-selected');
+        r.el.classList.remove('is-selected');
+        l.el.classList.add('is-wrong');
+        r.el.classList.add('is-wrong');
+        setTimeout(function() {
+          l.el.classList.remove('is-wrong');
+          r.el.classList.remove('is-wrong');
+        }, 500);
+      }
+    }
+
+    function showResult() {
+      var pts = matched === attempts ? 40 : matched >= 4 ? 25 : 15;
+      document.getElementById('result-pts').textContent = '+' + pts + ' баллов';
+      document.getElementById('game-screen').style.display = 'none';
+      document.getElementById('result-screen').style.display = '';
+    }
+
+    document.getElementById('btn-retry').addEventListener('click', init);
+
+    init();
+  </script>
 </body>
 </html>
