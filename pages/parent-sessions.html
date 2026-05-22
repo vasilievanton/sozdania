@@ -156,23 +156,6 @@
     .confirm-panel__text { font-weight: 600; font-size: 16px; }
     .confirm-panel__sub { font-size: 13px; color: var(--c-text-muted); margin-top: 2px; }
 
-    /* Broadcast cards */
-    .broadcast-card {
-      background: var(--c-surface);
-      border: 1px solid var(--c-border);
-      border-radius: var(--r-md);
-      padding: 16px 20px;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .broadcast-card--past { opacity: 0.6; }
-    .broadcast-info { flex: 1; min-width: 200px; }
-    .broadcast-title { font-weight: 600; margin-bottom: 4px; }
-    .broadcast-meta { font-size: 13px; color: var(--c-text-muted); }
   </style>
 </head>
 <body data-mode="user">
@@ -186,7 +169,6 @@
 
     <div class="session-tabs">
       <button class="session-tab active" data-tab="individual">Индивидуальные</button>
-      <button class="session-tab" data-tab="group">Групповые эфиры</button>
       <button class="session-tab" data-tab="my">Мои записи</button>
     </div>
 
@@ -213,43 +195,6 @@
           <div class="confirm-panel__sub">Напоминание придёт на корпоративную почту за день и за час</div>
         </div>
         <button class="btn btn--primary" id="confirm-btn">Записаться</button>
-      </div>
-    </div>
-
-    <!-- Групповые эфиры -->
-    <div class="session-pane" id="tab-group">
-      <div class="notice notice--info" style="margin-bottom:20px;">
-        4 онлайн-эфира за всё лето. Запишитесь — придёт напоминание на почту.
-        Ссылка на МТС Линк появится за 15 минут до начала.
-      </div>
-
-      <div class="broadcast-card broadcast-card--past">
-        <div class="broadcast-info">
-          <div class="broadcast-title">Старт лета: как говорить с ребёнком о новом опыте</div>
-          <div class="broadcast-meta">Пт, 7 июня · 19:00 · 90 мин · Елена Карпова, психолог</div>
-        </div>
-        <span class="badge badge--done">Прошёл</span>
-      </div>
-      <div class="broadcast-card">
-        <div class="broadcast-info">
-          <div class="broadcast-title">Тревога и дети: что делать родителю</div>
-          <div class="broadcast-meta">Пт, 21 июня · 19:00 · 90 мин</div>
-        </div>
-        <button class="btn btn--primary" onclick="registerGroup(this, 'Пт, 21 июня · 19:00', 'Тревога и дети: что делать родителю')">Записаться</button>
-      </div>
-      <div class="broadcast-card">
-        <div class="broadcast-info">
-          <div class="broadcast-title">Совместные занятия: инструкция по применению</div>
-          <div class="broadcast-meta">Пт, 28 июня · 19:00 · 90 мин</div>
-        </div>
-        <button class="btn" onclick="registerGroup(this, 'Пт, 28 июня · 19:00', 'Совместные занятия: инструкция по применению')">Записаться</button>
-      </div>
-      <div class="broadcast-card">
-        <div class="broadcast-info">
-          <div class="broadcast-title">Итоги лета: что взять с собой в сентябрь</div>
-          <div class="broadcast-meta">Пт, 4 июля · 19:00 · 90 мин</div>
-        </div>
-        <button class="btn" onclick="registerGroup(this, 'Пт, 4 июля · 19:00', 'Итоги лета: что взять с собой в сентябрь')">Записаться</button>
       </div>
     </div>
 
@@ -384,22 +329,6 @@
       alert('Готово! Запись подтверждена.\nНапоминание придёт на корпоративную почту.');
     });
 
-    function registerGroup(btn, datetime, title) {
-      btn.textContent = 'Записан ✓';
-      btn.disabled = true;
-      btn.classList.remove('btn--primary');
-      btn.classList.add('btn--ghost');
-
-      var tbody = document.getElementById('my-bookings');
-      var emptyRow = document.getElementById('empty-bookings-row');
-      if (emptyRow) emptyRow.remove();
-      var tr = document.createElement('tr');
-      tr.innerHTML =
-        '<td>' + datetime + ' · групповой эфир</td>' +
-        '<td><a href="#" data-stub="МТС Линк">МТС Линк</a> (откроется за 15 мин)</td>' +
-        '<td><button class="btn btn--sm btn--ghost" onclick="this.closest(\'tr\').remove()">Отменить</button></td>';
-      tbody.appendChild(tr);
-    }
   </script>
 </body>
 </html>
