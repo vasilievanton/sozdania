@@ -315,10 +315,10 @@
         ptsEl.innerHTML = '<p class="muted" style="font-size:13px;margin-bottom:var(--space-3);">Открыто не в свой день — баллы не начислены</p>';
       }
 
-      // Flip selected, unflip others that haven't been opened yet
+      // Flip selected, unflip all others
       document.querySelectorAll('.advent-cell').forEach(function(el, idx) {
         el.classList.toggle('is-active', idx === i);
-        if (idx !== i && !opened[idx]) el.classList.remove('is-flipped');
+        if (idx !== i) el.classList.remove('is-flipped');
       });
       document.querySelectorAll('.advent-cell')[i].classList.add('is-flipped');
 
