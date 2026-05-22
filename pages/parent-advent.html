@@ -76,7 +76,7 @@
     .viewer__text {
       color: var(--c-text-muted);
       line-height: 1.6;
-      margin-bottom: var(--space-4);
+      margin-bottom: var(--space-3);
     }
     .viewer__pts {
       display: inline-block;
@@ -86,7 +86,6 @@
       padding: 2px 10px;
       font-size: 13px;
       font-weight: 700;
-      margin-bottom: var(--space-4);
     }
 
     /* ── Grid ── */
@@ -137,16 +136,18 @@
       border: 2px solid var(--c-border);
       background: var(--c-surface);
     }
-    .advent-cell.is-active .advent-cell__front { border-color: var(--c-primary); background: #e8f0ff; }
-    .advent-cell.is-done  .advent-cell__front { border-color: #c0cfe8; background: #eef3fb; }
+    .advent-cell.is-active .advent-cell__front  { border-color: var(--c-primary); background: #e8f0ff; }
+    .advent-cell.is-today .advent-cell__front   { border-color: var(--c-primary); background: #e8f0ff; box-shadow: 0 0 0 3px rgba(66,133,244,.2); }
 
+    /* Back: on-time = gold, late = muted */
     .advent-cell__back {
       transform: rotateY(180deg);
       background: var(--c-primary);
       border-color: var(--c-primary);
       color: #fff;
     }
-    .advent-cell.is-done .advent-cell__back { background: #3a60a8; border-color: #3a60a8; }
+    .advent-cell.is-on-time .advent-cell__back { background: #c07800; border-color: #c07800; }
+    .advent-cell.is-late    .advent-cell__back { background: #7a90b0; border-color: #7a90b0; }
 
     .advent-cell__day {
       font-weight: 700;
@@ -154,7 +155,7 @@
       line-height: 1;
       color: var(--c-text);
     }
-    .advent-cell.is-done  .advent-cell__day { color: #3a60a8; }
+    .advent-cell.is-today .advent-cell__day  { color: var(--c-primary); }
     .advent-cell.is-active .advent-cell__day { color: var(--c-primary); }
     .advent-cell__month {
       font-size: 10px;
@@ -170,10 +171,10 @@
       line-height: 1.3;
       opacity: .95;
     }
-    .advent-cell__done-mark {
-      font-size: 11px;
+    .advent-cell__back-pts {
+      font-size: 10px;
       margin-top: 4px;
-      color: #3a60a8;
+      opacity: .9;
       font-weight: 700;
     }
   </style>
@@ -185,7 +186,7 @@
     <!-- Подводка -->
     <h1>Карточки вместе</h1>
     <p class="muted">
-      35 карточек на 35 дней совместного проекта. Каждая — повод сделать что-то маленькое,
+      30 карточек на 30 дней июня. Каждая — повод сделать что-то маленькое,
       но важное вместе с ребёнком. Не онлайн-задание, а живое общение.
     </p>
 
@@ -194,22 +195,22 @@
         <div class="rules-item__icon">📅</div>
         <div class="rules-item__text">
           <strong>Как устроено</strong>
-          Открывайте любую карточку из сетки ниже. Читайте совет и мини-действие.
+          Открывайте любую карточку из сетки. Читайте и делайте — прямо сегодня.
         </div>
       </div>
       <div class="rules-item">
         <div class="rules-item__icon">🤝</div>
         <div class="rules-item__text">
           <strong>Делайте вместе</strong>
-          Карточка адресована вам и ребёнку одновременно. 3–10 минут — больше не нужно.
+          Карточка адресована вам и ребёнку. 3–10 минут — больше не нужно.
         </div>
       </div>
       <div class="rules-item">
         <div class="rules-item__icon">⭐</div>
         <div class="rules-item__text">
           <strong>Баллы</strong>
-          За каждую выполненную карточку — <strong>+5 баллов</strong> в профиль ребёнка.
-          За все 35 — бонус <strong>+50 баллов</strong>.
+          За открытие карточки в её день — <strong>+5 баллов</strong>.
+          Пропущенные карточки тоже можно читать, но без баллов.
         </div>
       </div>
     </div>
@@ -228,11 +229,7 @@
         Сегодня обратите внимание не на то, что ребёнок сделал, а на то, как старался.
         Скажите об этом вслух — коротко и конкретно.
       </div>
-      <div class="viewer__pts">+5 баллов за выполнение</div>
-      <div class="btn-row">
-        <button class="btn btn--primary" id="btn-done" onclick="markDone()">Сделано ✓</button>
-        <button class="btn btn--ghost" id="btn-save" onclick="saveCard()">Сохранить</button>
-      </div>
+      <div id="viewer-pts"></div>
     </div>
 
     <!-- Сетка -->
@@ -279,55 +276,60 @@
       { icon:'🏆', title:'Отметьте успех',        text:'Отметьте один успех ребёнка за этот месяц — не оценку, а что-то настоящее.' },
     ];
 
-    var done = {};
+    // для демо: 0 = 1 июня; в проде вычислять по реальной дате
+    var now = new Date();
+    var TODAY_IDX = (now.getMonth() === 5) ? now.getDate() - 1 : 0;
+
+    // opened[i] = 'on-time' | 'late'  (undefined = not yet opened)
+    var opened = {};
     var activeIndex = 0;
 
     function showCard(i) {
       activeIndex = i;
       var c = cards[i];
+
+      // First open: award points if it's today's card
+      if (!opened[i]) {
+        opened[i] = (i === TODAY_IDX) ? 'on-time' : 'late';
+        var cell = document.querySelectorAll('.advent-cell')[i];
+        cell.classList.remove('is-today');
+        cell.classList.add(opened[i] === 'on-time' ? 'is-on-time' : 'is-late');
+        // Re-render back face to add/skip ⭐ pts line
+        var back = cell.querySelector('.advent-cell__back');
+        back.innerHTML =
+          '<div class="advent-cell__back-icon">' + c.icon + '</div>' +
+          '<div class="advent-cell__back-title">' + c.title + '</div>' +
+          (opened[i] === 'on-time' ? '<div class="advent-cell__back-pts">⭐ +5</div>' : '');
+      }
+
       document.getElementById('viewer-day').textContent = i + 1;
       document.getElementById('viewer-label').textContent = (i + 1) + ' июня';
       document.getElementById('viewer-icon').textContent = c.icon;
       document.getElementById('viewer-title').textContent = c.title;
       document.getElementById('viewer-text').textContent = c.text;
 
-      var btnDone = document.getElementById('btn-done');
-      if (done[i]) {
-        btnDone.textContent = 'Выполнено ✓';
-        btnDone.disabled = true;
+      var ptsEl = document.getElementById('viewer-pts');
+      if (opened[i] === 'on-time') {
+        ptsEl.innerHTML = '<div class="viewer__pts">⭐ +5 баллов — открыто вовремя</div>';
       } else {
-        btnDone.textContent = 'Сделано ✓';
-        btnDone.disabled = false;
+        ptsEl.innerHTML = '<p class="muted" style="font-size:13px;margin-bottom:var(--space-3);">Открыто не в свой день — баллы не начислены</p>';
       }
 
-      // flip selected, unflip others (unless done)
+      // Flip selected, unflip others that haven't been opened yet
       document.querySelectorAll('.advent-cell').forEach(function(el, idx) {
         el.classList.toggle('is-active', idx === i);
-        if (idx !== i && !done[idx]) el.classList.remove('is-flipped');
+        if (idx !== i && !opened[idx]) el.classList.remove('is-flipped');
       });
-      var cell = document.querySelectorAll('.advent-cell')[i];
-      cell.classList.add('is-flipped');
+      document.querySelectorAll('.advent-cell')[i].classList.add('is-flipped');
 
       document.getElementById('viewer').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    function markDone() {
-      done[activeIndex] = true;
-      var cell = document.querySelectorAll('.advent-cell')[activeIndex];
-      cell.classList.add('is-done');
-      var btnDone = document.getElementById('btn-done');
-      btnDone.textContent = 'Выполнено ✓';
-      btnDone.disabled = true;
-    }
-
-    function saveCard() {
-      alert('Прототип: карточка сохранена в избранное.');
-    }
-
     var grid = document.getElementById('advent-grid');
     cards.forEach(function(card, i) {
+      var isToday = (i === TODAY_IDX);
       var cell = document.createElement('div');
-      cell.className = 'advent-cell' + (i === 0 ? ' is-active is-flipped' : '');
+      cell.className = 'advent-cell' + (isToday ? ' is-today' : '') + (i === 0 ? ' is-active is-flipped' : '');
       cell.innerHTML =
         '<div class="advent-cell__inner">' +
           '<div class="advent-cell__front">' +
@@ -342,6 +344,9 @@
       cell.addEventListener('click', function() { showCard(i); });
       grid.appendChild(cell);
     });
+
+    // Open first card on load
+    showCard(0);
   </script>
 </body>
 </html>
