@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Психологическая поддержка</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <style>
+    /* ── Sessions booking ── */
+    .booking-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-5);
+      align-items: start;
+    }
+    @media (max-width: 680px) { .booking-layout { grid-template-columns: 1fr; } }
+
+    .booking-section-label {
+      font-size: 12px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: .06em;
+      color: var(--c-text-muted); margin-bottom: var(--space-3);
+    }
+    .date-strip { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+    .date-btn {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 10px 6px; border: 2px solid var(--c-border); border-radius: var(--r-md);
+      background: var(--c-surface); cursor: pointer; font-family: inherit;
+      line-height: 1.2; transition: border-color .15s, background .15s; gap: 2px;
+    }
+    .date-btn:hover:not(:disabled) { border-color: var(--c-primary); }
+    .date-btn.active { border-color: var(--c-primary); background: #e8f0ff; }
+    .date-btn:disabled { opacity: 0.38; cursor: not-allowed; }
+    .date-btn__weekday { font-size: 11px; color: var(--c-text-muted); text-transform: uppercase; letter-spacing: .04em; }
+    .date-btn__day { font-size: 20px; font-weight: 700; color: var(--c-text); }
+    .date-btn.active .date-btn__day { color: var(--c-primary); }
+    .date-btn__month { font-size: 11px; color: var(--c-text-muted); }
+    .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .slot-btn {
+      padding: 10px 8px; border: 2px solid var(--c-border); border-radius: var(--r-md);
+      background: var(--c-surface); cursor: pointer; font-family: inherit;
+      font-size: 15px; font-weight: 600; color: var(--c-text);
+      text-align: center; transition: border-color .15s, background .15s;
+    }
+    .slot-btn:hover:not(:disabled) { border-color: var(--c-primary); }
+    .slot-btn.active { border-color: var(--c-primary); background: #e8f0ff; color: var(--c-primary); }
+    .slot-btn:disabled { opacity: 0.35; cursor: not-allowed; text-decoration: line-through; }
+    .slots-empty { color: var(--c-text-muted); font-size: 14px; padding: var(--space-3) 0; }
+    .confirm-panel {
+      margin-top: var(--space-5); padding: var(--space-4) var(--space-5);
+      background: #e8f0ff; border: 2px solid var(--c-primary); border-radius: var(--r-md);
+      display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap;
+    }
+    .confirm-panel__text { font-weight: 600; font-size: 16px; }
+    .confirm-panel__sub { font-size: 13px; color: var(--c-text-muted); margin-top: 2px; }
+
+    /* ── Quiz ── */
+    .quiz-progress { height: 6px; background: var(--c-border); border-radius: 999px; overflow: hidden; margin-bottom: 24px; }
+    .quiz-progress__fill { height: 100%; background: var(--c-primary); transition: width .3s ease; }
+    .quiz-option {
+      display: block; padding: 14px 16px; border: 1px solid var(--c-border);
+      border-radius: 8px; margin-bottom: 10px; cursor: pointer; font-size: 14px;
+      background: var(--c-surface); transition: border-color .15s, background .15s;
+    }
+    .quiz-option:hover { border-color: var(--c-primary); background: #f0f4ff; }
+    .quiz-option.selected { border-color: var(--c-primary); background: #e8f0ff; font-weight: 600; }
+    .result-card { text-align: center; padding: 32px 24px; }
+    .result-card__icon { font-size: 56px; margin-bottom: 12px; }
+    .result-card__type { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .result-card__desc { font-size: 15px; color: var(--c-text-muted); line-height: 1.6; margin-bottom: 20px; }
+    .result-card__tip {
+      background: #e8f0ff; border: 1px solid #b9ccf0; border-radius: 8px;
+      padding: 14px 16px; font-size: 13px; color: #1e3a6f; margin-bottom: 20px; text-align: left;
+    }
+
+    /* ── Q&A broadcasts ── */
+    .broadcast-card {
+      background: var(--c-surface); border: 1px solid var(--c-border);
+      border-radius: var(--r-md); padding: 16px 20px; margin-bottom: 12px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+    }
+    .broadcast-card--past { opacity: 0.55; }
+    .broadcast-info { flex: 1; min-width: 200px; }
+    .broadcast-title { font-weight: 600; margin-bottom: 4px; }
+    .broadcast-meta { font-size: 13px; color: var(--c-text-muted); }
+
+    /* Section dividers */
+    .psych-divider { margin: var(--space-7) 0; border: none; border-top: 1px solid var(--c-border); }
+  </style>
+</head>
+<body data-mode="user">
+  <main class="app-main">
+    <div class="breadcrumb"><a href="parent-hub.html">← Для родителей</a></div>
+    <h1>Психологическая поддержка</h1>
+    <p class="muted">Индивидуальные сессии, тест на стиль воспитания и групповые Q&amp;A эфиры — всё в одном месте.</p>
+
+    <!-- ── 1. Индивидуальные сессии ── -->
+    <h2 class="section-title" id="sessions">Индивидуальные сессии</h2>
+    <p class="muted" style="margin-bottom: var(--space-5);">
+      50 минут один на один с психологом через МТС Линк. Выберите удобный день и время.
+    </p>
+
+    <div class="booking-layout">
+      <div>
+        <div class="booking-section-label">Выберите день</div>
+        <div class="date-strip" id="date-strip"></div>
+      </div>
+      <div>
+        <div class="booking-section-label" id="slots-label">Выберите время</div>
+        <div id="slots-container"><p class="slots-empty">← Сначала выберите день</p></div>
+      </div>
+    </div>
+
+    <div class="confirm-panel" id="confirm-panel" style="display:none;">
+      <div>
+        <div class="confirm-panel__text" id="confirm-text"></div>
+        <div class="confirm-panel__sub">Напоминание придёт на корпоративную почту за день и за час</div>
+      </div>
+      <button class="btn btn--primary" id="confirm-btn">Записаться</button>
+    </div>
+
+    <h3 class="section-title" style="margin-top: var(--space-6);">Мои записи</h3>
+    <div class="card" style="padding:0; overflow:hidden;">
+      <table class="tbl tbl--compact">
+        <thead><tr><th>Дата и время</th><th>Ссылка</th><th></th></tr></thead>
+        <tbody id="my-bookings">
+          <tr id="empty-bookings-row">
+            <td colspan="3" style="color:var(--c-text-muted); text-align:center; padding: 20px 0;">Записей пока нет</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="muted" style="font-size:13px;">Напоминание придёт на корпоративную почту за день и за час.</p>
+
+    <hr class="psych-divider">
+
+    <!-- ── 2. Тест ── -->
+    <h2 class="section-title" id="test">Тест «Какой ты родитель?»</h2>
+    <p class="muted" style="margin-bottom: var(--space-4);">6 вопросов · ~3 минуты · Результат — один из четырёх стилей воспитания</p>
+
+    <div id="quiz-section">
+      <div class="quiz-progress">
+        <div class="quiz-progress__fill" id="progress-fill" style="width:0%"></div>
+      </div>
+      <div class="card" id="question-card">
+        <p id="q-num" class="muted" style="font-size:13px; margin-bottom:8px;"></p>
+        <h3 id="q-text"></h3>
+        <div id="q-options"></div>
+        <div class="btn-row">
+          <button class="btn btn--primary" id="btn-next" disabled>Далее →</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card result-card" id="result-section" style="display:none">
+      <div class="result-card__icon" id="r-icon"></div>
+      <div class="result-card__type" id="r-type"></div>
+      <div class="result-card__desc" id="r-desc"></div>
+      <div class="result-card__tip" id="r-tip"></div>
+      <div class="btn-row" style="justify-content:center">
+        <button class="btn btn--ghost" id="btn-retake">Пройти ещё раз</button>
+      </div>
+    </div>
+
+    <hr class="psych-divider">
+
+    <!-- ── 3. Q&A сессии ── -->
+    <h2 class="section-title" id="qna">Q&amp;A сессии</h2>
+    <p class="muted" style="margin-bottom: var(--space-4);">
+      Групповые онлайн-эфиры с психологом — 4 встречи за лето. 90 минут: тема + вопросы из чата.
+      Ссылка на МТС Линк приходит на почту за 15 минут до начала.
+    </p>
+    <div class="notice notice--info" style="margin-bottom: var(--space-4);">
+      Запишитесь заранее — придёт напоминание на корпоративную почту.
+    </div>
+
+    <div class="broadcast-card broadcast-card--past">
+      <div class="broadcast-info">
+        <div class="broadcast-title">Старт лета: как говорить с ребёнком о новом опыте</div>
+        <div class="broadcast-meta">Пт, 7 июня · 19:00 · 90 мин · Елена Карпова, психолог</div>
+      </div>
+      <span class="badge badge--done">Прошёл</span>
+    </div>
+    <div class="broadcast-card">
+      <div class="broadcast-info">
+        <div class="broadcast-title">Тревога и дети: что делать родителю</div>
+        <div class="broadcast-meta">Пт, 21 июня · 19:00 · 90 мин</div>
+      </div>
+      <button class="btn btn--primary" onclick="registerQna(this)">Записаться</button>
+    </div>
+    <div class="broadcast-card">
+      <div class="broadcast-info">
+        <div class="broadcast-title">Совместные занятия: инструкция по применению</div>
+        <div class="broadcast-meta">Пт, 28 июня · 19:00 · 90 мин</div>
+      </div>
+      <button class="btn" onclick="registerQna(this)">Записаться</button>
+    </div>
+    <div class="broadcast-card">
+      <div class="broadcast-info">
+        <div class="broadcast-title">Итоги лета: что взять с собой в сентябрь</div>
+        <div class="broadcast-meta">Пт, 4 июля · 19:00 · 90 мин</div>
+      </div>
+      <button class="btn" onclick="registerQna(this)">Записаться</button>
+    </div>
+
+  </main>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    /* ── Sessions ── */
+    var DAYS = [
+      { weekday: 'Пн', day: 16, month: 'июня', slots: ['10:00', '11:00', '14:00', '19:00', '20:00'], taken: ['11:00'] },
+      { weekday: 'Вт', day: 17, month: 'июня', slots: ['10:00', '12:00', '15:00', '19:00'],           taken: ['10:00', '15:00'] },
+      { weekday: 'Ср', day: 18, month: 'июня', slots: ['11:00', '14:00', '16:00', '20:00'],           taken: [] },
+      { weekday: 'Чт', day: 19, month: 'июня', slots: ['10:00', '13:00', '19:00'],                    taken: ['13:00'] },
+      { weekday: 'Пт', day: 20, month: 'июня', slots: ['11:00', '14:00', '15:00', '18:00'],           taken: ['11:00', '14:00', '15:00', '18:00'] },
+      { weekday: 'Пн', day: 23, month: 'июня', slots: ['10:00', '11:00', '16:00', '19:00', '20:00'], taken: ['10:00'] },
+      { weekday: 'Вт', day: 24, month: 'июня', slots: ['12:00', '14:00', '19:00', '20:00'],           taken: [] },
+      { weekday: 'Ср', day: 25, month: 'июня', slots: ['10:00', '15:00', '16:00', '19:00'],           taken: ['16:00'] },
+      { weekday: 'Чт', day: 26, month: 'июня', slots: ['11:00', '14:00', '20:00'],                    taken: [] },
+      { weekday: 'Пт', day: 27, month: 'июня', slots: ['10:00', '12:00', '14:00', '19:00'],           taken: ['12:00'] },
+    ];
+
+    var selectedDay = null, selectedSlot = null, booked = {};
+
+    var strip = document.getElementById('date-strip');
+    DAYS.forEach(function(d, i) {
+      var allTaken = d.slots.every(function(s) { return d.taken.indexOf(s) !== -1; });
+      var btn = document.createElement('button');
+      btn.className = 'date-btn';
+      btn.disabled = allTaken;
+      btn.innerHTML =
+        '<span class="date-btn__weekday">' + d.weekday + '</span>' +
+        '<span class="date-btn__day">' + d.day + '</span>' +
+        '<span class="date-btn__month">' + d.month + '</span>';
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.date-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        selectedDay = i; selectedSlot = null;
+        renderSlots(i);
+        document.getElementById('confirm-panel').style.display = 'none';
+      });
+      strip.appendChild(btn);
+    });
+
+    function renderSlots(dayIdx) {
+      var d = DAYS[dayIdx];
+      document.getElementById('slots-label').textContent = d.weekday + ', ' + d.day + ' ' + d.month;
+      var container = document.getElementById('slots-container');
+      container.innerHTML = '';
+      var grid = document.createElement('div');
+      grid.className = 'slots-grid';
+      d.slots.forEach(function(slot) {
+        var taken = d.taken.indexOf(slot) !== -1 || booked[dayIdx + '_' + slot];
+        var btn = document.createElement('button');
+        btn.className = 'slot-btn';
+        btn.textContent = slot;
+        btn.disabled = taken;
+        if (!taken) {
+          btn.addEventListener('click', function() {
+            document.querySelectorAll('.slot-btn').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            selectedSlot = slot;
+            var d2 = DAYS[dayIdx];
+            document.getElementById('confirm-text').textContent = d2.weekday + ', ' + d2.day + ' ' + d2.month + ' · ' + slot + ' · 50 минут';
+            document.getElementById('confirm-panel').style.display = 'flex';
+          });
+        }
+        grid.appendChild(btn);
+      });
+      container.appendChild(grid);
+    }
+
+    document.getElementById('confirm-btn').addEventListener('click', function() {
+      if (selectedDay === null || !selectedSlot) return;
+      var d = DAYS[selectedDay];
+      booked[selectedDay + '_' + selectedSlot] = true;
+      var tbody = document.getElementById('my-bookings');
+      var emptyRow = document.getElementById('empty-bookings-row');
+      if (emptyRow) emptyRow.remove();
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td>' + d.weekday + ', ' + d.day + ' ' + d.month + ' · ' + selectedSlot + '</td>' +
+        '<td><a href="#" data-stub="МТС Линк">МТС Линк</a> (откроется за 15 мин)</td>' +
+        '<td><button class="btn btn--sm btn--ghost" onclick="this.closest(\'tr\').remove()">Отменить</button></td>';
+      tbody.appendChild(tr);
+      document.getElementById('confirm-panel').style.display = 'none';
+      renderSlots(selectedDay);
+      selectedSlot = null;
+      alert('Готово! Запись подтверждена.\nНапоминание придёт на корпоративную почту.');
+    });
+
+    /* ── Quiz ── */
+    var questions = [
+      { text: 'Когда у ребёнка что-то не получается, вы…', options: [
+        { text: 'Сидите рядом, поддерживаете и хвалите за попытку', type: 'A' },
+        { text: 'Объясняете правила и составляете план действий', type: 'B' },
+        { text: 'Сразу помогаете, чтобы не расстраивался', type: 'C' },
+        { text: 'Говорите: «Попробуй ещё раз — интересно, что получится»', type: 'D' }
+      ]},
+      { text: 'Как вы относитесь к домашним заданиям?', options: [
+        { text: 'Делаем вместе, хвалю за старание', type: 'A' },
+        { text: 'Есть чёткий режим: сначала ДЗ, потом остальное', type: 'B' },
+        { text: 'Проверяю всё, чтобы не было ошибок', type: 'C' },
+        { text: 'Пусть сам решит, когда делать — это его ответственность', type: 'D' }
+      ]},
+      { text: 'На площадке ребёнок поспорил с другим ребёнком. Вы:', options: [
+        { text: 'Остаюсь рядом, даю разобраться самим, но готов вмешаться', type: 'A' },
+        { text: 'Объясняю правила общения и как надо себя вести', type: 'B' },
+        { text: 'Сразу вступаюсь — ребёнок должен чувствовать защиту', type: 'C' },
+        { text: 'Наблюдаю со стороны — это полезный опыт', type: 'D' }
+      ]},
+      { text: 'Ребёнок хочет попробовать что-то рискованное (залезть на дерево, кататься на скейте):', options: [
+        { text: 'Поддерживаю и страхую рядом', type: 'A' },
+        { text: 'Объясняю технику безопасности и потом разрешаю', type: 'B' },
+        { text: 'Запрещаю или сильно ограничиваю — опасно', type: 'C' },
+        { text: 'Говорю «давай!» и смотрю — пусть пробует', type: 'D' }
+      ]},
+      { text: 'Вечером ребёнок говорит, что ему скучно:', options: [
+        { text: 'Слушаю, предлагаю побыть рядом или поиграть вместе', type: 'A' },
+        { text: 'Предлагаю список занятий на выбор', type: 'B' },
+        { text: 'Тут же придумываю, чем его занять', type: 'C' },
+        { text: 'Говорю: «Скука — нормально, найди сам», и не вмешиваюсь', type: 'D' }
+      ]},
+      { text: 'Как вы реагируете на плохие оценки?', options: [
+        { text: 'Сначала узнаю, как ребёнок себя чувствует', type: 'A' },
+        { text: 'Разбираюсь в причинах и составляем план, как исправить', type: 'B' },
+        { text: 'Расстраиваюсь и начинаю контролировать учёбу сильнее', type: 'C' },
+        { text: 'Спрашиваю: «Что ты сам думаешь об этом?»', type: 'D' }
+      ]}
+    ];
+
+    var results = {
+      A: { icon:'🤝', type:'Поддерживающий родитель', desc:'Вы — эмоциональная опора ребёнка. Чувствуете настроение, создаёте безопасность и принимаете без условий. Ребёнок рядом с вами открывается и доверяет.', tip:'💡 Иногда полезно немного подтолкнуть к самостоятельности — дайте ребёнку возможность справиться самому, даже если первая попытка окажется неудачной.' },
+      B: { icon:'📐', type:'Структурирующий родитель', desc:'Вы создаёте предсказуемость и порядок. Ребёнку с вами надёжно: есть правила, есть план. Это воспитывает ответственность и самодисциплину.', tip:'💡 Иногда стоит оставлять место для спонтанности — неплановые вечера и «просто потому что» тоже важны для отношений.' },
+      C: { icon:'🛡️', type:'Защищающий родитель', desc:'Вы глубоко вовлечены и всегда рядом. Ребёнок знает, что у него есть надёжный тыл. Ваша забота — это сила.', tip:'💡 Небольшой контролируемый риск — это опыт роста. Попробуйте иногда отступить на шаг и наблюдать, как ребёнок справляется сам.' },
+      D: { icon:'🔭', type:'Исследующий родитель', desc:'Вы верите в самостоятельность ребёнка и даёте много свободы. Он учится принимать решения и нести ответственность.', tip:'💡 Иногда ребёнку нужна не свобода, а ваше эмоциональное присутствие. Обнимите просто так — это тоже важный сигнал.' }
+    };
+
+    var qCurrent = 0, scores = { A:0, B:0, C:0, D:0 }, qSelected = null;
+
+    function renderQuestion() {
+      var q = questions[qCurrent];
+      document.getElementById('q-num').textContent = 'Вопрос ' + (qCurrent + 1) + ' из ' + questions.length;
+      document.getElementById('q-text').textContent = q.text;
+      document.getElementById('progress-fill').style.width = (qCurrent / questions.length * 100) + '%';
+      var optDiv = document.getElementById('q-options');
+      optDiv.innerHTML = '';
+      qSelected = null;
+      document.getElementById('btn-next').disabled = true;
+      q.options.forEach(function(opt) {
+        var el = document.createElement('div');
+        el.className = 'quiz-option';
+        el.textContent = opt.text;
+        el.addEventListener('click', function() {
+          document.querySelectorAll('.quiz-option').forEach(function(o) { o.classList.remove('selected'); });
+          el.classList.add('selected');
+          qSelected = opt.type;
+          document.getElementById('btn-next').disabled = false;
+        });
+        optDiv.appendChild(el);
+      });
+    }
+
+    document.getElementById('btn-next').addEventListener('click', function() {
+      if (!qSelected) return;
+      scores[qSelected]++;
+      qCurrent++;
+      if (qCurrent < questions.length) {
+        renderQuestion();
+      } else {
+        var best = 'A';
+        ['A','B','C','D'].forEach(function(k) { if (scores[k] > scores[best]) best = k; });
+        var r = results[best];
+        document.getElementById('r-icon').textContent = r.icon;
+        document.getElementById('r-type').textContent = r.type;
+        document.getElementById('r-desc').textContent = r.desc;
+        document.getElementById('r-tip').textContent = r.tip;
+        document.getElementById('progress-fill').style.width = '100%';
+        document.getElementById('quiz-section').style.display = 'none';
+        document.getElementById('result-section').style.display = '';
+      }
+    });
+
+    document.getElementById('btn-retake').addEventListener('click', function() {
+      qCurrent = 0; scores = { A:0, B:0, C:0, D:0 }; qSelected = null;
+      document.getElementById('result-section').style.display = 'none';
+      document.getElementById('quiz-section').style.display = '';
+      renderQuestion();
+    });
+
+    renderQuestion();
+
+    /* ── Q&A ── */
+    function registerQna(btn) {
+      btn.textContent = 'Записан ✓';
+      btn.disabled = true;
+      btn.classList.remove('btn--primary');
+      btn.classList.add('btn--ghost');
+    }
+  </script>
+</body>
+</html>
