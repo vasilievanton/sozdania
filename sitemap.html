@@ -6,9 +6,7 @@
   <title>Все экраны — СоздАния</title>
   <link rel="stylesheet" href="css/main.css">
   <style>
-    .sitemap-section {
-      margin-bottom: var(--space-7);
-    }
+    .sitemap-section { margin-bottom: var(--space-7); }
     .sitemap-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -20,27 +18,19 @@
       border: 1px solid var(--c-border);
       border-radius: var(--r-md);
       padding: var(--space-4);
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-2);
-      text-decoration: none;
-      color: inherit;
+      display: flex; flex-direction: column; gap: var(--space-2);
+      text-decoration: none; color: inherit;
       transition: border-color .12s, background .12s;
     }
     .screen-card:hover { border-color: var(--c-border-strong); background: var(--c-surface-alt); text-decoration: none; }
     .screen-card__title { font-weight: 600; font-size: 15px; }
-    .screen-card__path { font-size: 12px; color: var(--c-text-muted); font-family: monospace; }
-    .screen-card__desc { font-size: 13px; color: var(--c-text-muted); }
+    .screen-card__path  { font-size: 12px; color: var(--c-text-muted); font-family: monospace; }
+    .screen-card__desc  { font-size: 13px; color: var(--c-text-muted); }
     .screen-card__badge { align-self: flex-start; }
 
     .section-label {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: var(--r-sm);
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: .04em;
-      text-transform: uppercase;
+      display: inline-block; padding: 3px 10px; border-radius: var(--r-sm);
+      font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
     }
     .label--auth    { background:#e8f0ff; color:#1e3a6f; border:1px solid #b9ccf0; }
     .label--main    { background:#e6f2e9; color:#1f5a2c; border:1px solid #b8d6bf; }
@@ -51,17 +41,13 @@
     .label--meta    { background:var(--c-surface-alt); color:var(--c-text-muted); border:1px solid var(--c-border); }
 
     .stats-row {
-      display: flex;
-      gap: var(--space-5);
-      flex-wrap: wrap;
+      display: flex; gap: var(--space-5); flex-wrap: wrap;
       padding: var(--space-4) var(--space-5);
-      background: var(--c-surface);
-      border: 1px solid var(--c-border);
-      border-radius: var(--r-md);
-      margin-bottom: var(--space-6);
+      background: var(--c-surface); border: 1px solid var(--c-border);
+      border-radius: var(--r-md); margin-bottom: var(--space-6);
     }
     .stat { text-align: center; }
-    .stat__num { font-size: 28px; font-weight: 700; color: var(--c-primary); line-height: 1; }
+    .stat__num   { font-size: 28px; font-weight: 700; color: var(--c-primary); line-height: 1; }
     .stat__label { font-size: 12px; color: var(--c-text-muted); margin-top: 4px; }
   </style>
 </head>
@@ -72,13 +58,13 @@
     <p class="muted">Полная карта всех страниц. Кликните любой экран, чтобы перейти напрямую.</p>
 
     <div class="stats-row">
-      <div class="stat"><div class="stat__num">39</div><div class="stat__label">экранов всего</div></div>
+      <div class="stat"><div class="stat__num">40</div><div class="stat__label">экранов всего</div></div>
       <div class="stat"><div class="stat__num">7</div><div class="stat__label">разделов</div></div>
-      <div class="stat"><div class="stat__num">10</div><div class="stat__label">родительских экранов</div></div>
+      <div class="stat"><div class="stat__num">8</div><div class="stat__label">родительских экранов</div></div>
       <div class="stat"><div class="stat__num">6</div><div class="stat__label">экранов администратора</div></div>
     </div>
 
-    <!-- 1. Вход -->
+    <!-- 1. Авторизация -->
     <div class="sitemap-section">
       <div class="flex" style="align-items:center; gap:var(--space-3); margin-bottom:var(--space-3);">
         <span class="section-label label--auth">Авторизация</span>
@@ -93,7 +79,7 @@
         <a class="screen-card" href="pages/register.html">
           <div class="screen-card__title">Регистрация</div>
           <div class="screen-card__path">pages/register.html</div>
-          <div class="screen-card__desc">Форма с корпоративной почтой, именем, паролем и согласиями. Проверка домена.</div>
+          <div class="screen-card__desc">Форма с корпоративной почтой, именем, паролем и согласиями. Проверка домена @mts.ru.</div>
         </a>
         <a class="screen-card" href="pages/login.html">
           <div class="screen-card__title">Вход</div>
@@ -108,7 +94,7 @@
         <a class="screen-card" href="pages/add-child.html">
           <div class="screen-card__title">Добавление ребёнка</div>
           <div class="screen-card__path">pages/add-child.html</div>
-          <div class="screen-card__desc">Никнейм, реальное имя (для призов), возраст → определение группы 3–5 / 6–9 / 10–12 / 13–17.</div>
+          <div class="screen-card__desc">Никнейм, реальное имя (для призов), возраст → группа 3–5 / 6–9 / 10–12 / 13–17.</div>
         </a>
         <a class="screen-card" href="pages/profile-switch.html">
           <div class="screen-card__title">Выбор профиля ребёнка</div>
@@ -128,14 +114,14 @@
         <a class="screen-card" href="pages/map.html">
           <div class="screen-card__title">Карта СоздАнии</div>
           <div class="screen-card__path">pages/map.html</div>
-          <div class="screen-card__desc">Главный экран. Hero + лента новостей (что открылось) + 4 района + блок для родителей.</div>
+          <div class="screen-card__desc">Главный экран. Hero + 4 района + совместные задания + блок для родителей (→ Карточки вместе).</div>
           <span class="badge badge--in-progress screen-card__badge">Главная</span>
         </a>
         <a class="screen-card" href="pages/cabinet.html">
           <div class="screen-card__title">Личный кабинет</div>
           <div class="screen-card__path">pages/cabinet.html</div>
-          <div class="screen-card__desc">Баллы, место в группе, прогресс по каждому району (пройдено/нет), история начислений.</div>
-          <span class="badge badge--new screen-card__badge">Новый</span>
+          <div class="screen-card__desc">Баллы, место в группе, прогресс по районам, совместные задания как точка входа, история начислений.</div>
+          <span class="badge badge--new screen-card__badge">Обновлён</span>
         </a>
         <a class="screen-card" href="pages/leaderboard.html">
           <div class="screen-card__title">Турнирная таблица</div>
@@ -145,7 +131,7 @@
         <a class="screen-card" href="pages/prize-rules.html">
           <div class="screen-card__title">Правила акции</div>
           <div class="screen-card__path">pages/prize-rules.html</div>
-          <div class="screen-card__desc">Кратко о платформе, система начисления баллов, условия розыгрыша. Ссылка на полные условия.</div>
+          <div class="screen-card__desc">Система начисления баллов, условия розыгрыша. Ссылка на полные условия.</div>
         </a>
         <a class="screen-card" href="pages/character.html">
           <div class="screen-card__title">Персонаж</div>
@@ -166,22 +152,22 @@
         <a class="screen-card" href="pages/district-tehnodrom.html">
           <div class="screen-card__title"><span class="district-dot district-dot--tehnodrom"></span>Технодром</div>
           <div class="screen-card__path">pages/district-tehnodrom.html</div>
-          <div class="screen-card__desc">Список открытых роботов. С 1 июня: Доставщик. Далее — Уборщик, Самокатер, Садовник.</div>
+          <div class="screen-card__desc">Роботы: Доставщик, Уборщик, Самокатер, Садовник (ограниченный период). Программирование блоками.</div>
         </a>
         <a class="screen-card" href="pages/district-umnoteka.html">
           <div class="screen-card__title"><span class="district-dot district-dot--umnoteka"></span>Умнотека</div>
           <div class="screen-card__path">pages/district-umnoteka.html</div>
-          <div class="screen-card__desc">Список открытых пачек квизов. С 1 июня: Технологии, с 5 июня: Мир вокруг, с 8 июня: История.</div>
+          <div class="screen-card__desc">Три пачки квизов: Технологии, Мир вокруг, История и культура. 10 вопросов на пачку.</div>
         </a>
         <a class="screen-card" href="pages/district-boltalka.html">
           <div class="screen-card__title"><span class="district-dot district-dot--boltalka"></span>Болталка</div>
           <div class="screen-card__path">pages/district-boltalka.html</div>
-          <div class="screen-card__desc">Наборы «Сопоставь» и карточки интервью. Открывается с 8 июня.</div>
+          <div class="screen-card__desc">Матчинг «Сопоставь» (два набора) + совместные карточки-интервью с flip-анимацией.</div>
         </a>
         <a class="screen-card" href="pages/district-pridumkino.html">
           <div class="screen-card__title"><span class="district-dot district-dot--pridumkino"></span>Придумкино</div>
           <div class="screen-card__path">pages/district-pridumkino.html</div>
-          <div class="screen-card__desc">Раскраски + галерея граффити. Открывается 22 июня.</div>
+          <div class="screen-card__desc">Раскраски (3 шаблона) + галерея граффити. Загрузка рисунка → общая галерея.</div>
         </a>
       </div>
     </div>
@@ -196,17 +182,24 @@
         <a class="screen-card" href="pages/game-tehnodrom.html">
           <div class="screen-card__title">Игра Технодром</div>
           <div class="screen-card__path">pages/game-tehnodrom.html</div>
-          <div class="screen-card__desc">Поле + конструктор программы из блоков. Версия 6–9: 3–4 блока; 10–17: циклы и условия.</div>
+          <div class="screen-card__desc">Поле + конструктор программы из блоков. 6–9: 3–4 блока; 10–17: циклы и условия.</div>
         </a>
         <a class="screen-card" href="pages/game-umnoteka.html">
           <div class="screen-card__title">Квиз Умнотека</div>
           <div class="screen-card__path">pages/game-umnoteka.html</div>
-          <div class="screen-card__desc">Закрытый вопрос с 4 вариантами ответа. Прогресс 10 вопросов.</div>
+          <div class="screen-card__desc">Закрытый вопрос с 4 вариантами ответа. Прогресс-бар 10 вопросов.</div>
         </a>
         <a class="screen-card" href="pages/game-boltalka.html">
           <div class="screen-card__title">«Сопоставь» Болталка</div>
           <div class="screen-card__path">pages/game-boltalka.html</div>
-          <div class="screen-card__desc">Ситуация + 4 варианта ответа. Для старших — аудиофайл вместо текста.</div>
+          <div class="screen-card__desc">Матчинг: соедини ситуацию общения с подходящей реакцией. 5 пар, кликом. Баллы за точность.</div>
+          <span class="badge badge--new screen-card__badge">Обновлён</span>
+        </a>
+        <a class="screen-card" href="pages/game-boltalka-interview.html">
+          <div class="screen-card__title">Карточки-интервью Болталка</div>
+          <div class="screen-card__path">pages/game-boltalka-interview.html</div>
+          <div class="screen-card__desc">Совместное. Два режима: «За ребёнка» и «За родителя». Flip-карточки с вопросами для диалога. Вьювер сверху.</div>
+          <span class="badge badge--new screen-card__badge">Новый</span>
         </a>
         <a class="screen-card" href="pages/game-pridumkino.html">
           <div class="screen-card__title">Раскраска Придумкино</div>
@@ -216,12 +209,7 @@
         <a class="screen-card" href="pages/game-result.html">
           <div class="screen-card__title">Результат задания</div>
           <div class="screen-card__path">pages/game-result.html</div>
-          <div class="screen-card__desc">Баллы начислены, анимация, переход на карту или к следующему заданию.</div>
-        </a>
-        <a class="screen-card" href="pages/parent-joint-task.html">
-          <div class="screen-card__title">Совместные задания</div>
-          <div class="screen-card__path">pages/parent-joint-task.html</div>
-          <div class="screen-card__desc">Список заданий «ребёнок + родитель». Открываются по расписанию.</div>
+          <div class="screen-card__desc">Баллы начислены, анимация конфетти, переход на карту или к следующему заданию.</div>
         </a>
       </div>
     </div>
@@ -230,53 +218,51 @@
     <div class="sitemap-section">
       <div class="flex" style="align-items:center; gap:var(--space-3); margin-bottom:var(--space-3);">
         <span class="section-label label--parent">Для родителей</span>
-        <span class="muted" style="font-size:13px;">Контент, тесты, сессии, адвент</span>
+        <span class="muted" style="font-size:13px;">Контент, поддержка, совместные активности</span>
       </div>
       <div class="sitemap-grid">
         <a class="screen-card" href="pages/parent-hub.html">
           <div class="screen-card__title">Хаб для родителей</div>
           <div class="screen-card__path">pages/parent-hub.html</div>
-          <div class="screen-card__desc">Главная страница раздела: тесты, карточка дня, сессии с психологом.</div>
+          <div class="screen-card__desc">Главная страница раздела. 3 секции: Психологическая поддержка → Полезный контент → Игра с волком.</div>
+          <span class="badge badge--new screen-card__badge">Обновлён</span>
+        </a>
+        <a class="screen-card" href="pages/parent-psychology.html">
+          <div class="screen-card__title">Психологическая поддержка</div>
+          <div class="screen-card__path">pages/parent-psychology.html</div>
+          <div class="screen-card__desc">Единая страница: запись на индивидуальные сессии (#sessions) + тест «Какой ты родитель?» (#test) + Q&A эфиры (#qna).</div>
+          <span class="badge badge--new screen-card__badge">Новый</span>
         </a>
         <a class="screen-card" href="pages/parent-content.html">
           <div class="screen-card__title">Статьи и материалы</div>
           <div class="screen-card__path">pages/parent-content.html</div>
-          <div class="screen-card__desc">Статьи, подкаст, видео разминки. Открываются по расписанию.</div>
-        </a>
-        <a class="screen-card" href="pages/parent-sessions.html">
-          <div class="screen-card__title">Сессии с психологом</div>
-          <div class="screen-card__path">pages/parent-sessions.html</div>
-          <div class="screen-card__desc">Расписание групповых эфиров и запись на индивидуальные (с 10 июня).</div>
-        </a>
-        <a class="screen-card" href="pages/parent-session-book.html">
-          <div class="screen-card__title">Запись на сессию</div>
-          <div class="screen-card__path">pages/parent-session-book.html</div>
-          <div class="screen-card__desc">Выбор времени, подтверждение. Ссылка на МТС Линк приходит на почту.</div>
-        </a>
-        <a class="screen-card" href="pages/parent-test-type.html">
-          <div class="screen-card__title">Тест «Какой ты родитель?»</div>
-          <div class="screen-card__path">pages/parent-test-type.html</div>
-          <div class="screen-card__desc">6 вопросов → один из 4 стилей воспитания. Только для родителя.</div>
-        </a>
-        <a class="screen-card" href="pages/parent-test-anxiety.html">
-          <div class="screen-card__title">Тест «Тревожный ли ты?»</div>
-          <div class="screen-card__path">pages/parent-test-anxiety.html</div>
-          <div class="screen-card__desc">Шкала родительской тревожности, 6 вопросов. Только для родителя.</div>
+          <div class="screen-card__desc">Статьи, подкасты, видеоразминки для родителей. Карточки с тегами и форматами.</div>
         </a>
         <a class="screen-card" href="pages/parent-test.html">
-          <div class="screen-card__title">Тест «Какие мы напарники?»</div>
+          <div class="screen-card__title">Квиз «Какой ты мем?»</div>
           <div class="screen-card__path">pages/parent-test.html</div>
-          <div class="screen-card__desc">Совместный: ребёнок и родитель проходят независимо, система сравнивает → дуэт. С 9 июня.</div>
+          <div class="screen-card__desc">Совместный квиз: ребёнок и родитель проходят по очереди, система сравнивает ответы → мем-дуэт.</div>
         </a>
         <a class="screen-card" href="pages/parent-advent.html">
-          <div class="screen-card__title">Адвент-карточки</div>
+          <div class="screen-card__title">Карточки вместе</div>
           <div class="screen-card__path">pages/parent-advent.html</div>
-          <div class="screen-card__desc">35 дней — одна карточка в день. Совет или мини-действие вместе с ребёнком.</div>
+          <div class="screen-card__desc">30 карточек на 30 дней июня. Flip-сетка 4 колонки. Баллы за открытие в нужный день, без блокировок.</div>
+          <span class="badge badge--new screen-card__badge">Обновлён</span>
         </a>
-        <a class="screen-card" href="pages/parent-daily-card.html">
-          <div class="screen-card__title">Карточка дня</div>
-          <div class="screen-card__path">pages/parent-daily-card.html</div>
-          <div class="screen-card__desc">Открытая карточка текущего дня с описанием и кнопкой «Выполнено».</div>
+        <a class="screen-card" href="pages/parent-wolf-game.html">
+          <div class="screen-card__title">Игра с волком</div>
+          <div class="screen-card__path">pages/parent-wolf-game.html</div>
+          <div class="screen-card__desc">LCD-игра «Волк ловит яйца». Сыграйте вместе с ребёнком: кто наберёт больше очков?</div>
+        </a>
+        <a class="screen-card" href="pages/parent-sessions.html">
+          <div class="screen-card__title">Запись на сессию (standalone)</div>
+          <div class="screen-card__path">pages/parent-sessions.html</div>
+          <div class="screen-card__desc">Выбор дня и времени для индивидуальной сессии 50 мин. Мои записи внизу. Групповые эфиры убраны отсюда.</div>
+        </a>
+        <a class="screen-card" href="pages/parent-qna.html">
+          <div class="screen-card__title">Q&A сессии (standalone)</div>
+          <div class="screen-card__path">pages/parent-qna.html</div>
+          <div class="screen-card__desc">4 групповых онлайн-эфира за лето. Кнопка «Записаться», статус «Прошёл». Доступна через parent-psychology.html#qna.</div>
         </a>
       </div>
     </div>
@@ -346,7 +332,7 @@
         <a class="screen-card" href="user-flow.html">
           <div class="screen-card__title">Блок-схема пути</div>
           <div class="screen-card__path">user-flow.html</div>
-          <div class="screen-card__desc">Подробная схема пользовательского пути с датами для ребёнка и родителя.</div>
+          <div class="screen-card__desc">Детальная схема пользовательского пути по двум трекам — ребёнка и родителя.</div>
         </a>
       </div>
     </div>
