@@ -40,6 +40,37 @@
     .mode-card__cta { margin-top: var(--space-4); }
     .mode-card ul { padding-left: var(--space-4); margin: var(--space-3) 0; }
     .mode-card ul li { margin-bottom: var(--space-1); font-size: 14px; }
+
+    .calc-fab {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      z-index: 100;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      background: var(--c-primary, #1d4ed8);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.18);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .calc-fab:hover {
+      filter: brightness(1.05);
+      color: #fff;
+    }
+    @media (max-width: 600px) {
+      .calc-fab {
+        right: 16px;
+        bottom: 16px;
+        padding: 11px 14px;
+        font-size: 13px;
+      }
+    }
   </style>
 </head>
 <body data-mode="guest">
@@ -117,5 +148,7 @@
       Дополнительно: <a href="user-flow.html"><strong>блок-схема пользовательского пути</strong></a> — детальная схема с датами по двум трекам.
     </p>
   </main>
+
+  <a class="calc-fab" href="activity_points_calculator.html" title="Калькулятор баллов по активностям">Калькулятор баллов</a>
 </body>
 </html>

@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Калькулятор баллов активностей — СоздАния</title>
+  <link rel="stylesheet" href="css/main.css" />
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: var(--font-sans, Arial, sans-serif);
+      background: var(--c-bg, #f4f6f8);
+      color: var(--c-text, #1f2933);
+      padding: 32px;
+      padding-bottom: 88px;
+    }
+
+    .page-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    h1 { margin: 0; font-size: 32px; }
+
+    .subtitle {
+      margin: 0 0 24px;
+      color: #667085;
+      font-size: 16px;
+      max-width: 720px;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .summary-card,
+    .tools,
+    .card,
+    .recommendation {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    .summary-label {
+      color: #667085;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .summary-value {
+      font-size: 34px;
+      font-weight: 700;
+    }
+
+    .ok { color: #16803c; }
+    .warning { color: #b54708; }
+    .danger { color: #b42318; }
+
+    .tools { margin-bottom: 24px; }
+    .tools h2 { margin: 0 0 12px; font-size: 22px; }
+
+    .tools-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .calc-btn {
+      border: none;
+      border-radius: 12px;
+      padding: 11px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      background: #1d4ed8;
+      color: #ffffff;
+    }
+
+    .calc-btn.secondary {
+      background: #eef2ff;
+      color: #1d4ed8;
+    }
+
+    .calc-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 180px;
+      border: 1px solid #d0d5dd;
+      border-radius: 12px;
+      padding: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px;
+      resize: vertical;
+      line-height: 1.45;
+    }
+
+    textarea.invalid { border-color: #b42318; background: #fff5f5; }
+
+    .message { margin-top: 8px; font-size: 14px; color: #667085; }
+    .message.error { color: #b42318; }
+    .message.ok { color: #16803c; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 18px;
+    }
+
+    .card h2 { margin: 0 0 16px; font-size: 22px; }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr 0.7fr 0.7fr;
+      gap: 8px;
+      align-items: center;
+      padding: 10px 0;
+      border-top: 1px solid #eef2f6;
+    }
+
+    .row.header {
+      border-top: none;
+      color: #667085;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .activity-name { font-weight: 600; }
+
+    .hint {
+      color: #667085;
+      font-size: 13px;
+      margin-top: 2px;
+      line-height: 1.35;
+    }
+
+    input[type="number"] {
+      width: 100%;
+      border: 1px solid #d0d5dd;
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-size: 15px;
+    }
+
+    .points {
+      font-weight: 700;
+      font-size: 16px;
+      text-align: right;
+    }
+
+    .recommendation { margin-top: 24px; line-height: 1.55; }
+    .recommendation h2 { margin-top: 0; }
+
+    .json-hint {
+      font-size: 13px;
+      color: #667085;
+      margin: 0 0 10px;
+      line-height: 1.45;
+    }
+
+    #jsonFile { display: none; }
+
+    @media (max-width: 700px) {
+      body { padding: 16px; padding-bottom: 80px; }
+      .row { grid-template-columns: 1fr; gap: 6px; }
+      .row.header { display: none; }
+      .points { text-align: left; }
+    }
+  </style>
+</head>
+<body data-mode="guest">
+  <div class="page-top">
+    <h1>Калькулятор баллов активностей</h1>
+    <a class="btn" href="index.html">← На главную</a>
+  </div>
+  <p class="subtitle">
+    Меняйте единицы и вес баллов по районам — максимум пересчитывается сразу.
+    Сохраните настройки в JSON (скачать или скопировать), отправьте файл другу:
+    он откроет эту страницу и загрузит JSON обратно.
+  </p>
+
+  <section class="summary">
+    <div class="summary-card">
+      <div class="summary-label">Максимум за проект</div>
+      <div id="totalPoints" class="summary-value">0</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">Целевой диапазон</div>
+      <div id="targetRangeLabel" class="summary-value" style="font-size:28px;">700–800</div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-label">Статус</div>
+      <div id="status" class="summary-value ok">ОК</div>
+    </div>
+  </section>
+
+  <section class="tools">
+    <h2>Экспорт / импорт JSON</h2>
+    <p class="json-hint">
+      Формат: объект с полем <code>activities</code> (массив районов) и опционально <code>targetRange</code>.
+      Перед скачиванием JSON всегда собирается из текущих полей на странице.
+    </p>
+    <div class="tools-actions">
+      <button type="button" class="calc-btn" id="btnExport">Обновить JSON в поле</button>
+      <button type="button" class="calc-btn secondary" id="btnApply">Применить JSON из поля</button>
+      <button type="button" class="calc-btn secondary" id="btnCopy">Скопировать JSON</button>
+      <button type="button" class="calc-btn secondary" id="btnDownload">Скачать .json</button>
+      <button type="button" class="calc-btn secondary" id="btnPickFile">Загрузить файл .json</button>
+      <input type="file" id="jsonFile" accept=".json,application/json" />
+    </div>
+    <textarea id="jsonBox" spellcheck="false" placeholder='Вставьте JSON сюда или нажмите «Обновить JSON в поле». Пример: { "schemaVersion": 1, "activities": [ ... ] }'></textarea>
+    <div id="jsonMessage" class="message" role="status" aria-live="polite"></div>
+  </section>
+
+  <main class="grid" id="activities"></main>
+
+  <section class="recommendation">
+    <h2>Рекомендуемый стартовый вариант</h2>
+    <p>
+      Я бы держал максимум в районе <strong>700–800 баллов</strong>. Это уже ощущается как полноценная система прогресса,
+      но всё ещё остаётся ниже лимита в 1000 баллов. В текущей преднастройке максимум равен <strong id="recommendedTotal">0</strong> баллам.
+    </p>
+    <p>
+      Логика такая: адвент даёт регулярную ежедневную мотивацию, основные активности районов дают большую часть баллов,
+      а совместные задания с родителями работают как бонусные точки вовлечения.
+    </p>
+  </section>
+
+  <script>
+    const SCHEMA_VERSION = 1;
+    const DEFAULT_TARGET_RANGE = { min: 700, max: 800, absoluteLimit: 1000 };
+
+    let targetRange = { ...DEFAULT_TARGET_RANGE };
+
+    let activities = [
+      {
+        district: "Общая активность",
+        items: [
+          {
+            name: "Адвент-календарь",
+            description: "30 карточек. 1 карточка = 1 балльная единица.",
+            units: 30,
+            weight: 5
+          }
+        ]
+      },
+      {
+        district: "Технодром",
+        items: [
+          {
+            name: "Основные задания",
+            description: "4 обновления × 5 заданий. За каждое обновление можно получить максимум.",
+            units: 4,
+            weight: 50
+          },
+          {
+            name: "Совместное задание с родителем",
+            description: "Выполняется один раз. Баллы за факт прохождения.",
+            units: 1,
+            weight: 30
+          }
+        ]
+      },
+      {
+        district: "Умнотека",
+        items: [
+          {
+            name: "Тестовые задания",
+            description: "3 обновления × 10 вопросов. 1 правильный ответ = 1 балльная единица.",
+            units: 30,
+            weight: 5
+          },
+          {
+            name: "Совместное задание с родителем",
+            description: "Выполняется один раз. Баллы за факт прохождения.",
+            units: 1,
+            weight: 30
+          }
+        ]
+      },
+      {
+        district: "Болталка",
+        items: [
+          {
+            name: "Сопоставление карточек",
+            description: "2 обновления. Полностью верно = максимум, частично = половина, неверно = 0.",
+            units: 2,
+            weight: 60
+          },
+          {
+            name: "Совместные задания с родителем",
+            description: "2 задания. За каждое: выполнено = максимум, не выполнено = 0.",
+            units: 2,
+            weight: 25
+          }
+        ]
+      },
+      {
+        district: "Придумкино",
+        items: [
+          {
+            name: "Основная активность",
+            description: "Без обновлений. За факт выполнения +10 балльных единиц.",
+            units: 10,
+            weight: 7
+          },
+          {
+            name: "Совместное задание с родителем",
+            description: "Выполняется один раз. Баллы за факт прохождения.",
+            units: 1,
+            weight: 30
+          }
+        ]
+      }
+    ];
+
+    const container = document.getElementById("activities");
+    const jsonBox = document.getElementById("jsonBox");
+    const jsonMessage = document.getElementById("jsonMessage");
+    const jsonFileInput = document.getElementById("jsonFile");
+
+    function clampNumber(value, fallback = 0) {
+      const n = Number(value);
+      return Number.isFinite(n) && n >= 0 ? n : fallback;
+    }
+
+    function normalizeItem(raw) {
+      if (!raw || typeof raw !== "object") {
+        throw new Error("элемент активности должен быть объектом");
+      }
+      if (!raw.name || typeof raw.name !== "string") {
+        throw new Error("у каждой активности нужно поле name (строка)");
+      }
+      return {
+        name: raw.name,
+        description: typeof raw.description === "string" ? raw.description : "",
+        units: clampNumber(raw.units),
+        weight: clampNumber(raw.weight)
+      };
+    }
+
+    function normalizeActivities(raw) {
+      if (!Array.isArray(raw) || raw.length === 0) {
+        throw new Error("нужен непустой массив activities");
+      }
+      return raw.map((section, index) => {
+        if (!section || typeof section !== "object") {
+          throw new Error(`район #${index + 1}: ожидается объект`);
+        }
+        if (!section.district || typeof section.district !== "string") {
+          throw new Error(`район #${index + 1}: нужно поле district (строка)`);
+        }
+        if (!Array.isArray(section.items) || section.items.length === 0) {
+          throw new Error(`район «${section.district}»: нужен непустой массив items`);
+        }
+        return {
+          district: section.district,
+          items: section.items.map((item, itemIndex) => {
+            try {
+              return normalizeItem(item);
+            } catch (err) {
+              throw new Error(`район «${section.district}», активность #${itemIndex + 1}: ${err.message}`);
+            }
+          })
+        };
+      });
+    }
+
+    function normalizeTargetRange(raw) {
+      if (!raw || typeof raw !== "object") return { ...DEFAULT_TARGET_RANGE };
+      return {
+        min: clampNumber(raw.min, DEFAULT_TARGET_RANGE.min),
+        max: clampNumber(raw.max, DEFAULT_TARGET_RANGE.max),
+        absoluteLimit: clampNumber(raw.absoluteLimit, DEFAULT_TARGET_RANGE.absoluteLimit)
+      };
+    }
+
+    function computeTotal(data = activities) {
+      return data.reduce((sum, section) => {
+        return sum + section.items.reduce((sectionSum, item) => {
+          return sectionSum + item.units * item.weight;
+        }, 0);
+      }, 0);
+    }
+
+    function getConfig() {
+      const total = computeTotal();
+      return {
+        schemaVersion: SCHEMA_VERSION,
+        exportedAt: new Date().toISOString(),
+        project: "СоздАния — калькулятор баллов активностей",
+        targetRange: { ...targetRange },
+        totalMaxPoints: total,
+        activities: JSON.parse(JSON.stringify(activities))
+      };
+    }
+
+    function setJsonMessage(text, type = "") {
+      jsonMessage.textContent = text;
+      jsonMessage.className = "message" + (type ? ` ${type}` : "");
+      jsonBox.classList.toggle("invalid", type === "error");
+    }
+
+    function formatJson(config = getConfig()) {
+      return JSON.stringify(config, null, 2);
+    }
+
+    function validateJsonText(text) {
+      if (!text || !text.trim()) {
+        throw new Error("поле JSON пустое");
+      }
+      let parsed;
+      try {
+        parsed = JSON.parse(text);
+      } catch (err) {
+        throw new Error(`невалидный JSON: ${err.message}`);
+      }
+      if (Array.isArray(parsed)) {
+        parsed = { activities: parsed };
+      }
+      if (!parsed || typeof parsed !== "object") {
+        throw new Error("ожидается объект или массив activities");
+      }
+      const nextActivities = normalizeActivities(parsed.activities);
+      const nextTarget = normalizeTargetRange(parsed.targetRange);
+      return { activities: nextActivities, targetRange: nextTarget };
+    }
+
+    function applyConfig({ activities: nextActivities, targetRange: nextTarget }) {
+      activities = nextActivities;
+      targetRange = nextTarget;
+      document.getElementById("targetRangeLabel").textContent =
+        `${targetRange.min}–${targetRange.max}`;
+      render();
+      setJsonMessage("Настройки применены. Максимум пересчитан.", "ok");
+    }
+
+    function render() {
+      container.innerHTML = "";
+
+      activities.forEach((section, sectionIndex) => {
+        const card = document.createElement("section");
+        card.className = "card";
+        card.innerHTML = `
+          <h2>${escapeHtml(section.district)}</h2>
+          <div class="row header">
+            <div>Активность</div>
+            <div>Единицы</div>
+            <div>Вес</div>
+            <div>Максимум</div>
+          </div>
+        `;
+
+        section.items.forEach((item, itemIndex) => {
+          const row = document.createElement("div");
+          row.className = "row";
+          row.innerHTML = `
+            <div>
+              <div class="activity-name">${escapeHtml(item.name)}</div>
+              <div class="hint">${escapeHtml(item.description)}</div>
+            </div>
+            <input type="number" min="0" step="1" value="${item.units}" data-section="${sectionIndex}" data-item="${itemIndex}" data-field="units" />
+            <input type="number" min="0" step="1" value="${item.weight}" data-section="${sectionIndex}" data-item="${itemIndex}" data-field="weight" />
+            <div class="points" id="points-${sectionIndex}-${itemIndex}">0</div>
+          `;
+          card.appendChild(row);
+        });
+
+        container.appendChild(card);
+      });
+
+      container.querySelectorAll("input[type='number']").forEach((input) => {
+        input.addEventListener("input", (event) => {
+          const sectionIndex = Number(event.target.dataset.section);
+          const itemIndex = Number(event.target.dataset.item);
+          const field = event.target.dataset.field;
+          activities[sectionIndex].items[itemIndex][field] = clampNumber(event.target.value);
+          calculate();
+        });
+      });
+
+      calculate();
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function calculate() {
+      const total = computeTotal();
+      const totalElement = document.getElementById("totalPoints");
+      const statusElement = document.getElementById("status");
+      const recommendedElement = document.getElementById("recommendedTotal");
+
+      activities.forEach((section, sectionIndex) => {
+        section.items.forEach((item, itemIndex) => {
+          const points = item.units * item.weight;
+          const pointsElement = document.getElementById(`points-${sectionIndex}-${itemIndex}`);
+          if (pointsElement) pointsElement.textContent = String(points);
+        });
+      });
+
+      totalElement.textContent = String(total);
+      recommendedElement.textContent = String(total);
+
+      totalElement.className = "summary-value";
+      statusElement.className = "summary-value";
+
+      if (total >= targetRange.min && total <= targetRange.max) {
+        totalElement.classList.add("ok");
+        statusElement.classList.add("ok");
+        statusElement.textContent = "ОК";
+      } else if (total < targetRange.absoluteLimit) {
+        totalElement.classList.add("warning");
+        statusElement.classList.add("warning");
+        statusElement.textContent = "Можно лучше";
+      } else {
+        totalElement.classList.add("danger");
+        statusElement.classList.add("danger");
+        statusElement.textContent = "Много";
+      }
+    }
+
+    function exportJson() {
+      const text = formatJson();
+      jsonBox.value = text;
+      setJsonMessage("JSON обновлён из текущих настроек на странице.", "ok");
+      return text;
+    }
+
+    async function copyJson() {
+      const text = exportJson();
+      try {
+        await navigator.clipboard.writeText(text);
+        setJsonMessage("JSON скопирован в буфер обмена.", "ok");
+      } catch {
+        setJsonMessage("Не удалось скопировать автоматически — выделите текст в поле и скопируйте вручную.", "error");
+      }
+    }
+
+    function importJson() {
+      try {
+        const config = validateJsonText(jsonBox.value);
+        applyConfig(config);
+        jsonBox.value = formatJson();
+      } catch (err) {
+        setJsonMessage(`Ошибка импорта: ${err.message}`, "error");
+      }
+    }
+
+    function downloadJson() {
+      const text = formatJson();
+      jsonBox.value = text;
+      const blob = new Blob([text], { type: "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "sozdania-activity-points.json";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      setJsonMessage("Файл sozdania-activity-points.json скачан.", "ok");
+    }
+
+    function loadJsonFromFile(file) {
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        jsonBox.value = String(reader.result || "");
+        importJson();
+      };
+      reader.onerror = () => {
+        setJsonMessage("Не удалось прочитать файл.", "error");
+      };
+      reader.readAsText(file, "utf-8");
+    }
+
+    document.getElementById("btnExport").addEventListener("click", exportJson);
+    document.getElementById("btnApply").addEventListener("click", importJson);
+    document.getElementById("btnCopy").addEventListener("click", copyJson);
+    document.getElementById("btnDownload").addEventListener("click", downloadJson);
+    document.getElementById("btnPickFile").addEventListener("click", () => jsonFileInput.click());
+    jsonFileInput.addEventListener("change", (event) => {
+      const file = event.target.files && event.target.files[0];
+      loadJsonFromFile(file);
+      event.target.value = "";
+    });
+
+    render();
+    exportJson();
+  </script>
+</body>
+</html>
