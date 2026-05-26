@@ -245,90 +245,10 @@
   <script>
     const SCHEMA_VERSION = 1;
     const DEFAULT_TARGET_RANGE = { min: 700, max: 800, absoluteLimit: 1000 };
+    const DEFAULT_CONFIG_URL = "sozdania-activity-points.json";
 
     let targetRange = { ...DEFAULT_TARGET_RANGE };
-
-    let activities = [
-      {
-        district: "Общая активность",
-        items: [
-          {
-            name: "Адвент-календарь",
-            description: "30 карточек. 1 карточка = 1 балльная единица.",
-            units: 30,
-            weight: 5
-          }
-        ]
-      },
-      {
-        district: "Технодром",
-        items: [
-          {
-            name: "Основные задания",
-            description: "4 обновления × 5 заданий. За каждое обновление можно получить максимум.",
-            units: 4,
-            weight: 50
-          },
-          {
-            name: "Совместное задание с родителем",
-            description: "Выполняется один раз. Баллы за факт прохождения.",
-            units: 1,
-            weight: 30
-          }
-        ]
-      },
-      {
-        district: "Умнотека",
-        items: [
-          {
-            name: "Тестовые задания",
-            description: "3 обновления × 10 вопросов. 1 правильный ответ = 1 балльная единица.",
-            units: 30,
-            weight: 5
-          },
-          {
-            name: "Совместное задание с родителем",
-            description: "Выполняется один раз. Баллы за факт прохождения.",
-            units: 1,
-            weight: 30
-          }
-        ]
-      },
-      {
-        district: "Болталка",
-        items: [
-          {
-            name: "Сопоставление карточек",
-            description: "2 обновления. Полностью верно = максимум, частично = половина, неверно = 0.",
-            units: 2,
-            weight: 60
-          },
-          {
-            name: "Совместные задания с родителем",
-            description: "2 задания. За каждое: выполнено = максимум, не выполнено = 0.",
-            units: 2,
-            weight: 25
-          }
-        ]
-      },
-      {
-        district: "Придумкино",
-        items: [
-          {
-            name: "Основная активность",
-            description: "Без обновлений. За факт выполнения +10 балльных единиц.",
-            units: 10,
-            weight: 7
-          },
-          {
-            name: "Совместное задание с родителем",
-            description: "Выполняется один раз. Баллы за факт прохождения.",
-            units: 1,
-            weight: 30
-          }
-        ]
-      }
-    ];
+    let activities = [];
 
     const container = document.getElementById("activities");
     const jsonBox = document.getElementById("jsonBox");
@@ -607,8 +527,29 @@
       event.target.value = "";
     });
 
-    render();
-    exportJson();
+    async function loadDefaultConfig() {
+      try {
+        const response = await fetch(DEFAULT_CONFIG_URL, { cache: "no-store" });
+        if (!response.ok) {
+          throw new Error(`не удалось загрузить ${DEFAULT_CONFIG_URL} (HTTP ${response.status})`);
+        }
+        const text = await response.text();
+        jsonBox.value = text;
+        applyConfig(validateJsonText(text));
+        setJsonMessage(
+          `Загружена конфигурация по умолчанию из ${DEFAULT_CONFIG_URL}.`,
+          "ok"
+        );
+      } catch (err) {
+        setJsonMessage(`Ошибка загрузки конфигурации: ${err.message}`, "error");
+        if (activities.length) {
+          render();
+          exportJson();
+        }
+      }
+    }
+
+    loadDefaultConfig();
   </script>
 </body>
 </html>
