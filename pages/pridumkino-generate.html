@@ -44,6 +44,8 @@
 
   <script src="../js/pridumkino-proto.js"></script>
   <script src="../js/pridumkino-flow-ui.js"></script>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
   <script>
     const P = window.PridumkinoProto;
     const UI = window.PridumkinoFlowUI;
@@ -59,7 +61,7 @@
     const icons = { gorod: "🏙️", kosmos: "🪐", leto: "🌻" };
 
     if (!theme) {
-      location.replace("district-pridumkino.html");
+      P.goReplace("district-pridumkino.html");
     } else {
       const session = P.loadSession();
       session.theme = theme;
@@ -94,10 +96,10 @@
           document.getElementById("loaderBlock").hidden = true;
           showSuccess(state, false);
         } else {
-          location.replace(`pridumkino-method.html?theme=${theme}`);
+          P.goReplace(`pridumkino-method.html?theme=${theme}`);
         }
       } else if (!selectedBuilding) {
-        location.replace(`pridumkino-buildings.html?theme=${theme}&method=${method}`);
+        P.goReplace(`pridumkino-buildings.html?theme=${theme}&method=${method}`);
       } else {
         const result = P.completeGeneration(theme, {
           method,
@@ -115,6 +117,8 @@
           showSuccess(result.state, result.isNew);
         }, 2500);
       }
+
+      P.patchTourLinks();
     }
   </script>
 </body>

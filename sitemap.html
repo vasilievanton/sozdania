@@ -39,6 +39,7 @@
     .label--parent  { background:#f0e4f0; color:#5a1a6b; border:1px solid #ddbddd; }
     .label--admin   { background:#f0e8e8; color:#6b1818; border:1px solid #d9bdbd; }
     .label--meta    { background:var(--c-surface-alt); color:var(--c-text-muted); border:1px solid var(--c-border); }
+    .label--pridumkino { background:#fce1f0; color:#6b1840; border:1px solid #e8b8d0; }
 
     .stats-row {
       display: flex; gap: var(--space-5); flex-wrap: wrap;
@@ -58,7 +59,7 @@
     <p class="muted">Полная карта всех страниц. Кликните любой экран, чтобы перейти напрямую.</p>
 
     <div class="stats-row">
-      <div class="stat"><div class="stat__num">40</div><div class="stat__label">экранов всего</div></div>
+      <div class="stat"><div class="stat__num">47</div><div class="stat__label">экранов всего</div></div>
       <div class="stat"><div class="stat__num">7</div><div class="stat__label">разделов</div></div>
       <div class="stat"><div class="stat__num">8</div><div class="stat__label">родительских экранов</div></div>
       <div class="stat"><div class="stat__num">6</div><div class="stat__label">экранов администратора</div></div>
@@ -165,19 +166,65 @@
           <div class="screen-card__desc">Матчинг «Сопоставь» (два набора) + совместные карточки-интервью с flip-анимацией.</div>
         </a>
         <a class="screen-card" href="pages/district-pridumkino.html">
-          <div class="screen-card__title"><span class="district-dot district-dot--pridumkino"></span>Придумкино · Дизайн-завод</div>
+          <div class="screen-card__title"><span class="district-dot district-dot--pridumkino"></span>Придумкино</div>
           <div class="screen-card__path">pages/district-pridumkino.html</div>
-          <div class="screen-card__desc">3 темы → раскраска/загрузка → здание → ИИ-мурал. Совместное задание после 3 генераций. Арт-галерея отдельно.</div>
+          <div class="screen-card__desc">Вход в район. Дизайн-завод, бульвар дуэтов, превью арт-галереи — новый кликабельный поток.</div>
+          <span class="badge badge--new screen-card__badge">Новый поток</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 3b. Придумкино — поток -->
+    <div class="sitemap-section">
+      <div class="flex" style="align-items:center; gap:var(--space-3); margin-bottom:var(--space-3);">
+        <span class="section-label label--pridumkino">Придумкино</span>
+        <span class="muted" style="font-size:13px;">Новый кликабельный поток — все экраны по порядку</span>
+      </div>
+      <div class="sitemap-grid">
+        <a class="screen-card" href="pages/district-pridumkino.html">
+          <div class="screen-card__title">1 · Хаб района</div>
+          <div class="screen-card__path">pages/district-pridumkino.html</div>
+          <div class="screen-card__desc">Дизайн-завод: три темы, совместное задание, превью галереи.</div>
+        </a>
+        <a class="screen-card" href="pages/pridumkino-method.html?theme=gorod">
+          <div class="screen-card__title">2 · Выбор способа</div>
+          <div class="screen-card__path">pages/pridumkino-method.html</div>
+          <div class="screen-card__desc">Модал: раскрасить готовый шаблон или загрузить свой рисунок.</div>
+        </a>
+        <a class="screen-card" href="pages/pridumkino-pick.html?theme=gorod">
+          <div class="screen-card__title">3 · Выбор раскраски</div>
+          <div class="screen-card__path">pages/pridumkino-pick.html</div>
+          <div class="screen-card__desc">Одна из трёх раскрасок по теме.</div>
+        </a>
+        <a class="screen-card" href="pages/pridumkino-color.html?theme=gorod&picture=1">
+          <div class="screen-card__title">4 · Раскраска</div>
+          <div class="screen-card__path">pages/pridumkino-color.html</div>
+          <div class="screen-card__desc">Интерактивная раскраска: палитра, undo/redo, минимум 5 зон.</div>
+        </a>
+        <a class="screen-card" href="pages/pridumkino-upload.html?theme=gorod">
+          <div class="screen-card__title">4 · Загрузка рисунка</div>
+          <div class="screen-card__path">pages/pridumkino-upload.html</div>
+          <div class="screen-card__desc">Альтернатива раскраске — загрузить свой файл.</div>
+        </a>
+        <a class="screen-card" href="pages/pridumkino-buildings.html?theme=gorod&method=color">
+          <div class="screen-card__title">5 · Выбор здания</div>
+          <div class="screen-card__path">pages/pridumkino-buildings.html</div>
+          <div class="screen-card__desc">10 зданий — куда «наклеить» граффити.</div>
+        </a>
+        <a class="screen-card" href="pages/pridumkino-generate.html?theme=gorod&method=color&building=1&picture=1">
+          <div class="screen-card__title">6 · ИИ-генерация</div>
+          <div class="screen-card__path">pages/pridumkino-generate.html</div>
+          <div class="screen-card__desc">Загрузка, модал «Отлично!», +30 баллов, работа в галерее.</div>
+        </a>
+        <a class="screen-card" href="pages/pridumkino-joint.html">
+          <div class="screen-card__title">7 · Совместное задание</div>
+          <div class="screen-card__path">pages/pridumkino-joint.html</div>
+          <div class="screen-card__desc">Три названия рисунков вместе с родителем. Открывается после всех тем.</div>
         </a>
         <a class="screen-card" href="pages/pridumkino-gallery.html">
-          <div class="screen-card__title">Арт-галерея Придумкино</div>
+          <div class="screen-card__title">8 · Арт-галерея</div>
           <div class="screen-card__path">pages/pridumkino-gallery.html</div>
-          <div class="screen-card__desc">Пагинация 5×4. Работы участников + свои муралы с названиями.</div>
-        </a>
-        <a class="screen-card" href="pages/pridumkino-method.html?theme=kosmos">
-          <div class="screen-card__title">Поток темы (выбор способа)</div>
-          <div class="screen-card__path">pages/pridumkino-method.html</div>
-          <div class="screen-card__desc">Раскрасить / загрузить → картинка → раскраска → здание → ИИ → галерея.</div>
+          <div class="screen-card__desc">Все работы участников и свои муралы с пагинацией.</div>
         </a>
       </div>
     </div>
@@ -212,9 +259,10 @@
           <span class="badge badge--new screen-card__badge">Новый</span>
         </a>
         <a class="screen-card" href="pages/game-pridumkino.html">
-          <div class="screen-card__title">Раскраска Придумкино</div>
+          <div class="screen-card__title">Раскраска Придумкино (старый экран)</div>
           <div class="screen-card__path">pages/game-pridumkino.html</div>
-          <div class="screen-card__desc">Контур для раскрашивания прямо на платформе. Загрузка в общую галерею.</div>
+          <div class="screen-card__desc">Сохранён для совместимости. Редирект на новый поток: district-pridumkino → pridumkino-pick.</div>
+          <span class="badge screen-card__badge">Старый · редирект</span>
         </a>
         <a class="screen-card" href="pages/game-result.html">
           <div class="screen-card__title">Результат задания</div>

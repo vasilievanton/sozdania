@@ -29,6 +29,8 @@
 
   <script src="../js/pridumkino-proto.js"></script>
   <script src="../js/pridumkino-flow-ui.js"></script>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
   <script>
     const P = window.PridumkinoProto;
     const UI = window.PridumkinoFlowUI;
@@ -36,10 +38,10 @@
     const theme = P.getThemeFromQuery();
     const pictureId = Number(params.get("picture"));
 
-    if (!theme || !pictureId) location.href = `pridumkino-pick.html?theme=${theme || ""}`;
+    if (!theme || !pictureId) P.go(`pridumkino-pick.html?theme=${theme || ""}`);
 
     const page = P.getColoringPages(theme).find((p) => p.id === pictureId);
-    if (!page) location.href = `pridumkino-pick.html?theme=${theme}`;
+    if (!page) P.go(`pridumkino-pick.html?theme=${theme}`);
 
     const session = P.loadSession();
     session.theme = theme;
@@ -147,8 +149,10 @@
       const s = P.loadSession();
       s.pictureId = pictureId;
       P.saveSession(s);
-      location.href = `pridumkino-buildings.html?theme=${theme}&method=color`;
+      P.go(`pridumkino-buildings.html?theme=${theme}&method=color`);
     });
+
+    P.patchTourLinks();
   </script>
 </body>
 </html>

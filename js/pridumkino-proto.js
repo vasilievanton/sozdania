@@ -263,6 +263,44 @@
     `;
   }
 
+  function isTourMode() {
+    return new URLSearchParams(location.search).get("mode") === "tour";
+  }
+
+  function tourUrl(href) {
+    if (!href || href.startsWith("#") || /^https?:/i.test(href) || href.startsWith("../")) {
+      return href;
+    }
+    const cur = new URLSearchParams(location.search);
+    if (cur.get("mode") !== "tour") return href;
+
+    const step = cur.get("step") || "5";
+    const [path, query] = href.split("?");
+    const next = new URLSearchParams(query || "");
+    next.set("mode", "tour");
+    next.set("step", step);
+    return `${path}?${next.toString()}`;
+  }
+
+  function go(href) {
+    location.href = tourUrl(href);
+  }
+
+  function goReplace(href) {
+    location.replace(tourUrl(href));
+  }
+
+  function patchTourLinks(root) {
+    if (!isTourMode()) return;
+    const scope = root || document;
+    scope.querySelectorAll("a[href]").forEach((a) => {
+      const raw = a.getAttribute("href");
+      if (!raw) return;
+      const patched = tourUrl(raw);
+      if (patched !== raw) a.setAttribute("href", patched);
+    });
+  }
+
   global.PridumkinoProto = {
     STORAGE_KEY,
     SESSION_KEY,
@@ -289,7 +327,12 @@
     resetProto,
     getGalleryWorks,
     themeLink(base, themeId) {
-      return `${base}?theme=${themeId}`;
-    }
+      return tourUrl(`${base}?theme=${themeId}`);
+    },
+    isTourMode,
+    tourUrl,
+    go,
+    goReplace,
+    patchTourLinks
   };
 })(window);

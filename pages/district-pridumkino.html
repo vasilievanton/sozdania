@@ -354,9 +354,9 @@
       grid.innerHTML = P.THEMES.map((id) => {
         const meta = P.THEME_META[id];
         const done = Boolean(state.completed[id]);
-        const href = done
+        const href = P.tourUrl(done
           ? `pridumkino-generate.html?theme=${id}&view=1`
-          : `pridumkino-method.html?theme=${id}`;
+          : `pridumkino-method.html?theme=${id}`);
         const btn = done ? "СМОТРЕТЬ >" : "НАЧАТЬ >";
         const badge = done
           ? `<div class="theme-card__badge">✓ Мурал готов · +${P.POINTS_PER_GENERATION} баллов</div>`
@@ -423,6 +423,7 @@
           </div>
         `;
       }
+      P.patchTourLinks();
     }
 
     document.getElementById("btnReset").addEventListener("click", () => {

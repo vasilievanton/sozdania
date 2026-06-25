@@ -36,18 +36,25 @@
     </div>
   </div>
   <script src="../js/pridumkino-proto.js"></script>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
   <script>
     const P = window.PridumkinoProto;
     const theme = P.getThemeFromQuery();
-    if (!theme) location.href = "district-pridumkino.html";
+    if (!theme) {
+      P.go("district-pridumkino.html");
+    } else {
     const meta = P.THEME_META[theme];
     document.title = `${meta.title} — выбор способа`;
 
-    document.getElementById("linkColor").href = `pridumkino-pick.html?theme=${theme}`;
+    document.getElementById("linkColor").href = P.tourUrl(`pridumkino-pick.html?theme=${theme}`);
     document.getElementById("linkColor").addEventListener("click", () => P.setSessionTheme(theme, "color"));
 
-    document.getElementById("linkUpload").href = `pridumkino-upload.html?theme=${theme}`;
+    document.getElementById("linkUpload").href = P.tourUrl(`pridumkino-upload.html?theme=${theme}`);
     document.getElementById("linkUpload").addEventListener("click", () => P.setSessionTheme(theme, "upload"));
+
+    P.patchTourLinks();
+    }
   </script>
 </body>
 </html>

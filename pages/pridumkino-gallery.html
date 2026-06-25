@@ -204,6 +204,7 @@
   </main>
 
   <script src="../js/pridumkino-proto.js"></script>
+  <script src="../js/tour.js"></script>
   <script src="../js/app.js"></script>
   <script>
     const P = window.PridumkinoProto;
@@ -257,20 +258,21 @@
         <button type="button" class="ag-page-arrow" id="nextPage" aria-label="Следующая" ${page >= totalPages ? "disabled" : ""}>&gt;</button>
       `;
 
-      document.getElementById("prevPage")?.addEventListener("click", () => go(page - 1));
-      document.getElementById("nextPage")?.addEventListener("click", () => go(page + 1));
+      document.getElementById("prevPage")?.addEventListener("click", () => goPage(page - 1));
+      document.getElementById("nextPage")?.addEventListener("click", () => goPage(page + 1));
       pag.querySelectorAll(".ag-page-num").forEach((btn) => {
-        btn.addEventListener("click", () => go(Number(btn.dataset.page)));
+        btn.addEventListener("click", () => goPage(Number(btn.dataset.page)));
       });
     }
 
-    function go(p) {
+    function goPage(p) {
       if (p < 1 || p > totalPages) return;
-      location.href = p === 1 ? "pridumkino-gallery.html" : `pridumkino-gallery.html?page=${p}`;
+      P.go(p === 1 ? "pridumkino-gallery.html" : `pridumkino-gallery.html?page=${p}`);
     }
 
     renderGrid();
     renderPagination();
+    P.patchTourLinks();
   </script>
 </body>
 </html>

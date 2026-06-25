@@ -10,7 +10,7 @@
     root.innerHTML = `
       <div class="pk-flow__top">
         <nav class="pk-flow__nav">
-          <a href="map.html">Районы</a>
+          <a href="${P().tourUrl("map.html")}">Районы</a>
           <span>Кодекс СоздАния</span>
           <span>Рейтинг героев</span>
           <span>Квартал родителей</span>
@@ -18,8 +18,8 @@
         <span class="pk-points">${state.totalPoints} БАЛЛОВ</span>
       </div>
       <div class="pk-flow__crumb">
-        <a href="map.html">Главная</a> &gt;
-        <a href="district-pridumkino.html">Придумкино</a> &gt;
+        <a href="${P().tourUrl("map.html")}">Главная</a> &gt;
+        <a href="${P().tourUrl("district-pridumkino.html")}">Придумкино</a> &gt;
         ${meta.title}
       </div>
       <div class="pk-flow__hero">

@@ -19,11 +19,13 @@
 
   <script src="../js/pridumkino-proto.js"></script>
   <script src="../js/pridumkino-flow-ui.js"></script>
+  <script src="../js/tour.js"></script>
+  <script src="../js/app.js"></script>
   <script>
     const P = window.PridumkinoProto;
     const UI = window.PridumkinoFlowUI;
     const theme = P.getThemeFromQuery();
-    if (!theme) location.href = "district-pridumkino.html";
+    if (!theme) P.go("district-pridumkino.html");
     P.setSessionTheme(theme, "color");
 
     UI.renderFlowChrome(document.getElementById("chrome"), theme);
@@ -57,8 +59,10 @@
       const s = P.loadSession();
       s.pictureId = selected;
       P.saveSession(s);
-      location.href = `pridumkino-color.html?theme=${theme}&picture=${selected}`;
+      P.go(`pridumkino-color.html?theme=${theme}&picture=${selected}`);
     });
+
+    P.patchTourLinks();
   </script>
 </body>
 </html>

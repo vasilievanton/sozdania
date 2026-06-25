@@ -5,6 +5,19 @@
 (function () {
   if (new URLSearchParams(location.search).get('mode') !== 'tour') return;
 
+  const PRIDUMKINO_FLOW = [
+    'district-pridumkino.html',
+    'pridumkino-method.html',
+    'pridumkino-pick.html',
+    'pridumkino-color.html',
+    'pridumkino-upload.html',
+    'pridumkino-buildings.html',
+    'pridumkino-generate.html',
+    'pridumkino-joint.html',
+    'pridumkino-gallery.html',
+    'game-pridumkino.html',
+  ];
+
   const STEPS = [
     {
       n: 1,
@@ -39,21 +52,33 @@
         if (inp[1]) inp[1].value = 'Мария';
         if (inp[2]) inp[2].value = '9';
       },
-      rewire: [['profile-switch.html', 'map.html']], // сразу на карту, без селектора режимов
+      rewire: [['profile-switch.html', 'map.html']],
     },
     {
       n: 4,
       path: 'map.html',
       title: 'Карта СоздАнии — главный экран',
-      hint: 'Четыре района, прогресс по каждому — всё открыто. Перейдите в <strong>Технодром</strong>.',
+      hint: 'Четыре района открыты. Можно идти в <strong>Технодром</strong> (классический сценарий тура) или в <strong>Придумкино</strong> — новый кликабельный поток с раскраской и ИИ-муралом.',
       rewire: [
         ['district-tehnodrom.html', 'district-tehnodrom.html'],
+        ['district-pridumkino.html', 'district-pridumkino.html'],
+        ['district-umnoteka.html', null],
+        ['district-boltalka.html', null],
         ['character.html', null],
         ['leaderboard.html', null],
       ],
     },
     {
       n: 5,
+      path: 'district-pridumkino.html',
+      title: 'Придумкино — Дизайн-завод',
+      hint: 'Хаб района: три темы, совместное задание и превью арт-галереи. Нажмите <strong>«НАЧАТЬ»</strong> у любой темы — откроется новый поток: способ → раскраска/загрузка → здание → ИИ-мурал.',
+      rewire: [
+        ['map.html', 'map.html'],
+      ],
+    },
+    {
+      n: 6,
       path: 'district-tehnodrom.html',
       title: 'Технодром',
       hint: 'Роботы ждут помощи. Нажмите <strong>«Помоги роботу»</strong> у Доставщика.',
@@ -63,7 +88,7 @@
       ],
     },
     {
-      n: 6,
+      n: 7,
       path: 'game-tehnodrom.html',
       title: 'Игра — версия для 6–9 лет',
       hint: 'Маша 9 лет видит механику группы 6–9: цепочка из 3–4 блоков. Нажмите <strong>«Запустить»</strong>.',
@@ -73,13 +98,13 @@
       ],
     },
     {
-      n: 7,
+      n: 8,
       path: 'game-result.html',
       title: 'Результат',
       hint: 'Маша получила баллы, на карте обновился её прогресс. Дальше посмотрим, что доступно для родителя в этом же интерфейсе. Нажмите <strong>«На карту»</strong>.',
       rewire: [
         ['map.html', 'parent-content.html'],
-        ['game-pridumkino.html', null],
+        ['district-pridumkino.html', 'district-pridumkino.html'],
         ['game-tehnodrom.html', null],
         ['leaderboard.html', null],
         ['parent-joint-task.html', null],
@@ -90,14 +115,14 @@
       },
     },
     {
-      n: 8,
+      n: 9,
       path: 'parent-content.html',
       title: 'Материалы для родителей',
       hint: 'Никакого отдельного «родительского режима» — это просто разделы в общем меню: статьи, видео, аудио, чек-листы.',
       rewire: [['parent-sessions.html', 'parent-test.html']],
     },
     {
-      n: 9,
+      n: 10,
       path: 'parent-test.html',
       title: 'Квиз «Какой ты мем?»',
       hint: 'Ребёнок и родитель проходят независимо, система сравнивает ответы и выдаёт мем-дуэт.',
@@ -112,10 +137,10 @@
       },
     },
     {
-      n: 10,
+      n: 11,
       path: 'leaderboard.html',
       title: 'Турнирная таблица — финал тура',
-      hint: 'Маша на 4 месте в своей возрастной группе. Тур закончен — теперь можете свободно ходить по остальным экранам.',
+      hint: 'Маша на 4 месте в своей возрастной группе. Тур закончен — теперь можете свободно ходить по остальным экранам, в том числе по новому потоку Придумкино.',
       isFinal: true,
     },
   ];
@@ -128,6 +153,9 @@
 
   let cur = STEPS.find(s => s.n === wantStep && s.path === pageName);
   if (!cur) cur = STEPS.find(s => s.path === pageName);
+  if (!cur && PRIDUMKINO_FLOW.includes(pageName)) {
+    cur = STEPS.find(s => s.path === 'district-pridumkino.html');
+  }
   if (!cur) return;
 
   const prev = STEPS[cur.n - 2] || null;
@@ -159,11 +187,18 @@
             if (stepRef) {
               a.href = `${to}?mode=tour&step=${stepRef.n}`;
             } else {
-              a.href = `${to}?mode=tour&step=${cur.n}`;
+              const backRef = STEPS.find(s => s.path === to && s.n < cur.n);
+              a.href = backRef
+                ? `${to}?mode=tour&step=${backRef.n}`
+                : `${to}?mode=tour&step=${cur.n}`;
             }
           }
         });
       });
+    }
+
+    if (window.PridumkinoProto && typeof window.PridumkinoProto.patchTourLinks === 'function') {
+      window.PridumkinoProto.patchTourLinks();
     }
   });
 })();
