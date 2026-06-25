@@ -30,6 +30,21 @@
     }
   };
 
+  const THEME_MURAL_PREVIEW = {
+    gorod: {
+      gradient: "linear-gradient(180deg, #fbbf24 0%, #f97316 35%, #64748b 42%, #cbd5e1 100%)",
+      accent: "#f59e0b"
+    },
+    kosmos: {
+      gradient: "linear-gradient(180deg, #312e81 0%, #6366f1 40%, #94a3b8 48%, #e2e8f0 100%)",
+      accent: "#818cf8"
+    },
+    leto: {
+      gradient: "linear-gradient(180deg, #38bdf8 0%, #fbbf24 30%, #86efac 38%, #e2e8f0 100%)",
+      accent: "#facc15"
+    }
+  };
+
   const BUILDINGS = [
     { id: 1, name: "Дом у парка" },
     { id: 2, name: "Библиотека" },
@@ -255,6 +270,33 @@
     return getColoringPages(themeId)[0] || null;
   }
 
+  function getJointCard(themeId, state) {
+    const st = state || loadState();
+    const meta = THEME_META[themeId];
+    const work = st.completed[themeId] || null;
+    const preview = THEME_MURAL_PREVIEW[themeId] || THEME_MURAL_PREVIEW.gorod;
+    const coloring = work?.pictureId
+      ? getColoringPages(themeId).find((p) => p.id === work.pictureId)
+      : getThemeColoringPage(themeId);
+
+    return {
+      themeId,
+      meta,
+      work,
+      ready: Boolean(work),
+      title: st.jointTitles?.[themeId] || work?.title || "",
+      buildingName: work?.buildingName || "",
+      method: work?.method || null,
+      coloringLabel: coloring?.label || meta.title,
+      coloringArt: coloring?.art || meta.icon,
+      preview
+    };
+  }
+
+  function getJointCards(state) {
+    return THEMES.map((id) => getJointCard(id, state));
+  }
+
   function getColoringPages(themeId) {
     return COLORING_PAGES[themeId] || [];
   }
@@ -317,6 +359,7 @@
     SESSION_KEY,
     THEMES,
     THEME_META,
+    THEME_MURAL_PREVIEW,
     BUILDINGS,
     COLORING_PAGES,
     PALETTE,
@@ -331,6 +374,8 @@
     getColoringPages,
     getThemeColoringPage,
     getDefaultPictureId,
+    getJointCard,
+    getJointCards,
     getColoringSvg,
     getThemeFromQuery,
     resolveBuildingId,

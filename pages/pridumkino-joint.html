@@ -6,128 +6,320 @@
   <title>Как назовём рисунок? — Придумкино</title>
   <link rel="stylesheet" href="../css/main.css">
   <style>
-    .name-row {
-      display: grid;
-      grid-template-columns: 80px 1fr;
-      gap: var(--space-4);
-      align-items: start;
-      padding: var(--space-4) 0;
-      border-top: 1px solid var(--c-border);
+    .joint-page {
+      max-width: 1080px;
+      margin: 0 auto;
     }
-    .name-row:first-of-type { border-top: none; }
-    .name-row__thumb {
-      aspect-ratio: 1;
-      background: var(--c-surface-alt);
+
+    .joint-lead {
+      max-width: 640px;
+      margin-bottom: var(--space-5);
+    }
+
+    .joint-success {
+      background: #e8f5ec;
+      border: 1px solid #b8dfc4;
       border-radius: var(--r-md);
+      padding: var(--space-4) var(--space-5);
+      margin-bottom: var(--space-5);
+    }
+
+    .joint-success strong {
+      display: block;
+      margin-bottom: var(--space-2);
+      font-size: 16px;
+    }
+
+    .joint-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-5);
+      margin-bottom: var(--space-5);
+    }
+
+    @media (max-width: 900px) {
+      .joint-grid { grid-template-columns: 1fr; max-width: 360px; margin-left: auto; margin-right: auto; }
+    }
+
+    .joint-card {
+      background: var(--c-surface);
+      border: 1px solid var(--c-border);
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .joint-card__head {
       display: flex;
       align-items: center;
-      justify-content: center;
-      font-size: 32px;
-      border: 1px solid var(--c-border);
-    }
-    .name-row label { font-weight: 600; display: block; margin-bottom: var(--space-2); }
-    .name-row input {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid var(--c-border);
-      border-radius: var(--r-sm);
+      gap: var(--space-2);
+      padding: var(--space-3) var(--space-4);
+      border-bottom: 1px solid var(--c-border);
+      font-weight: 600;
       font-size: 15px;
     }
-    .name-row .muted { font-size: 13px; margin-top: var(--space-1); }
+
+    .joint-card__head-icon {
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .joint-card__preview {
+      position: relative;
+      aspect-ratio: 3 / 4;
+      background: var(--joint-gradient, #e2e8f0);
+      overflow: hidden;
+    }
+
+    .joint-card__preview--empty {
+      background: var(--c-surface-alt);
+      border-bottom: 1px dashed var(--c-border);
+    }
+
+    .joint-card__preview--empty::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 10px,
+        rgba(0,0,0,.03) 10px,
+        rgba(0,0,0,.03) 20px
+      );
+    }
+
+    .joint-card__art {
+      position: absolute;
+      left: 50%;
+      top: 42%;
+      transform: translate(-50%, -50%);
+      font-size: 56px;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,.15));
+      z-index: 2;
+    }
+
+    .joint-card__building {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 34%;
+      background: linear-gradient(180deg, transparent, rgba(15,23,42,.08));
+      display: flex;
+      align-items: flex-end;
+      padding: var(--space-3);
+      z-index: 1;
+    }
+
+    .joint-card__building-tag {
+      background: rgba(255,255,255,.92);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--c-text);
+      border: 1px solid rgba(0,0,0,.06);
+    }
+
+    .joint-card__placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: var(--space-4);
+      text-align: center;
+      color: var(--c-text-muted);
+      font-size: 14px;
+      z-index: 2;
+    }
+
+    .joint-card__placeholder-icon {
+      font-size: 40px;
+      opacity: .45;
+    }
+
+    .joint-card__body {
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      flex: 1;
+    }
+
+    .joint-card__label {
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .joint-card__input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--c-border);
+      border-radius: 12px;
+      font-size: 15px;
+      background: #fff;
+    }
+
+    .joint-card__input:focus {
+      outline: none;
+      border-color: #e30611;
+      box-shadow: 0 0 0 3px rgba(227, 6, 17, .12);
+    }
+
+    .joint-card__hint {
+      font-size: 13px;
+      color: var(--c-text-muted);
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    .joint-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      justify-content: center;
+      padding-top: var(--space-2);
+    }
+
+    @media (min-width: 901px) {
+      .joint-actions { justify-content: flex-start; }
+    }
   </style>
 </head>
 <body data-mode="user">
-  <main class="app-main app-main--narrow">
+  <main class="app-main joint-page">
     <div class="breadcrumb"><a href="district-pridumkino.html">← В Придумкино</a></div>
     <h1>Как назовём рисунок?</h1>
-    <p class="muted">
-      Совместное задание с родителем. Придумайте название для каждой темы —
-      смешное, волшебное или неожиданное. Можно заполнить заранее, даже если муралы ещё не готовы.
+    <p class="muted joint-lead">
+      Совместное задание с родителем. Посмотрите на каждый рисунок и придумайте название —
+      смешное, волшебное или неожиданное. Если мурал ещё не готов, поле всё равно можно заполнить заранее.
     </p>
 
-    <form id="jointForm" class="card" hidden>
-      <div id="nameFields"></div>
-      <div class="btn-row">
+    <div id="successBanner" class="joint-success" hidden></div>
+
+    <form id="jointForm">
+      <div class="joint-grid" id="jointGrid"></div>
+      <div class="joint-actions">
         <a class="btn" href="district-pridumkino.html">Отмена</a>
         <button type="submit" class="btn btn--primary" id="submitBtn">Сохранить все названия</button>
       </div>
     </form>
-
-    <div id="doneBlock" class="notice notice--success" hidden></div>
   </main>
   <script src="../js/pridumkino-proto.js"></script>
   <script src="../js/tour.js"></script>
   <script src="../js/app.js"></script>
   <script>
     const P = window.PridumkinoProto;
-    const icons = { gorod: "🏙️", kosmos: "🪐", leto: "🌻" };
-    const state = P.loadState();
 
-    if (state.jointDone) {
-      showDone(state);
-    } else {
-      renderForm(state);
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
     }
 
-    function renderForm(st) {
-      const form = document.getElementById("jointForm");
-      const fields = document.getElementById("nameFields");
-      form.hidden = false;
-
-      fields.innerHTML = P.THEMES.map((id) => {
-        const meta = P.THEME_META[id];
-        const work = st.completed[id];
-        const val = st.jointTitles?.[id] || work?.title || "";
-        const buildingLine = work?.buildingName ? ` · ${work.buildingName}` : "";
+    function renderPreview(card) {
+      if (!card.ready) {
         return `
-          <div class="name-row">
-            <div class="name-row__thumb">${icons[id]}</div>
-            <div>
-              <label for="title-${id}">${meta.title}${buildingLine}</label>
-              <input type="text" id="title-${id}" name="${id}" value="${val.replace(/"/g, "&quot;")}" placeholder="Например: «Космический пикник»" required>
-              <p class="muted">${work ? "Название появится в галерее рядом с работой" : "Мурал ещё не готов — название сохранится заранее"}</p>
+          <div class="joint-card__preview joint-card__preview--empty">
+            <div class="joint-card__placeholder">
+              <span class="joint-card__placeholder-icon">${card.meta.icon}</span>
+              <span>Рисунок появится здесь<br>после мурала в Дизайн-заводе</span>
             </div>
           </div>
         `;
-      }).join("");
+      }
 
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const titles = {};
-        P.THEMES.forEach((id) => {
-          titles[id] = document.getElementById(`title-${id}`).value;
-        });
-        const result = P.saveJointTitles(titles);
-        if (result.ok) {
-          form.hidden = true;
-          showDone(result.state);
-        }
-      });
-      P.patchTourLinks(form);
-    }
-
-    function showDone(st) {
-      const block = document.getElementById("doneBlock");
-      block.hidden = false;
-      const list = P.THEMES.map((id) => {
-        const meta = P.THEME_META[id];
-        const title = st.jointTitles?.[id] || st.completed[id]?.title || "—";
-        return `<li><strong>${meta.title}:</strong> «${title}»</li>`;
-      }).join("");
-      block.innerHTML = `
-        <strong>Совместное задание выполнено!</strong>
-        ${st.jointBonusAwarded
-          ? `<p>Начислено <strong>+${P.POINTS_JOINT} баллов</strong> за все три названия.</p>`
-          : `<p class="muted">Баллы за задание начислятся, когда будут готовы все три мурала в Дизайн-заводе.</p>`}
-        <ul>${list}</ul>
-        <div class="btn-row">
-          <a class="btn btn--primary" href="pridumkino-gallery.html">Смотреть в галерее</a>
-          <a class="btn" href="district-pridumkino.html">На главную</a>
+      const methodLabel = card.method === "upload" ? "Загруженный рисунок" : card.coloringLabel;
+      return `
+        <div class="joint-card__preview" style="--joint-gradient: ${card.preview.gradient}">
+          <div class="joint-card__art" aria-hidden="true">${card.coloringArt}</div>
+          <div class="joint-card__building">
+            <span class="joint-card__building-tag">${escapeHtml(card.buildingName || "Здание")}</span>
+          </div>
         </div>
       `;
-      P.patchTourLinks(block);
     }
 
+    function renderCard(card) {
+      const hint = card.ready
+        ? "Название появится в галерее рядом с работой"
+        : "Можно придумать название заранее";
+      const methodLine = card.ready
+        ? `<p class="joint-card__hint">${escapeHtml(card.method === "upload" ? "Загруженный рисунок" : card.coloringLabel)}</p>`
+        : "";
+
+      return `
+        <article class="joint-card">
+          <div class="joint-card__head">
+            <span class="joint-card__head-icon">${card.meta.icon}</span>
+            <span>${escapeHtml(card.meta.title)}</span>
+          </div>
+          ${renderPreview(card)}
+          <div class="joint-card__body">
+            ${methodLine}
+            <label class="joint-card__label" for="title-${card.themeId}">Название рисунка</label>
+            <input
+              class="joint-card__input"
+              type="text"
+              id="title-${card.themeId}"
+              name="${card.themeId}"
+              value="${escapeHtml(card.title)}"
+              placeholder="Например: «Космический пикник»"
+              required
+              autocomplete="off"
+            >
+            <p class="joint-card__hint">${hint}</p>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderSuccess(st) {
+      const banner = document.getElementById("successBanner");
+      const pointsLine = st.jointBonusAwarded
+        ? `Начислено <strong>+${P.POINTS_JOINT} баллов</strong> за все три названия.`
+        : "Баллы за задание начислятся, когда будут готовы все три мурала в Дизайн-заводе.";
+
+      banner.hidden = false;
+      banner.innerHTML = `
+        <strong>Совместное задание сохранено!</strong>
+        <p style="margin:0 0 var(--space-3);">${pointsLine}</p>
+        <div class="btn-row" style="margin:0;">
+          <a class="btn btn--primary btn--sm" href="pridumkino-gallery.html">Смотреть в галерее</a>
+          <a class="btn btn--sm" href="district-pridumkino.html">На главную</a>
+        </div>
+      `;
+      document.getElementById("submitBtn").textContent = "Обновить названия";
+      P.patchTourLinks(banner);
+    }
+
+    function renderForm(state) {
+      const cards = P.getJointCards(state);
+      document.getElementById("jointGrid").innerHTML = cards.map(renderCard).join("");
+      if (state.jointDone) renderSuccess(state);
+    }
+
+    document.getElementById("jointForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const titles = {};
+      P.THEMES.forEach((id) => {
+        titles[id] = document.getElementById(`title-${id}`).value;
+      });
+      const result = P.saveJointTitles(titles);
+      if (result.ok) {
+        renderForm(result.state);
+        document.getElementById("successBanner").scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    });
+
+    renderForm(P.loadState());
     P.patchTourLinks();
   </script>
 </body>
