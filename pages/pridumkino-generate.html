@@ -58,7 +58,7 @@
       ? pictureParam
       : (P.loadSession().pictureId || null);
     const viewOnly = params.get("view") === "1";
-    const icons = { gorod: "🏙️", kosmos: "🪐", leto: "🌻" };
+    const icons = Object.fromEntries(P.THEMES.map((id) => [id, P.THEME_META[id].icon]));
 
     if (!theme) {
       P.goReplace("district-pridumkino.html");

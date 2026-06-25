@@ -4,16 +4,14 @@
 (function (global) {
   const STORAGE_KEY = "sozdania_pridumkino_proto_v1";
 
-  const THEMES = ["gorod", "kosmos", "leto"];
+  const THEMES = ["kosmos", "nauka", "tekhnologiya"];
+
+  const LEGACY_THEME_IDS = {
+    gorod: "nauka",
+    leto: "tekhnologiya"
+  };
 
   const THEME_META = {
-    gorod: {
-      id: "gorod",
-      title: "Город",
-      icon: "🏙️",
-      tagline: "Преврати город в произведение искусства",
-      colorLabel: "Город"
-    },
     kosmos: {
       id: "kosmos",
       title: "Космос",
@@ -21,27 +19,34 @@
       tagline: "Пусть космос станет таким, каким его видишь только ты",
       colorLabel: "Космос"
     },
-    leto: {
-      id: "leto",
-      title: "Лето",
-      icon: "🌻",
-      tagline: "Сделай лето таким солнечным, каким оно бывает в твоих мечтах",
-      colorLabel: "Лето"
+    nauka: {
+      id: "nauka",
+      title: "Наука",
+      icon: "🔬",
+      tagline: "Открой мир открытий и преврати идеи в настоящие открытия",
+      colorLabel: "Наука"
+    },
+    tekhnologiya: {
+      id: "tekhnologiya",
+      title: "Технология",
+      icon: "🤖",
+      tagline: "Создай будущее — роботы, гаджеты и изобретения твоей мечты",
+      colorLabel: "Технология"
     }
   };
 
   const THEME_MURAL_PREVIEW = {
-    gorod: {
-      gradient: "linear-gradient(180deg, #fbbf24 0%, #f97316 35%, #64748b 42%, #cbd5e1 100%)",
-      accent: "#f59e0b"
-    },
     kosmos: {
       gradient: "linear-gradient(180deg, #312e81 0%, #6366f1 40%, #94a3b8 48%, #e2e8f0 100%)",
       accent: "#818cf8"
     },
-    leto: {
-      gradient: "linear-gradient(180deg, #38bdf8 0%, #fbbf24 30%, #86efac 38%, #e2e8f0 100%)",
-      accent: "#facc15"
+    nauka: {
+      gradient: "linear-gradient(180deg, #ecfccb 0%, #84cc16 35%, #64748b 42%, #cbd5e1 100%)",
+      accent: "#65a30d"
+    },
+    tekhnologiya: {
+      gradient: "linear-gradient(180deg, #0ea5e9 0%, #38bdf8 30%, #94a3b8 38%, #e2e8f0 100%)",
+      accent: "#0284c7"
     }
   };
 
@@ -59,30 +64,30 @@
   ];
 
   const MOCK_GALLERY = [
-    { login: "КосмоВаня", title: "Радужный закат", theme: "leto" },
-    { login: "МираКрафт", title: "Планета мечты", theme: "kosmos" },
-    { login: "ТехноРома", title: "Улица идей", theme: "gorod" },
-    { login: "ВикаКодит", title: "Солнечный день", theme: "leto" },
-    { login: "ЛесникАртём", title: "Космический дом", theme: "kosmos" },
-    { login: "ДашаЛео", title: "Город будущего", theme: "gorod" },
-    { login: "СаняВольт", title: "Летний ветер", theme: "leto" },
-    { login: "НикаАрт", title: "Звёздная тропа", theme: "kosmos" },
-    { login: "ПолинаСвет", title: "Домик мечты", theme: "gorod" },
-    { login: "МаксПикс", title: "Морской бриз", theme: "leto" },
-    { login: "ЮляКраск", title: "Орбита", theme: "kosmos" },
-    { login: "КирСмайл", title: "Площадь", theme: "gorod" },
-    { login: "АняЛуч", title: "Пикник", theme: "leto" },
-    { login: "ТимКод", title: "Галактика", theme: "kosmos" },
-    { login: "ЛенаХаус", title: "Переулок", theme: "gorod" },
-    { login: "РомаВолна", title: "Каникулы", theme: "leto" },
-    { login: "СоняНебо", title: "Комета", theme: "kosmos" },
-    { login: "ВоваГраф", title: "Проспект", theme: "gorod" },
-    { login: "КатяСад", title: "Сад", theme: "leto" },
-    { login: "ИльяМур", title: "Станция", theme: "kosmos" },
-    { login: "МишаЛайн", title: "Квартал", theme: "gorod" },
-    { login: "ЗояТепло", title: "Озеро", theme: "leto" },
-    { login: "ГлебОрбит", title: "Спутник", theme: "kosmos" },
-    { login: "НастяБлок", title: "Двор", theme: "gorod" }
+    { login: "КосмоВаня", title: "Планета мечты", theme: "kosmos" },
+    { login: "МираКрафт", title: "Орбита знаний", theme: "nauka" },
+    { login: "ТехноРома", title: "Робот-помощник", theme: "tekhnologiya" },
+    { login: "ВикаКодит", title: "Звёздная тропа", theme: "kosmos" },
+    { login: "ЛесникАртём", title: "Лаборатория идей", theme: "nauka" },
+    { login: "ДашаЛео", title: "Умный дом", theme: "tekhnologiya" },
+    { login: "СаняВольт", title: "Комета", theme: "kosmos" },
+    { login: "НикаАрт", title: "Микромир", theme: "nauka" },
+    { login: "ПолинаСвет", title: "Город будущего", theme: "tekhnologiya" },
+    { login: "МаксПикс", title: "Галактика", theme: "kosmos" },
+    { login: "ЮляКраск", title: "Формула чуда", theme: "nauka" },
+    { login: "КирСмайл", title: "Дрон-мечта", theme: "tekhnologiya" },
+    { login: "АняЛуч", title: "Спутник", theme: "kosmos" },
+    { login: "ТимКод", title: "Опыт №7", theme: "nauka" },
+    { login: "ЛенаХаус", title: "Кибер-скейт", theme: "tekhnologiya" },
+    { login: "РомаВолна", title: "НЛО дружбы", theme: "kosmos" },
+    { login: "СоняНебо", title: "Телескоп", theme: "nauka" },
+    { login: "ВоваГраф", title: "ИИ-художник", theme: "tekhnologiya" },
+    { login: "КатяСад", title: "Станция", theme: "kosmos" },
+    { login: "ИльяМур", title: "Химия цвета", theme: "nauka" },
+    { login: "МишаЛайн", title: "Голограмма", theme: "tekhnologiya" },
+    { login: "ЗояТепло", title: "Марс сегодня", theme: "kosmos" },
+    { login: "ГлебОрбит", title: "Клетка жизни", theme: "nauka" },
+    { login: "НастяБлок", title: "Прототип мечты", theme: "tekhnologiya" }
   ];
 
   const POINTS_PER_GENERATION = 30;
@@ -90,9 +95,9 @@
   const SESSION_KEY = "sozdania_pridumkino_session";
 
   const COLORING_PAGES = {
-    gorod: [{ id: 1, label: "Город", art: "🏠🚗" }],
     kosmos: [{ id: 1, label: "Космос", art: "👽🛸" }],
-    leto: [{ id: 1, label: "Лето", art: "🏖️☀️" }]
+    nauka: [{ id: 1, label: "Наука", art: "🔬🧪" }],
+    tekhnologiya: [{ id: 1, label: "Технология", art: "🤖⚙️" }]
   };
 
   const PALETTE = [
@@ -112,6 +117,24 @@
     };
   }
 
+  function normalizeThemeId(id) {
+    if (!id) return null;
+    const key = String(id).trim().toLowerCase();
+    if (THEMES.includes(key)) return key;
+    if (LEGACY_THEME_IDS[key]) return LEGACY_THEME_IDS[key];
+    return null;
+  }
+
+  function migrateThemeMap(source) {
+    const out = {};
+    if (!source || typeof source !== "object") return out;
+    Object.keys(source).forEach((key) => {
+      const nextId = normalizeThemeId(key);
+      if (nextId) out[nextId] = source[key];
+    });
+    return out;
+  }
+
   function loadState() {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
@@ -120,8 +143,8 @@
       return {
         ...defaultState(),
         ...parsed,
-        completed: parsed.completed || {},
-        jointTitles: parsed.jointTitles || {}
+        completed: migrateThemeMap(parsed.completed),
+        jointTitles: migrateThemeMap(parsed.jointTitles)
       };
     } catch {
       return defaultState();
@@ -134,11 +157,9 @@
 
   function getThemeFromQuery() {
     const raw = new URLSearchParams(location.search).get("theme");
-    const id = raw ? String(raw).trim().toLowerCase() : "";
-    if (THEMES.includes(id)) return id;
-    const sessionTheme = loadSession().theme;
-    if (sessionTheme && THEMES.includes(sessionTheme)) return sessionTheme;
-    return null;
+    const id = normalizeThemeId(raw);
+    if (id) return id;
+    return normalizeThemeId(loadSession().theme);
   }
 
   function resolveBuildingId(explicitId) {
@@ -154,18 +175,19 @@
   }
 
   function completeGeneration(themeId, payload) {
-    if (!THEMES.includes(themeId)) {
+    const theme = normalizeThemeId(themeId);
+    if (!theme) {
       return { state: loadState(), isNew: false, ok: false };
     }
 
     const state = loadState();
-    const already = Boolean(state.completed[themeId]);
-    const prev = state.completed[themeId] || {};
-    const savedTitle = state.jointTitles?.[themeId] || prev.title || "";
+    const already = Boolean(state.completed[theme]);
+    const prev = state.completed[theme] || {};
+    const savedTitle = state.jointTitles?.[theme] || prev.title || "";
 
     state.completed = { ...state.completed };
-    state.completed[themeId] = {
-      theme: themeId,
+    state.completed[theme] = {
+      theme,
       method: payload.method || prev.method || "color",
       buildingId: payload.buildingId ?? prev.buildingId ?? null,
       buildingName: payload.buildingName || prev.buildingName || "",
@@ -242,7 +264,9 @@
     try {
       const raw = sessionStorage.getItem(SESSION_KEY);
       if (!raw) return defaultSession();
-      return { ...defaultSession(), ...JSON.parse(raw) };
+      const session = { ...defaultSession(), ...JSON.parse(raw) };
+      session.theme = normalizeThemeId(session.theme);
+      return session;
     } catch {
       return defaultSession();
     }
@@ -253,8 +277,9 @@
   }
 
   function setSessionTheme(themeId, method) {
+    const theme = normalizeThemeId(themeId);
     const s = loadSession();
-    s.theme = themeId;
+    s.theme = theme;
     s.method = method;
     s.pictureId = method === "color" ? 1 : null;
     s.buildingId = null;
@@ -274,7 +299,7 @@
     const st = state || loadState();
     const meta = THEME_META[themeId];
     const work = st.completed[themeId] || null;
-    const preview = THEME_MURAL_PREVIEW[themeId] || THEME_MURAL_PREVIEW.gorod;
+    const preview = THEME_MURAL_PREVIEW[themeId] || THEME_MURAL_PREVIEW.kosmos;
     const coloring = work?.pictureId
       ? getColoringPages(themeId).find((p) => p.id === work.pictureId)
       : getThemeColoringPage(themeId);
