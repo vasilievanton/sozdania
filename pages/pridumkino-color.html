@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Раскрась картинку — Придумкино</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/pridumkino-flow.css">
+</head>
+<body data-mode="user" class="pk-flow">
+  <div id="chrome"></div>
+  <div class="pk-flow__card">
+    <div id="stepper"></div>
+
+    <div class="pk-color-layout">
+      <div>
+        <div class="pk-color-canvas-wrap" id="canvasWrap"></div>
+        <div class="pk-color-toolbar">
+          <button type="button" class="pk-tool-btn" id="btnUndo" title="Отменить" disabled>↶</button>
+          <button type="button" class="pk-tool-btn" id="btnRedo" title="Вернуть" disabled>↷</button>
+          <button type="button" class="pk-tool-btn" id="btnClear" title="Очистить всё">🗑</button>
+          <button type="button" class="pk-btn-done" id="btnDone" disabled>ГОТОВО</button>
+        </div>
+      </div>
+      <div class="pk-palette" id="palette"></div>
+    </div>
+  </div>
+  <div id="footer"></div>
+
+  <script src="../js/pridumkino-proto.js"></script>
+  <script src="../js/pridumkino-flow-ui.js"></script>
+  <script>
+    const P = window.PridumkinoProto;
+    const UI = window.PridumkinoFlowUI;
+    const params = new URLSearchParams(location.search);
+    const theme = P.getThemeFromQuery();
+    const pictureId = Number(params.get("picture"));
+
+    if (!theme || !pictureId) location.href = `pridumkino-pick.html?theme=${theme || ""}`;
+
+    const page = P.getColoringPages(theme).find((p) => p.id === pictureId);
+    if (!page) location.href = `pridumkino-pick.html?theme=${theme}`;
+
+    const session = P.loadSession();
+    session.theme = theme;
+    session.method = "color";
+    session.pictureId = pictureId;
+    P.saveSession(session);
+
+    UI.renderFlowChrome(document.getElementById("chrome"), theme);
+    UI.renderStepper(document.getElementById("stepper"), UI.COLOR_STEPS, 1);
+    document.getElementById("footer").innerHTML = UI.flowFooter();
+
+    const ZONE_IDS = ["bg", "sun", "cloud", "house", "roof", "planet", "rocket"];
+    const DEFAULT_FILL = "#ffffff";
+    let currentColor = P.PALETTE[0];
+    const fills = Object.fromEntries(ZONE_IDS.map((z) => [z, DEFAULT_FILL]));
+    const history = [];
+    const future = [];
+    let coloredCount = 0;
+
+    document.getElementById("canvasWrap").innerHTML = P.getColoringSvg();
+
+    const paletteEl = document.getElementById("palette");
+    P.PALETTE.forEach((color, i) => {
+      const sw = document.createElement("button");
+      sw.type = "button";
+      sw.className = "pk-palette__swatch" + (i === 0 ? " selected" : "");
+      sw.style.background = color;
+      sw.addEventListener("click", () => {
+        currentColor = color;
+        paletteEl.querySelectorAll(".pk-palette__swatch").forEach((x) => x.classList.remove("selected"));
+        sw.classList.add("selected");
+      });
+      paletteEl.appendChild(sw);
+    });
+
+    function snapshot() {
+      return { ...fills };
+    }
+
+    function applySnapshot(snap) {
+      ZONE_IDS.forEach((z) => {
+        fills[z] = snap[z];
+        const el = document.querySelector(`[data-zone="${z}"]`);
+        if (el) el.setAttribute("fill", snap[z]);
+      });
+      coloredCount = ZONE_IDS.filter((z) => fills[z] !== DEFAULT_FILL).length;
+      updateDone();
+    }
+
+    function pushHistory() {
+      history.push(snapshot());
+      future.length = 0;
+      document.getElementById("btnUndo").disabled = history.length === 0;
+      document.getElementById("btnRedo").disabled = true;
+    }
+
+    function updateDone() {
+      const minZones = 5;
+      document.getElementById("btnDone").disabled = coloredCount < minZones;
+      document.getElementById("btnDone").title =
+        coloredCount < minZones
+          ? `Закрась ещё ${minZones - coloredCount} зон(ы)`
+          : "";
+    }
+
+    document.querySelectorAll(".pk-color-zone").forEach((zone) => {
+      zone.addEventListener("click", () => {
+        const id = zone.dataset.zone;
+        if (fills[id] === currentColor) return;
+        pushHistory();
+        fills[id] = currentColor;
+        zone.setAttribute("fill", currentColor);
+        coloredCount = ZONE_IDS.filter((z) => fills[z] !== DEFAULT_FILL).length;
+        updateDone();
+      });
+    });
+
+    document.getElementById("btnUndo").addEventListener("click", () => {
+      if (!history.length) return;
+      future.push(snapshot());
+      applySnapshot(history.pop());
+      document.getElementById("btnUndo").disabled = history.length === 0;
+      document.getElementById("btnRedo").disabled = false;
+    });
+
+    document.getElementById("btnRedo").addEventListener("click", () => {
+      if (!future.length) return;
+      history.push(snapshot());
+      applySnapshot(future.pop());
+      document.getElementById("btnRedo").disabled = future.length === 0;
+      document.getElementById("btnUndo").disabled = false;
+    });
+
+    document.getElementById("btnClear").addEventListener("click", () => {
+      pushHistory();
+      ZONE_IDS.forEach((z) => {
+        fills[z] = DEFAULT_FILL;
+        document.querySelector(`[data-zone="${z}"]`)?.setAttribute("fill", DEFAULT_FILL);
+      });
+      coloredCount = 0;
+      updateDone();
+    });
+
+    document.getElementById("btnDone").addEventListener("click", () => {
+      const s = P.loadSession();
+      s.pictureId = pictureId;
+      P.saveSession(s);
+      location.href = `pridumkino-buildings.html?theme=${theme}&method=color`;
+    });
+  </script>
+</body>
+</html>

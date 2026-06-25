@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Как назовём рисунок? — Придумкино</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <style>
+    .name-row {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: var(--space-4);
+      align-items: start;
+      padding: var(--space-4) 0;
+      border-top: 1px solid var(--c-border);
+    }
+    .name-row:first-of-type { border-top: none; }
+    .name-row__thumb {
+      aspect-ratio: 1;
+      background: var(--c-surface-alt);
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      border: 1px solid var(--c-border);
+    }
+    .name-row label { font-weight: 600; display: block; margin-bottom: var(--space-2); }
+    .name-row input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--c-border);
+      border-radius: var(--r-sm);
+      font-size: 15px;
+    }
+    .name-row .muted { font-size: 13px; margin-top: var(--space-1); }
+  </style>
+</head>
+<body data-mode="user">
+  <main class="app-main app-main--narrow">
+    <div class="breadcrumb"><a href="district-pridumkino.html">← В Придумкино</a></div>
+    <h1>Как назовём рисунок?</h1>
+    <p class="muted">
+      Совместное задание с родителем. Придумайте название для каждого из трёх муралов —
+      смешное, волшебное или неожиданное. Все три поля заполняются сразу.
+    </p>
+
+    <div id="lockedBlock" class="notice notice--warn" hidden>
+      <strong>Задание закрыто.</strong> Сначала заверши все три рисунка в Дизайн-заводе.
+      <div class="btn-row"><a class="btn" href="district-pridumkino.html">Вернуться</a></div>
+    </div>
+
+    <form id="jointForm" class="card" hidden>
+      <div id="nameFields"></div>
+      <div class="btn-row">
+        <a class="btn" href="district-pridumkino.html">Отмена</a>
+        <button type="submit" class="btn btn--primary" id="submitBtn">Сохранить все названия</button>
+      </div>
+    </form>
+
+    <div id="doneBlock" class="notice notice--success" hidden></div>
+  </main>
+  <script src="../js/pridumkino-proto.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    const P = window.PridumkinoProto;
+    const icons = { gorod: "🏙️", kosmos: "🪐", leto: "🌻" };
+    const state = P.loadState();
+
+    if (!P.allThemesDone(state)) {
+      document.getElementById("lockedBlock").hidden = false;
+    } else if (state.jointDone) {
+      showDone(state);
+    } else {
+      renderForm(state);
+    }
+
+    function renderForm(st) {
+      const form = document.getElementById("jointForm");
+      const fields = document.getElementById("nameFields");
+      form.hidden = false;
+
+      fields.innerHTML = P.THEMES.map((id) => {
+        const meta = P.THEME_META[id];
+        const work = st.completed[id];
+        const val = work?.title || "";
+        return `
+          <div class="name-row">
+            <div class="name-row__thumb">${icons[id]}</div>
+            <div>
+              <label for="title-${id}">${meta.title} · ${work.buildingName || "здание"}</label>
+              <input type="text" id="title-${id}" name="${id}" value="${val.replace(/"/g, "&quot;")}" placeholder="Например: «Космический пикник»" required>
+              <p class="muted">Название появится в галерее рядом с работой</p>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const titles = {};
+        P.THEMES.forEach((id) => {
+          titles[id] = document.getElementById(`title-${id}`).value;
+        });
+        const result = P.saveJointTitles(titles);
+        if (result.ok) {
+          form.hidden = true;
+          showDone(result.state);
+        }
+      });
+    }
+
+    function showDone(st) {
+      const block = document.getElementById("doneBlock");
+      block.hidden = false;
+      const list = P.THEMES.map((id) => {
+        const meta = P.THEME_META[id];
+        const title = st.completed[id]?.title || "—";
+        return `<li><strong>${meta.title}:</strong> «${title}»</li>`;
+      }).join("");
+      block.innerHTML = `
+        <strong>Совместное задание выполнено!</strong>
+        ${st.jointBonusAwarded ? `<p>Начислено <strong>+${P.POINTS_JOINT} баллов</strong> один раз за все три названия.</p>` : ""}
+        <ul>${list}</ul>
+        <div class="btn-row">
+          <a class="btn btn--primary" href="pridumkino-gallery.html">Смотреть в галерее</a>
+          <a class="btn" href="district-pridumkino.html">На главную</a>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>

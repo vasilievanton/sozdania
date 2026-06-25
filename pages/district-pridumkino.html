@@ -3,100 +3,437 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Придумкино</title>
+  <title>Придумкино — Дизайн-завод</title>
   <link rel="stylesheet" href="../css/main.css">
   <style>
-    .gallery {
+    .proto-notice {
+      background: #fff8e6;
+      border: 1px solid #e8d4a0;
+      border-radius: var(--r-md);
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-5);
+      font-size: 14px;
+    }
+    .design-factory {
+      text-align: center;
+      margin-bottom: var(--space-6);
+    }
+    .design-factory__title {
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0 0 var(--space-4);
+      color: var(--c-text);
+    }
+    .design-factory__lead {
+      max-width: 820px;
+      margin: 0 auto var(--space-6);
+      color: var(--c-text);
+      font-size: 15px;
+      line-height: 1.55;
+    }
+    .theme-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--space-3);
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+    }
+    @media (max-width: 800px) {
+      .theme-grid { grid-template-columns: 1fr; }
+    }
+    .theme-card {
+      background: linear-gradient(160deg, #7ec8f0 0%, #4aa3e0 100%);
+      border-radius: 20px;
+      padding: var(--space-5);
+      color: #fff;
+      text-align: center;
+      min-height: 260px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      text-decoration: none;
+      border: 2px solid transparent;
+      transition: transform .15s;
+    }
+    .theme-card:hover {
+      transform: translateY(-2px);
+      text-decoration: none;
+      color: #fff;
+    }
+    .theme-card--done {
+      border-color: #fff;
+      box-shadow: 0 0 0 2px var(--c-success);
+    }
+    .theme-card--done .theme-card__btn {
+      background: rgba(255,255,255,.9);
+    }
+    .theme-card__icon { font-size: 48px; line-height: 1; }
+    .theme-card__title { font-size: 28px; font-weight: 700; margin: var(--space-3) 0 var(--space-2); }
+    .theme-card__desc { font-size: 14px; opacity: .95; margin-bottom: var(--space-4); }
+    .theme-card__btn {
+      display: inline-block;
+      background: #fff;
+      color: #1a1a1a;
+      font-weight: 700;
+      font-size: 13px;
+      letter-spacing: .04em;
+      padding: 10px 20px;
+      border-radius: 999px;
+    }
+    .theme-card__badge {
+      font-size: 12px;
+      background: rgba(255,255,255,.25);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: var(--space-2);
+    }
+    .joint-banner {
+      background: linear-gradient(135deg, #8fd0f5 0%, #5eb5e8 55%, #7ec8f0 100%);
+      border-radius: 20px;
+      padding: var(--space-6);
+      color: #fff;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: var(--space-5);
+      align-items: center;
+      margin-bottom: var(--space-6);
     }
     @media (max-width: 760px) {
-      .gallery { grid-template-columns: repeat(2, 1fr); }
+      .joint-banner { grid-template-columns: 1fr; }
     }
-    .gallery__item {
+    .joint-banner--locked {
       background: var(--c-surface-alt);
-      border: 1px solid var(--c-border);
+      color: var(--c-text);
+      border: 1px dashed var(--c-border-strong);
+    }
+    .joint-banner h2 {
+      color: inherit;
+      margin-bottom: var(--space-3);
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+    .joint-banner p {
+      color: inherit;
+      opacity: .92;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .joint-banner__btn {
+      display: inline-block;
+      margin-top: var(--space-4);
+      background: #fff;
+      color: #1a1a1a;
+      border: none;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: .06em;
+      padding: 12px 22px;
+      border-radius: 999px;
+      text-decoration: none;
+    }
+    .joint-banner__btn:hover {
+      color: #1a1a1a;
+      text-decoration: none;
+    }
+    .joint-banner__art {
+      background: rgba(255,255,255,.2);
       border-radius: var(--r-md);
-      aspect-ratio: 1;
+      min-height: 140px;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
-      color: var(--c-text-muted);
-      font-size: 12px;
-      text-align: center;
-      padding: var(--space-2);
+      font-size: 64px;
     }
-    .gallery__item--locked { opacity: 0.45; }
+    .joint-banner--locked .joint-banner__art {
+      background: var(--c-surface);
+      font-size: 40px;
+      opacity: .5;
+    }
+    .joint-banner .btn--white {
+      background: #fff;
+      color: #1a1a1a;
+      border: none;
+      font-weight: 700;
+    }
+    .gallery-hub {
+      margin-top: var(--space-7);
+      margin-bottom: var(--space-6);
+    }
+    .gallery-hub__box {
+      background: #f2f4f7;
+      border-radius: 24px;
+      padding: var(--space-6) var(--space-5);
+      text-align: center;
+    }
+    .gallery-hub__title {
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0 0 var(--space-3);
+      color: var(--c-text);
+    }
+    .gallery-hub__lead {
+      max-width: 520px;
+      margin: 0 auto var(--space-6);
+      color: var(--c-text);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .gallery-hub__grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-4) var(--space-3);
+      margin-bottom: var(--space-6);
+    }
+    @media (max-width: 900px) {
+      .gallery-hub__grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .gallery-hub__item {
+      text-align: center;
+    }
+    .gallery-hub__img {
+      aspect-ratio: 1;
+      width: 100%;
+      border-radius: 20px;
+      background: linear-gradient(
+        180deg,
+        #c4b5fd 0%,
+        #a78bfa 18%,
+        #fbbf24 22%,
+        #94a3b8 28%,
+        #e2e8f0 100%
+      );
+      position: relative;
+      overflow: hidden;
+      margin-bottom: var(--space-3);
+    }
+    .gallery-hub__img::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 10%;
+      transform: translateX(-50%);
+      width: 42%;
+      height: 65%;
+      background: linear-gradient(180deg, #f8fafc 0%, #cbd5e1 100%);
+      border-radius: 6px 6px 3px 3px;
+    }
+    .gallery-hub__img::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 24%;
+      transform: translateX(-50%);
+      width: 16%;
+      height: 16%;
+      border-radius: 50%;
+      background: #7c3aed;
+    }
+    .gallery-hub__login {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--c-text);
+    }
+    .gallery-hub__more {
+      display: inline-block;
+      background: #fff;
+      color: var(--c-text);
+      border: 1px solid var(--c-border);
+      border-radius: 12px;
+      padding: 14px 32px;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: .06em;
+      text-decoration: none;
+    }
+    .gallery-hub__more:hover {
+      color: var(--c-text);
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    }
+    .progress-pill {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+      background: var(--c-surface-alt);
+      border: 1px solid var(--c-border);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 13px;
+      margin-bottom: var(--space-4);
+    }
+    .progress-pill span.done { color: var(--c-success); font-weight: 700; }
+
+    .joint-section {
+      text-align: center;
+      margin-bottom: var(--space-6);
+    }
+    .joint-section__title {
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0 0 var(--space-4);
+      color: var(--c-text);
+    }
+    .joint-section__lead {
+      max-width: 720px;
+      margin: 0 auto var(--space-5);
+      color: var(--c-text);
+      font-size: 15px;
+      line-height: 1.55;
+    }
   </style>
 </head>
 <body data-mode="user">
   <main class="app-main">
     <div class="breadcrumb"><a href="map.html">← На карту</a></div>
+
     <div class="flex flex--between flex--wrap mb-4">
       <div>
         <h1 class="mb-0"><span class="district-dot district-dot--pridumkino"></span>Придумкино</h1>
-        <p class="muted mb-0">Творчество · Маскот: Креативик</p>
+        <p class="muted mb-0">Дизайн-завод · Маскот: Креативик</p>
+      </div>
+      <div class="progress-pill" id="progressPill"></div>
+    </div>
+
+    <div class="proto-notice">
+      <strong>Прототип сценария.</strong>
+      Пройди все три темы → откроется совместное задание → работы попадут в арт-галерею.
+      Баллы начисляются сразу после генерации. Кнопка «Сбросить» — для повторного прохождения.
+      <div class="btn-row" style="margin-top:var(--space-2); margin-bottom:0;">
+        <button type="button" class="btn btn--ghost" id="btnReset">Сбросить прототип</button>
       </div>
     </div>
 
-    <h2 class="section-title">Раскраски</h2>
-    <div class="card">
-      <p class="muted">
-        Готовые шаблоны для раскрашивания. Графического редактора нет — ребёнок
-        раскрашивает прямо на платформе по уже нарисованным контурам.
+    <section class="design-factory">
+      <h2 class="design-factory__title">Дизайн-завод</h2>
+      <p class="design-factory__lead">
+        Я Креативик — главный фантазёр района Придумкино. В моих заданиях линии становятся улицами,
+        цвета превращают дома в сказочные города, а рисунки оживают с помощью искусственного интеллекта.
+        Выбирай, что хочешь создать: раскрась город, добавь свои детали или преврати рисунок в настоящую историю
       </p>
-      <div class="grid grid--3">
-        <a class="tile" href="game-pridumkino.html">
-          <div class="tile__head"><span class="tile__name">Раскраска: Город</span></div>
-          <div class="tile__desc">Дом, дерево, машина</div>
-        </a>
-        <a class="tile" href="game-pridumkino.html">
-          <div class="tile__head"><span class="tile__name">Раскраска: Космос</span></div>
-          <div class="tile__desc">Планеты, ракета, астронавт</div>
-        </a>
-        <a class="tile" href="game-pridumkino.html">
-          <div class="tile__head"><span class="tile__name">Раскраска: Лето</span></div>
-          <div class="tile__desc">Пляж, мороженое, солнце</div>
-        </a>
-      </div>
-    </div>
+      <div class="theme-grid" id="themeGrid"></div>
+    </section>
 
-    <h2 class="section-title">Общая галерея граффити</h2>
-    <div class="card">
-      <p class="muted">
-        Участники рисуют граффити где-то вне платформы (на бумаге, в Procreate, фото настоящего рисунка)
-        и загружают сюда. Все работы видны всем — скроллится бесконечная стена.
+    <section class="joint-section">
+      <h2 class="joint-section__title">Бульвар творческих дуэтов</h2>
+      <p class="joint-section__lead">
+        Прикрепи рисунок, а потом предложи родителю придумать вместе самое классное название —
+        смешное, волшебное или совсем неожиданное
       </p>
-      <div class="gallery">
-        <div class="gallery__item">Граффити<br>КосмоВаня</div>
-        <div class="gallery__item">Граффити<br>МираКрафт</div>
-        <div class="gallery__item">Граффити<br>ТехноРома</div>
-        <div class="gallery__item">Граффити<br>ВикаКодит</div>
-        <div class="gallery__item">Граффити<br>ЛесникАртём</div>
-        <div class="gallery__item">Граффити<br>ДашаЛео</div>
-        <div class="gallery__item">Граффити<br>СаняВольт</div>
-        <div class="gallery__item">…ещё 42</div>
-      </div>
-      <div class="btn-row">
-        <a class="btn btn--primary" href="#" data-stub="Загрузить свой граффити">Загрузить свой граффити</a>
-        <a class="btn btn--ghost" href="#" data-stub="Показать ещё">Показать ещё</a>
-      </div>
-    </div>
+      <div id="jointBlock"></div>
+    </section>
 
-    <h2 class="section-title">Совместное задание</h2>
-    <div class="card">
-      <h3>«Имя рисунку»</h3>
-      <p class="muted">
-        Ребёнок загружает свой граффити в галерею, родитель открывает работу и придумывает название.
-      </p>
-      <div class="btn-row">
-        <a class="btn" href="game-pridumkino.html">Открыть задание</a>
+    <section class="gallery-hub">
+      <div class="gallery-hub__box">
+        <h2 class="gallery-hub__title">Арт-галерея</h2>
+        <p class="gallery-hub__lead">
+          Тут каждый рисунок — маленькая история, которую интересно рассматривать
+        </p>
+        <div class="gallery-hub__grid" id="galleryPreview"></div>
+        <a class="gallery-hub__more" href="pridumkino-gallery.html">ПОКАЗАТЬ ЕЩЁ</a>
       </div>
-    </div>
+    </section>
   </main>
+  <script src="../js/pridumkino-proto.js"></script>
   <script src="../js/tour.js"></script>
   <script src="../js/app.js"></script>
+  <script>
+    const P = window.PridumkinoProto;
+
+    const JOINT_CARD_TITLE = "Как назовём рисунок?";
+    const JOINT_CARD_TEXT =
+      "Придумай рисунку название, которого ещё никто не слышал! Смешивай идеи, фантазируй вместе с ребёнком и создавайте неповторимые творческие работы";
+
+    function renderHub() {
+      const state = P.loadState();
+      const doneCount = P.THEMES.filter((t) => state.completed[t]).length;
+
+      document.getElementById("progressPill").innerHTML =
+        `Рисунки: <span class="done">${doneCount}</span> / 3 · Баллы: <strong>${state.totalPoints}</strong>`;
+
+      const grid = document.getElementById("themeGrid");
+      grid.innerHTML = P.THEMES.map((id) => {
+        const meta = P.THEME_META[id];
+        const done = Boolean(state.completed[id]);
+        const href = done
+          ? `pridumkino-generate.html?theme=${id}&view=1`
+          : `pridumkino-method.html?theme=${id}`;
+        const btn = done ? "СМОТРЕТЬ >" : "НАЧАТЬ >";
+        const badge = done
+          ? `<div class="theme-card__badge">✓ Мурал готов · +${P.POINTS_PER_GENERATION} баллов</div>`
+          : "";
+        return `
+          <a class="theme-card${done ? " theme-card--done" : ""}" href="${href}">
+            ${badge}
+            <div>
+              <div class="theme-card__icon">${meta.icon}</div>
+              <div class="theme-card__title">${meta.title}</div>
+              <div class="theme-card__desc">${meta.tagline}</div>
+            </div>
+            <span class="theme-card__btn">${btn}</span>
+          </a>
+        `;
+      }).join("");
+
+      const previewWorks = P.getGalleryWorks(state).slice(0, 8);
+      document.getElementById("galleryPreview").innerHTML = previewWorks.map((w) => `
+        <article class="gallery-hub__item">
+          <div class="gallery-hub__img" aria-hidden="true"></div>
+          <div class="gallery-hub__login">${w.login}</div>
+        </article>
+      `).join("");
+
+      const jointEl = document.getElementById("jointBlock");
+      const allDone = P.allThemesDone(state);
+
+      if (!allDone) {
+        jointEl.innerHTML = `
+          <div class="joint-banner joint-banner--locked" style="text-align:left;">
+            <div>
+              <h2>${JOINT_CARD_TITLE}</h2>
+              <p><strong>Сначала заверши все три рисунка.</strong></p>
+              <p class="muted" style="opacity:1;">Осталось: ${3 - doneCount} из 3 тем. Совместное задание откроется автоматически.</p>
+            </div>
+            <div class="joint-banner__art">🔒</div>
+          </div>
+        `;
+      } else if (state.jointDone) {
+        jointEl.innerHTML = `
+          <div class="joint-banner" style="text-align:left;">
+            <div>
+              <h2>${JOINT_CARD_TITLE}</h2>
+              <p>${JOINT_CARD_TEXT}</p>
+              <p style="margin-top:var(--space-3);"><strong>Задание выполнено</strong> — +${P.POINTS_JOINT} баллов.</p>
+              <div class="btn-row">
+                <a class="joint-banner__btn" href="pridumkino-joint.html">ПОСМОТРЕТЬ НАЗВАНИЯ ></a>
+                <a class="joint-banner__btn" href="pridumkino-gallery.html" style="background:rgba(255,255,255,.25);color:#fff;">В ГАЛЕРЕЮ ></a>
+              </div>
+            </div>
+            <div class="joint-banner__art">🖍️📄</div>
+          </div>
+        `;
+      } else {
+        jointEl.innerHTML = `
+          <div class="joint-banner" style="text-align:left;">
+            <div>
+              <h2>${JOINT_CARD_TITLE}</h2>
+              <p>${JOINT_CARD_TEXT}</p>
+              <a class="joint-banner__btn" href="pridumkino-joint.html">ОТКРЫТЬ ЗАДАНИЕ ></a>
+            </div>
+            <div class="joint-banner__art">🖍️📄</div>
+          </div>
+        `;
+      }
+    }
+
+    document.getElementById("btnReset").addEventListener("click", () => {
+      if (confirm("Сбросить прогресс прототипа Придумкино?")) {
+        P.resetProto();
+        renderHub();
+      }
+    });
+
+    renderHub();
+    window.addEventListener("pageshow", renderHub);
+  </script>
 </body>
 </html>

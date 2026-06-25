@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Загрузить рисунок — Придумкино</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/pridumkino-flow.css">
+</head>
+<body data-mode="user" class="pk-flow">
+  <div id="chrome"></div>
+  <div class="pk-flow__card">
+    <div id="stepper"></div>
+    <p class="muted" style="text-align:center;">Загрузи фото или скан своего рисунка.</p>
+
+    <div style="max-width:480px;margin:var(--space-5) auto;">
+      <div class="mock-canvas" style="min-height:200px;margin-bottom:var(--space-4);border-radius:16px;" id="preview">
+        Предпросмотр рисунка
+      </div>
+      <label class="pk-btn-start" style="display:block;text-align:center;cursor:pointer;margin-top:0;">
+        ВЫБРАТЬ ФАЙЛ
+        <input type="file" id="fileInput" accept="image/*" hidden>
+      </label>
+      <p id="fileName" class="muted" style="text-align:center;margin-top:var(--space-3);">Файл не выбран</p>
+      <button type="button" class="pk-btn-start" id="btnNext" disabled style="margin-top:var(--space-4);">ДАЛЕЕ →</button>
+    </div>
+  </div>
+  <div id="footer"></div>
+
+  <script src="../js/pridumkino-proto.js"></script>
+  <script src="../js/pridumkino-flow-ui.js"></script>
+  <script>
+    const P = window.PridumkinoProto;
+    const UI = window.PridumkinoFlowUI;
+    const theme = P.getThemeFromQuery();
+    if (!theme) location.href = "district-pridumkino.html";
+    P.setSessionTheme(theme, "upload");
+
+    UI.renderFlowChrome(document.getElementById("chrome"), theme);
+    UI.renderStepper(document.getElementById("stepper"), UI.getSteps("upload"), 0);
+    document.getElementById("footer").innerHTML = UI.flowFooter();
+
+    const btn = document.getElementById("btnNext");
+    document.getElementById("fileInput").addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      document.getElementById("fileName").textContent = file.name;
+      document.getElementById("preview").textContent = "✓ Рисунок загружен";
+      btn.disabled = false;
+    });
+
+    btn.addEventListener("click", () => {
+      location.href = `pridumkino-buildings.html?theme=${theme}&method=upload`;
+    });
+  </script>
+</body>
+</html>

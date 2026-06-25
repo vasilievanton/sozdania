@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Генерация — Придумкино</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/pridumkino-flow.css">
+</head>
+<body data-mode="user" class="pk-flow">
+  <div id="chrome"></div>
+  <div class="pk-flow__card">
+    <div id="stepper"></div>
+    <p class="muted" style="text-align:center;" id="leadText">
+      ИИ накладывает рисунок на стену здания…
+    </p>
+
+    <div id="loaderBlock">
+      <div class="pk-loader-box">
+        <div class="pk-loader-box__spin"></div>
+      </div>
+      <button type="button" class="pk-btn-gallery-send" disabled>ОТПРАВИТЬ В АРТ-ГАЛЕРЕЮ</button>
+      <p class="muted" style="text-align:center;font-size:13px;margin-top:var(--space-3);">
+        Работа сохраняется сразу. Отправка в галерею — автоматически.
+      </p>
+    </div>
+  </div>
+  <div id="footer"></div>
+
+  <div class="pk-success-overlay" id="successModal" hidden>
+    <div class="pk-success-modal">
+      <div class="pk-success-modal__icon" id="successIcon">🪐</div>
+      <h2>Отлично!</h2>
+      <p id="successText">
+        Твоя картинка заняла своё место в Арт-галерее, скорее иди смотреть, как здорово у тебя получилось!
+      </p>
+      <p class="muted" id="pointsLine"></p>
+      <div class="pk-success-actions">
+        <a class="btn-primary-red" href="pridumkino-gallery.html">АРТ-ГАЛЕРЕЯ</a>
+        <a class="btn-exit" href="district-pridumkino.html">ВЫЙТИ</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/pridumkino-proto.js"></script>
+  <script src="../js/pridumkino-flow-ui.js"></script>
+  <script>
+    const P = window.PridumkinoProto;
+    const UI = window.PridumkinoFlowUI;
+    const params = new URLSearchParams(location.search);
+    const theme = P.getThemeFromQuery();
+    const method = params.get("method") === "upload" ? "upload" : "color";
+    const buildingId = P.resolveBuildingId(params.get("building"));
+    const pictureParam = Number(params.get("picture"));
+    const pictureId = Number.isFinite(pictureParam) && pictureParam > 0
+      ? pictureParam
+      : (P.loadSession().pictureId || null);
+    const viewOnly = params.get("view") === "1";
+    const icons = { gorod: "🏙️", kosmos: "🪐", leto: "🌻" };
+
+    if (!theme) {
+      location.replace("district-pridumkino.html");
+    } else {
+      const session = P.loadSession();
+      session.theme = theme;
+      session.method = method;
+      if (pictureId) session.pictureId = pictureId;
+      if (buildingId) session.buildingId = buildingId;
+      P.saveSession(session);
+
+      const selectedBuilding = buildingId
+        ? P.BUILDINGS.find((b) => b.id === buildingId)
+        : null;
+
+      UI.renderFlowChrome(document.getElementById("chrome"), theme);
+      UI.renderStepper(document.getElementById("stepper"), UI.getSteps(method), 2);
+      document.getElementById("footer").innerHTML = UI.flowFooter();
+      document.getElementById("successIcon").textContent = icons[theme] || "🎨";
+
+      function showSuccess(state, isNew) {
+        document.getElementById("loaderBlock").hidden = true;
+        document.getElementById("successModal").hidden = false;
+        if (isNew) {
+          document.getElementById("pointsLine").innerHTML =
+            `<strong>+${P.POINTS_PER_GENERATION} баллов</strong> · активность выполнена · работа уже в галерее`;
+        } else {
+          document.getElementById("pointsLine").textContent = "Эта тема уже была выполнена ранее.";
+        }
+      }
+
+      if (viewOnly) {
+        const state = P.loadState();
+        if (state.completed[theme]) {
+          document.getElementById("loaderBlock").hidden = true;
+          showSuccess(state, false);
+        } else {
+          location.replace(`pridumkino-method.html?theme=${theme}`);
+        }
+      } else if (!selectedBuilding) {
+        location.replace(`pridumkino-buildings.html?theme=${theme}&method=${method}`);
+      } else {
+        const result = P.completeGeneration(theme, {
+          method,
+          buildingId: selectedBuilding.id,
+          buildingName: selectedBuilding.name,
+          pictureId
+        });
+
+        if (!result.ok) {
+          document.getElementById("leadText").textContent =
+            "Не удалось сохранить прогресс. Попробуйте ещё раз или сбросьте прототип на главной Придумкино.";
+        }
+
+        setTimeout(() => {
+          showSuccess(result.state, result.isNew);
+        }, 2500);
+      }
+    }
+  </script>
+</body>
+</html>

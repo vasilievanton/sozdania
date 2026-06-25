@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Арт-галерея — Придумкино</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <style>
+    body {
+      background: #fff;
+    }
+
+    .ag-page {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: var(--space-5) var(--space-6) var(--space-7);
+    }
+
+    .ag-breadcrumb {
+      font-size: 14px;
+      color: var(--c-text-muted);
+      margin-bottom: var(--space-6);
+    }
+
+    .ag-breadcrumb a {
+      color: var(--c-text-muted);
+      text-decoration: none;
+    }
+
+    .ag-breadcrumb a:hover {
+      color: var(--c-text);
+      text-decoration: underline;
+    }
+
+    .ag-breadcrumb span {
+      color: var(--c-text);
+    }
+
+    .ag-header {
+      text-align: center;
+      margin-bottom: var(--space-7);
+    }
+
+    .ag-header h1 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: var(--space-3);
+    }
+
+    .ag-header p {
+      max-width: 560px;
+      margin: 0 auto;
+      color: var(--c-text-muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .ag-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: var(--space-5) var(--space-4);
+    }
+
+    @media (max-width: 1100px) {
+      .ag-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    @media (max-width: 760px) {
+      .ag-grid { grid-template-columns: repeat(2, 1fr); }
+      .ag-page { padding: var(--space-4); }
+    }
+
+    .ag-card {
+      text-align: left;
+    }
+
+    .ag-card__img {
+      aspect-ratio: 3 / 4;
+      width: 100%;
+      border-radius: 16px;
+      background: linear-gradient(
+        180deg,
+        #c4b5fd 0%,
+        #a78bfa 18%,
+        #fbbf24 22%,
+        #94a3b8 28%,
+        #e2e8f0 100%
+      );
+      position: relative;
+      overflow: hidden;
+      margin-bottom: var(--space-3);
+    }
+
+    .ag-card__img--mine {
+      box-shadow: 0 0 0 2px var(--c-pridumkino);
+    }
+
+  /* Заглушка «здание с муралом» */
+    .ag-card__img::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 8%;
+      transform: translateX(-50%);
+      width: 42%;
+      height: 72%;
+      background: linear-gradient(180deg, #f8fafc 0%, #cbd5e1 100%);
+      border-radius: 8px 8px 4px 4px;
+      box-shadow: inset 0 -8px 0 #94a3b8;
+    }
+
+    .ag-card__img::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 22%;
+      transform: translateX(-50%);
+      width: 18%;
+      height: 18%;
+      border-radius: 50%;
+      background: #7c3aed;
+      box-shadow: 0 0 0 6px rgba(124, 58, 237, .25);
+    }
+
+    .ag-card__login {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--c-text);
+      line-height: 1.3;
+    }
+
+    .ag-card__title {
+      font-size: 13px;
+      color: var(--c-text-muted);
+      margin-top: 2px;
+    }
+
+    .ag-pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+      margin-top: var(--space-7);
+    }
+
+    .ag-page-arrow,
+    .ag-page-num {
+      min-width: 36px;
+      height: 36px;
+      padding: 0 10px;
+      border: none;
+      background: transparent;
+      border-radius: 50%;
+      font-size: 15px;
+      color: var(--c-text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ag-page-arrow:hover,
+    .ag-page-num:hover {
+      background: #f3f4f6;
+    }
+
+    .ag-page-num.is-active {
+      background: #eceff3;
+      font-weight: 600;
+    }
+
+    .ag-page-arrow:disabled {
+      opacity: .35;
+      cursor: not-allowed;
+    }
+
+    .ag-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: var(--c-text-muted);
+      padding: var(--space-7);
+    }
+  </style>
+</head>
+<body data-mode="user">
+  <main class="ag-page">
+    <nav class="ag-breadcrumb" aria-label="Навигация">
+      <a href="map.html">Главная</a> /
+      <a href="district-pridumkino.html">Придумкино</a> /
+      <span>Арт-галерея</span>
+    </nav>
+
+    <header class="ag-header">
+      <h1>Арт-галерея</h1>
+      <p>
+        Добро пожаловать в галерею идей! Тут каждый рисунок — маленькая история,
+        которую интересно рассматривать
+      </p>
+    </header>
+
+    <div class="ag-grid" id="galleryGrid"></div>
+
+    <nav class="ag-pagination" id="pagination" aria-label="Страницы галереи"></nav>
+  </main>
+
+  <script src="../js/pridumkino-proto.js"></script>
+  <script src="../js/app.js"></script>
+  <script>
+    const P = window.PridumkinoProto;
+    const PER_PAGE = 8;
+    const MAX_PAGE_BUTTONS = 6;
+
+    const params = new URLSearchParams(location.search);
+    let page = Math.max(1, Number(params.get("page")) || 1);
+
+    const allWorks = P.getGalleryWorks(P.loadState());
+    const totalPages = Math.max(1, Math.ceil(allWorks.length / PER_PAGE));
+
+    if (page > totalPages) page = totalPages;
+
+    function renderGrid() {
+      const start = (page - 1) * PER_PAGE;
+      const slice = allWorks.slice(start, start + PER_PAGE);
+      const grid = document.getElementById("galleryGrid");
+
+      if (!slice.length) {
+        grid.innerHTML = `<p class="ag-empty">Пока нет работ. Создай первый мурал в Дизайн-заводе.</p>`;
+        return;
+      }
+
+      grid.innerHTML = slice.map((w) => {
+        const titleLine = w.title && w.title !== "Без названия"
+          ? `<div class="ag-card__title">«${w.title}»</div>`
+          : "";
+        return `
+          <article class="ag-card">
+            <div class="ag-card__img${w.isMine ? " ag-card__img--mine" : ""}" aria-hidden="true"></div>
+            <div class="ag-card__login">${w.login}</div>
+            ${titleLine}
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderPagination() {
+      const pag = document.getElementById("pagination");
+      const pagesToShow = Math.min(MAX_PAGE_BUTTONS, totalPages);
+
+      let nums = "";
+      for (let i = 1; i <= pagesToShow; i += 1) {
+        nums += `<button type="button" class="ag-page-num${i === page ? " is-active" : ""}" data-page="${i}">${i}</button>`;
+      }
+
+      pag.innerHTML = `
+        <button type="button" class="ag-page-arrow" id="prevPage" aria-label="Предыдущая" ${page <= 1 ? "disabled" : ""}>&lt;</button>
+        ${nums}
+        <button type="button" class="ag-page-arrow" id="nextPage" aria-label="Следующая" ${page >= totalPages ? "disabled" : ""}>&gt;</button>
+      `;
+
+      document.getElementById("prevPage")?.addEventListener("click", () => go(page - 1));
+      document.getElementById("nextPage")?.addEventListener("click", () => go(page + 1));
+      pag.querySelectorAll(".ag-page-num").forEach((btn) => {
+        btn.addEventListener("click", () => go(Number(btn.dataset.page)));
+      });
+    }
+
+    function go(p) {
+      if (p < 1 || p > totalPages) return;
+      location.href = p === 1 ? "pridumkino-gallery.html" : `pridumkino-gallery.html?page=${p}`;
+    }
+
+    renderGrid();
+    renderPagination();
+  </script>
+</body>
+</html>

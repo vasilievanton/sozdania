@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Выбор способа — Придумкино</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/pridumkino-flow.css">
+</head>
+<body data-mode="user">
+  <div class="pk-method-overlay">
+    <div class="pk-method-modal">
+      <div class="pk-method-modal__head">
+        <h1 style="margin:0;">Правила</h1>
+        <a class="pk-method-modal__close" href="district-pridumkino.html" title="Закрыть">×</a>
+      </div>
+      <p class="muted" id="rulesText">
+        Выбери, как создать рисунок для темы. Можно раскрасить готовый шаблон или загрузить свой.
+        После рисунка — выбор здания и ИИ сделает мурал на стене.
+      </p>
+
+      <div class="pk-method-cards">
+        <a class="pk-method-card pk-method-card--color" href="#" id="linkColor">
+          <div class="pk-method-card__icon">🖍️</div>
+          <div class="pk-method-card__title">Раскрасить</div>
+          <div class="pk-method-card__sub">Готовая раскраска</div>
+          <span class="pk-method-card__btn">ВЫБРАТЬ</span>
+        </a>
+        <a class="pk-method-card pk-method-card--upload" href="#" id="linkUpload">
+          <div class="pk-method-card__icon">🖼️</div>
+          <div class="pk-method-card__title">Загрузить</div>
+          <div class="pk-method-card__sub">Твой рисунок</div>
+          <span class="pk-method-card__btn">ВЫБРАТЬ</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <script src="../js/pridumkino-proto.js"></script>
+  <script>
+    const P = window.PridumkinoProto;
+    const theme = P.getThemeFromQuery();
+    if (!theme) location.href = "district-pridumkino.html";
+    const meta = P.THEME_META[theme];
+    document.title = `${meta.title} — выбор способа`;
+
+    document.getElementById("linkColor").href = `pridumkino-pick.html?theme=${theme}`;
+    document.getElementById("linkColor").addEventListener("click", () => P.setSessionTheme(theme, "color"));
+
+    document.getElementById("linkUpload").href = `pridumkino-upload.html?theme=${theme}`;
+    document.getElementById("linkUpload").addEventListener("click", () => P.setSessionTheme(theme, "upload"));
+  </script>
+</body>
+</html>

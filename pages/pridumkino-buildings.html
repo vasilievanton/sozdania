@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Выбери здание — Придумкино</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/pridumkino-flow.css">
+</head>
+<body data-mode="user" class="pk-flow">
+  <div id="chrome"></div>
+  <div class="pk-flow__card">
+    <div id="stepper"></div>
+    <p class="muted" style="text-align:center;">
+      Выбери здание, а после нажми «Генерировать», чтобы посмотреть, как на нём будет смотреться твоё граффити.
+    </p>
+
+    <div class="pk-buildings-grid" id="buildingsGrid"></div>
+
+    <div class="pk-flow-actions">
+      <a class="pk-btn-back" id="backBtn" href="#">← Назад</a>
+      <button type="button" class="pk-btn-generate" id="btnGenerate" disabled>Генерировать</button>
+    </div>
+  </div>
+  <div id="footer"></div>
+
+  <script src="../js/pridumkino-proto.js"></script>
+  <script src="../js/pridumkino-flow-ui.js"></script>
+  <script>
+    const P = window.PridumkinoProto;
+    const UI = window.PridumkinoFlowUI;
+    const params = new URLSearchParams(location.search);
+    const theme = P.getThemeFromQuery();
+    const method = params.get("method") === "upload" ? "upload" : "color";
+    if (!theme) location.href = "district-pridumkino.html";
+
+    const session = P.loadSession();
+    session.theme = theme;
+    session.method = method;
+    P.saveSession(session);
+
+    const stepIndex = method === "upload" ? 2 : 2;
+    UI.renderFlowChrome(document.getElementById("chrome"), theme);
+    UI.renderStepper(document.getElementById("stepper"), UI.getSteps(method), stepIndex);
+    document.getElementById("footer").innerHTML = UI.flowFooter();
+
+    const back = method === "upload"
+      ? `pridumkino-upload.html?theme=${theme}`
+      : `pridumkino-color.html?theme=${theme}&picture=${P.loadSession().pictureId || 1}`;
+    document.getElementById("backBtn").href = back;
+
+    let selectedId = null;
+    const grid = document.getElementById("buildingsGrid");
+    const btn = document.getElementById("btnGenerate");
+
+    P.BUILDINGS.forEach((b) => {
+      const el = document.createElement("button");
+      el.type = "button";
+      el.className = "pk-building";
+      el.innerHTML = `<div class="pk-building__img">🏢</div>`;
+      el.title = b.name;
+      el.addEventListener("click", () => {
+        selectedId = b.id;
+        grid.querySelectorAll(".pk-building").forEach((t) => t.classList.remove("selected"));
+        el.classList.add("selected");
+        btn.disabled = false;
+        const s = P.loadSession();
+        s.buildingId = b.id;
+        P.saveSession(s);
+      });
+      grid.appendChild(el);
+    });
+
+    btn.addEventListener("click", () => {
+      if (!selectedId) return;
+      const session = P.loadSession();
+      const picture = session.pictureId || "";
+      session.buildingId = selectedId;
+      P.saveSession(session);
+      location.href = `pridumkino-generate.html?theme=${theme}&method=${method}&building=${selectedId}&picture=${picture}`;
+    });
+  </script>
+</body>
+</html>

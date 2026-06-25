@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Выбери картинку — Придумкино</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/pridumkino-flow.css">
+</head>
+<body data-mode="user" class="pk-flow">
+  <div id="chrome"></div>
+  <div class="pk-flow__card">
+    <div id="stepper"></div>
+    <p class="muted" style="text-align:center;">Выбери одну из трёх раскрасок — она перейдёт на следующий шаг.</p>
+    <div class="pk-pick-grid" id="pickGrid"></div>
+    <button type="button" class="pk-btn-start" id="btnStart" disabled>НАЧАТЬ</button>
+  </div>
+  <div id="footer"></div>
+
+  <script src="../js/pridumkino-proto.js"></script>
+  <script src="../js/pridumkino-flow-ui.js"></script>
+  <script>
+    const P = window.PridumkinoProto;
+    const UI = window.PridumkinoFlowUI;
+    const theme = P.getThemeFromQuery();
+    if (!theme) location.href = "district-pridumkino.html";
+    P.setSessionTheme(theme, "color");
+
+    UI.renderFlowChrome(document.getElementById("chrome"), theme);
+    UI.renderStepper(document.getElementById("stepper"), UI.COLOR_STEPS, 0);
+    document.getElementById("footer").innerHTML = UI.flowFooter();
+
+    const pages = P.getColoringPages(theme);
+    let selected = null;
+    const grid = document.getElementById("pickGrid");
+    const btn = document.getElementById("btnStart");
+
+    pages.forEach((p) => {
+      const el = document.createElement("button");
+      el.type = "button";
+      el.className = "pk-pick-item";
+      el.innerHTML = `
+        <div class="pk-pick-item__art">${p.art}</div>
+        <div class="pk-pick-item__label">${p.label}</div>
+      `;
+      el.addEventListener("click", () => {
+        selected = p.id;
+        grid.querySelectorAll(".pk-pick-item").forEach((x) => x.classList.remove("selected"));
+        el.classList.add("selected");
+        btn.disabled = false;
+      });
+      grid.appendChild(el);
+    });
+
+    btn.addEventListener("click", () => {
+      if (!selected) return;
+      const s = P.loadSession();
+      s.pictureId = selected;
+      P.saveSession(s);
+      location.href = `pridumkino-color.html?theme=${theme}&picture=${selected}`;
+    });
+  </script>
+</body>
+</html>
