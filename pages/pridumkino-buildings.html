@@ -41,7 +41,7 @@
     session.method = method;
     P.saveSession(session);
 
-    const stepIndex = method === "upload" ? 2 : 2;
+    const stepIndex = 1;
     UI.renderFlowChrome(document.getElementById("chrome"), theme);
     UI.renderStepper(document.getElementById("stepper"), UI.getSteps(method), stepIndex);
     document.getElementById("footer").innerHTML = UI.flowFooter();

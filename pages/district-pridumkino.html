@@ -296,8 +296,8 @@
 
     <div class="proto-notice">
       <strong>Прототип сценария.</strong>
-      Пройди все три темы → откроется совместное задание → работы попадут в арт-галерею.
-      Баллы начисляются сразу после генерации. Кнопка «Сбросить» — для повторного прохождения.
+      Пройди все три темы → работы попадут в арт-галерею. Совместное задание «Как назовём рисунок?» можно открыть в любой момент.
+      Баллы за мурал — сразу после генерации, за названия — когда готовы все три рисунка.
       <div class="btn-row" style="margin-top:var(--space-2); margin-bottom:0;">
         <button type="button" class="btn btn--ghost" id="btnReset">Сбросить прототип</button>
       </div>
@@ -385,24 +385,13 @@
       const jointEl = document.getElementById("jointBlock");
       const allDone = P.allThemesDone(state);
 
-      if (!allDone) {
-        jointEl.innerHTML = `
-          <div class="joint-banner joint-banner--locked" style="text-align:left;">
-            <div>
-              <h2>${JOINT_CARD_TITLE}</h2>
-              <p><strong>Сначала заверши все три рисунка.</strong></p>
-              <p class="muted" style="opacity:1;">Осталось: ${3 - doneCount} из 3 тем. Совместное задание откроется автоматически.</p>
-            </div>
-            <div class="joint-banner__art">🔒</div>
-          </div>
-        `;
-      } else if (state.jointDone) {
+      if (state.jointDone) {
         jointEl.innerHTML = `
           <div class="joint-banner" style="text-align:left;">
             <div>
               <h2>${JOINT_CARD_TITLE}</h2>
               <p>${JOINT_CARD_TEXT}</p>
-              <p style="margin-top:var(--space-3);"><strong>Задание выполнено</strong> — +${P.POINTS_JOINT} баллов.</p>
+              <p style="margin-top:var(--space-3);"><strong>Задание выполнено</strong>${state.jointBonusAwarded ? ` — +${P.POINTS_JOINT} баллов` : " — баллы начислятся после всех трёх муралов"}.</p>
               <div class="btn-row">
                 <a class="joint-banner__btn" href="pridumkino-joint.html">ПОСМОТРЕТЬ НАЗВАНИЯ ></a>
                 <a class="joint-banner__btn" href="pridumkino-gallery.html" style="background:rgba(255,255,255,.25);color:#fff;">В ГАЛЕРЕЮ ></a>
@@ -412,11 +401,15 @@
           </div>
         `;
       } else {
+        const hint = allDone
+          ? ""
+          : `<p class="muted" style="opacity:1;margin-top:var(--space-2);">Можно придумать названия заранее — баллы за задание начислятся, когда будут готовы все три мурала.</p>`;
         jointEl.innerHTML = `
           <div class="joint-banner" style="text-align:left;">
             <div>
               <h2>${JOINT_CARD_TITLE}</h2>
               <p>${JOINT_CARD_TEXT}</p>
+              ${hint}
               <a class="joint-banner__btn" href="pridumkino-joint.html">ОТКРЫТЬ ЗАДАНИЕ ></a>
             </div>
             <div class="joint-banner__art">🖍️📄</div>

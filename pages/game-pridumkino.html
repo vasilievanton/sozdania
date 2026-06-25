@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Раскраска — Придумкино</title>
   <link rel="stylesheet" href="../css/main.css">
-  <meta http-equiv="refresh" content="0;url=pridumkino-pick.html">
+  <meta http-equiv="refresh" content="0;url=pridumkino-color.html">
 </head>
 <body data-mode="user">
   <main class="app-main app-main--narrow">
-    <p class="muted">Перенаправление… <a id="link" href="pridumkino-pick.html">Перейти к выбору картинки</a></p>
+    <p class="muted">Перенаправление… <a id="link" href="pridumkino-color.html">Перейти к раскраске</a></p>
   </main>
   <script src="../js/pridumkino-proto.js"></script>
   <script src="../js/tour.js"></script>
@@ -17,11 +17,11 @@
     const P = window.PridumkinoProto;
     const theme = P.getThemeFromQuery();
     const url = theme
-      ? P.tourUrl(`pridumkino-pick.html?theme=${theme}`)
+      ? P.tourUrl(`pridumkino-color.html?theme=${theme}&picture=1`)
       : P.tourUrl("district-pridumkino.html");
     document.getElementById("link").href = url;
     P.goReplace(theme
-      ? `pridumkino-pick.html?theme=${theme}`
+      ? `pridumkino-color.html?theme=${theme}&picture=1`
       : "district-pridumkino.html");
   </script>
 </body>

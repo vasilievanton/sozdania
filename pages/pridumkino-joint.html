@@ -41,14 +41,9 @@
     <div class="breadcrumb"><a href="district-pridumkino.html">← В Придумкино</a></div>
     <h1>Как назовём рисунок?</h1>
     <p class="muted">
-      Совместное задание с родителем. Придумайте название для каждого из трёх муралов —
-      смешное, волшебное или неожиданное. Все три поля заполняются сразу.
+      Совместное задание с родителем. Придумайте название для каждой темы —
+      смешное, волшебное или неожиданное. Можно заполнить заранее, даже если муралы ещё не готовы.
     </p>
-
-    <div id="lockedBlock" class="notice notice--warn" hidden>
-      <strong>Задание закрыто.</strong> Сначала заверши все три рисунка в Дизайн-заводе.
-      <div class="btn-row"><a class="btn" href="district-pridumkino.html">Вернуться</a></div>
-    </div>
 
     <form id="jointForm" class="card" hidden>
       <div id="nameFields"></div>
@@ -68,9 +63,7 @@
     const icons = { gorod: "🏙️", kosmos: "🪐", leto: "🌻" };
     const state = P.loadState();
 
-    if (!P.allThemesDone(state)) {
-      document.getElementById("lockedBlock").hidden = false;
-    } else if (state.jointDone) {
+    if (state.jointDone) {
       showDone(state);
     } else {
       renderForm(state);
@@ -84,14 +77,15 @@
       fields.innerHTML = P.THEMES.map((id) => {
         const meta = P.THEME_META[id];
         const work = st.completed[id];
-        const val = work?.title || "";
+        const val = st.jointTitles?.[id] || work?.title || "";
+        const buildingLine = work?.buildingName ? ` · ${work.buildingName}` : "";
         return `
           <div class="name-row">
             <div class="name-row__thumb">${icons[id]}</div>
             <div>
-              <label for="title-${id}">${meta.title} · ${work.buildingName || "здание"}</label>
+              <label for="title-${id}">${meta.title}${buildingLine}</label>
               <input type="text" id="title-${id}" name="${id}" value="${val.replace(/"/g, "&quot;")}" placeholder="Например: «Космический пикник»" required>
-              <p class="muted">Название появится в галерее рядом с работой</p>
+              <p class="muted">${work ? "Название появится в галерее рядом с работой" : "Мурал ещё не готов — название сохранится заранее"}</p>
             </div>
           </div>
         `;
@@ -117,12 +111,14 @@
       block.hidden = false;
       const list = P.THEMES.map((id) => {
         const meta = P.THEME_META[id];
-        const title = st.completed[id]?.title || "—";
+        const title = st.jointTitles?.[id] || st.completed[id]?.title || "—";
         return `<li><strong>${meta.title}:</strong> «${title}»</li>`;
       }).join("");
       block.innerHTML = `
         <strong>Совместное задание выполнено!</strong>
-        ${st.jointBonusAwarded ? `<p>Начислено <strong>+${P.POINTS_JOINT} баллов</strong> один раз за все три названия.</p>` : ""}
+        ${st.jointBonusAwarded
+          ? `<p>Начислено <strong>+${P.POINTS_JOINT} баллов</strong> за все три названия.</p>`
+          : `<p class="muted">Баллы за задание начислятся, когда будут готовы все три мурала в Дизайн-заводе.</p>`}
         <ul>${list}</ul>
         <div class="btn-row">
           <a class="btn btn--primary" href="pridumkino-gallery.html">Смотреть в галерее</a>

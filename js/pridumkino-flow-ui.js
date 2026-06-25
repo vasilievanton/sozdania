@@ -59,8 +59,8 @@
     container.innerHTML = withConnectors.join("");
   }
 
-  const COLOR_STEPS = ["Выбери картинку", "Раскрась картинку", "Сделай граффити"];
-  const UPLOAD_STEPS = ["Загрузи рисунок", "Раскрась картинку", "Сделай граффити"];
+  const COLOR_STEPS = ["Раскрась картинку", "Сделай граффити"];
+  const UPLOAD_STEPS = ["Загрузи рисунок", "Сделай граффити"];
 
   function getSteps(method) {
     return method === "upload" ? UPLOAD_STEPS : COLOR_STEPS;

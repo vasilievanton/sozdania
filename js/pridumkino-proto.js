@@ -75,21 +75,9 @@
   const SESSION_KEY = "sozdania_pridumkino_session";
 
   const COLORING_PAGES = {
-    gorod: [
-      { id: 1, label: "Дом и машина", art: "🏠🚗" },
-      { id: 2, label: "Площадь", art: "🏛️🌳" },
-      { id: 3, label: "Мост", art: "🌉🏙️" }
-    ],
-    kosmos: [
-      { id: 1, label: "Йети в НЛО", art: "👽🛸" },
-      { id: 2, label: "Ракета", art: "🚀🪐" },
-      { id: 3, label: "Пришелец", art: "🛸🌙" }
-    ],
-    leto: [
-      { id: 1, label: "Пляж", art: "🏖️☀️" },
-      { id: 2, label: "Мороженое", art: "🍦🌻" },
-      { id: 3, label: "Пикник", art: "🧺🌳" }
-    ]
+    gorod: [{ id: 1, label: "Город", art: "🏠🚗" }],
+    kosmos: [{ id: 1, label: "Космос", art: "👽🛸" }],
+    leto: [{ id: 1, label: "Лето", art: "🏖️☀️" }]
   };
 
   const PALETTE = [
@@ -101,6 +89,7 @@
   function defaultState() {
     return {
       completed: {},
+      jointTitles: {},
       jointDone: false,
       jointBonusAwarded: false,
       totalPoints: 0,
@@ -113,7 +102,12 @@
       const raw = localStorage.getItem(STORAGE_KEY);
       if (!raw) return defaultState();
       const parsed = JSON.parse(raw);
-      return { ...defaultState(), ...parsed, completed: parsed.completed || {} };
+      return {
+        ...defaultState(),
+        ...parsed,
+        completed: parsed.completed || {},
+        jointTitles: parsed.jointTitles || {}
+      };
     } catch {
       return defaultState();
     }
@@ -152,6 +146,7 @@
     const state = loadState();
     const already = Boolean(state.completed[themeId]);
     const prev = state.completed[themeId] || {};
+    const savedTitle = state.jointTitles?.[themeId] || prev.title || "";
 
     state.completed = { ...state.completed };
     state.completed[themeId] = {
@@ -159,13 +154,18 @@
       method: payload.method || prev.method || "color",
       buildingId: payload.buildingId ?? prev.buildingId ?? null,
       buildingName: payload.buildingName || prev.buildingName || "",
-      pictureId: payload.pictureId ?? prev.pictureId ?? null,
-      title: prev.title || "",
+      pictureId: payload.pictureId ?? prev.pictureId ?? 1,
+      title: savedTitle,
       completedAt: new Date().toISOString()
     };
 
     if (!already) {
       state.totalPoints += POINTS_PER_GENERATION;
+    }
+
+    if (state.jointDone && allThemesDone(state) && !state.jointBonusAwarded) {
+      state.totalPoints += POINTS_JOINT;
+      state.jointBonusAwarded = true;
     }
 
     try {
@@ -180,16 +180,19 @@
 
   function saveJointTitles(titles) {
     const state = loadState();
-    if (!allThemesDone(state)) return { ok: false, reason: "not_all_done" };
+    if (!state.jointTitles) state.jointTitles = {};
 
     THEMES.forEach((themeId) => {
-      if (state.completed[themeId] && titles[themeId]) {
-        state.completed[themeId].title = titles[themeId].trim();
+      const title = (titles[themeId] || "").trim();
+      if (!title) return;
+      state.jointTitles[themeId] = title;
+      if (state.completed[themeId]) {
+        state.completed[themeId].title = title;
       }
     });
 
     state.jointDone = true;
-    if (!state.jointBonusAwarded) {
+    if (allThemesDone(state) && !state.jointBonusAwarded) {
       state.totalPoints += POINTS_JOINT;
       state.jointBonusAwarded = true;
     }
@@ -238,10 +241,18 @@
     const s = loadSession();
     s.theme = themeId;
     s.method = method;
-    s.pictureId = null;
+    s.pictureId = method === "color" ? 1 : null;
     s.buildingId = null;
     saveSession(s);
     return s;
+  }
+
+  function getDefaultPictureId() {
+    return 1;
+  }
+
+  function getThemeColoringPage(themeId) {
+    return getColoringPages(themeId)[0] || null;
   }
 
   function getColoringPages(themeId) {
@@ -318,6 +329,8 @@
     saveSession,
     setSessionTheme,
     getColoringPages,
+    getThemeColoringPage,
+    getDefaultPictureId,
     getColoringSvg,
     getThemeFromQuery,
     resolveBuildingId,

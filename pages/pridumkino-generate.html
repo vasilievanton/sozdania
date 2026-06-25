@@ -75,7 +75,7 @@
         : null;
 
       UI.renderFlowChrome(document.getElementById("chrome"), theme);
-      UI.renderStepper(document.getElementById("stepper"), UI.getSteps(method), 2);
+      UI.renderStepper(document.getElementById("stepper"), UI.getSteps(method), 1);
       document.getElementById("footer").innerHTML = UI.flowFooter();
       document.getElementById("successIcon").textContent = icons[theme] || "🎨";
 

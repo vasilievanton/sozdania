@@ -36,12 +36,14 @@
     const UI = window.PridumkinoFlowUI;
     const params = new URLSearchParams(location.search);
     const theme = P.getThemeFromQuery();
-    const pictureId = Number(params.get("picture"));
-
-    if (!theme || !pictureId) P.go(`pridumkino-pick.html?theme=${theme || ""}`);
-
-    const page = P.getColoringPages(theme).find((p) => p.id === pictureId);
-    if (!page) P.go(`pridumkino-pick.html?theme=${theme}`);
+    if (!theme) {
+      P.go("district-pridumkino.html");
+    } else {
+    const page = P.getThemeColoringPage(theme);
+    if (!page) {
+      P.go("district-pridumkino.html");
+    } else {
+    const pictureId = Number(params.get("picture")) || page.id;
 
     const session = P.loadSession();
     session.theme = theme;
@@ -50,7 +52,7 @@
     P.saveSession(session);
 
     UI.renderFlowChrome(document.getElementById("chrome"), theme);
-    UI.renderStepper(document.getElementById("stepper"), UI.COLOR_STEPS, 1);
+    UI.renderStepper(document.getElementById("stepper"), UI.getSteps("color"), 0);
     document.getElementById("footer").innerHTML = UI.flowFooter();
 
     const ZONE_IDS = ["bg", "sun", "cloud", "house", "roof", "planet", "rocket"];
@@ -153,6 +155,8 @@
     });
 
     P.patchTourLinks();
+    }
+    }
   </script>
 </body>
 </html>
